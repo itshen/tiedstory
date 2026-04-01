@@ -680,11 +680,21 @@ async def api_add_echo(ribbon_id: str, request: Request):
         raise HTTPException(status_code=403, detail="内容包含非法指令")
 
     ip = _get_client_ip(request)
-    ok = database.add_echo(ribbon_id, content, ip=ip)
-    if not ok:
+    echo_id = database.add_echo(ribbon_id, content, ip=ip)
+    if echo_id is None:
         raise HTTPException(status_code=404, detail="Ribbon not found")
-    logger.info(f"[Echo] ribbon={ribbon_id} ip={ip} content={content[:40]}")
-    return {"ok": True}
+    logger.info(f"[Echo] ribbon={ribbon_id} ip={ip} echo_id={echo_id} content={content[:40]}")
+    return {"ok": True, "echo_id": echo_id}
+
+
+@app.post("/api/echo/{echo_id}/like")
+async def api_like_echo(echo_id: int, request: Request):
+    """回响点赞"""
+    new_count = database.like_echo(echo_id)
+    if new_count is None:
+        raise HTTPException(status_code=404, detail="Echo not found")
+    logger.info(f"[Like] echo_id={echo_id} new_count={new_count}")
+    return {"ok": True, "like_count": new_count}
 
 
 @app.post("/api/ribbon/{ribbon_id}/append")

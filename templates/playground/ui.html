@@ -2250,7 +2250,7 @@
 <div class="bg-demo-title">· 背景时光流转 Demo ·</div>
 <div class="bg-mode-row">
 <button class="pg-mode-btn" id="pgModeReal" onclick="pgSetRealMode()">跟随真实时间</button>
-<button class="pg-mode-btn" id="pgModeDemo" onclick="pgSetDemoMode();document.getElementById('demoProgressWrap').style.display='block';">时光流逝演示（30s/时段）</button>
+            <button class="pg-mode-btn" id="pgModeDemo" onclick="pgSetDemoMode()">时光流逝演示（30s/时段）</button>
 <div class="bg-mode-hint" id="bgAutoHint" style="display:none;"><span class="bg-mode-hint-dot"></span>按真实月份季节、真实时刻自动切换</div>
 <div class="bg-mode-hint" id="bgDemoHint" style="display:none;"><span class="bg-mode-hint-dot" style="background:#E0925A;"></span>演示中：每30秒流转一个时段，转完四个进入下一季节</div>
 </div>
@@ -2258,25 +2258,25 @@
 <div class="bg-matrix">
 <div class="bg-matrix-head"></div><div class="bg-matrix-head">清晨</div><div class="bg-matrix-head">正午</div><div class="bg-matrix-head">傍晚</div><div class="bg-matrix-head">夜晚</div>
 <div class="bg-matrix-season-label">🌸 春</div>
-<div class="bg-matrix-cell" data-season="spring" data-time="morning" style="background-image:url('/static/images/tree_bg_morning.jpg')" onclick="pgSwitchTo('spring','morning')"><div class="bg-matrix-cell-label">春·清晨</div></div>
-<div class="bg-matrix-cell" data-season="spring" data-time="noon" style="background-image:url('/static/images/tree_bg_noon.jpg')" onclick="pgSwitchTo('spring','noon')"><div class="bg-matrix-cell-label">春·正午</div></div>
-<div class="bg-matrix-cell" data-season="spring" data-time="dusk" style="background-image:url('/static/images/tree_bg.jpg')" onclick="pgSwitchTo('spring','dusk')"><div class="bg-matrix-cell-label">春·傍晚</div></div>
-<div class="bg-matrix-cell" data-season="spring" data-time="night" style="background-image:url('/static/images/tree_bg_night.jpg')" onclick="pgSwitchTo('spring','night')"><div class="bg-matrix-cell-label">春·夜晚</div></div>
-<div class="bg-matrix-season-label">🌿 夏</div>
-<div class="bg-matrix-cell" data-season="summer" data-time="morning" style="background-image:url('/static/images/summer_morning.jpg')" onclick="pgSwitchTo('summer','morning')"><div class="bg-matrix-cell-label">夏·清晨</div></div>
-<div class="bg-matrix-cell" data-season="summer" data-time="noon" style="background-image:url('/static/images/summer_noon.jpg')" onclick="pgSwitchTo('summer','noon')"><div class="bg-matrix-cell-label">夏·正午</div></div>
-<div class="bg-matrix-cell" data-season="summer" data-time="dusk" style="background-image:url('/static/images/summer_dusk.jpg')" onclick="pgSwitchTo('summer','dusk')"><div class="bg-matrix-cell-label">夏·傍晚</div></div>
-<div class="bg-matrix-cell" data-season="summer" data-time="night" style="background-image:url('/static/images/summer_night.jpg')" onclick="pgSwitchTo('summer','night')"><div class="bg-matrix-cell-label">夏·夜晚</div></div>
-<div class="bg-matrix-season-label">🍂 秋</div>
-<div class="bg-matrix-cell" data-season="autumn" data-time="morning" style="background-image:url('/static/images/autumn_morning.jpg')" onclick="pgSwitchTo('autumn','morning')"><div class="bg-matrix-cell-label">秋·清晨</div></div>
-<div class="bg-matrix-cell" data-season="autumn" data-time="noon" style="background-image:url('/static/images/autumn_noon.jpg')" onclick="pgSwitchTo('autumn','noon')"><div class="bg-matrix-cell-label">秋·正午</div></div>
-<div class="bg-matrix-cell" data-season="autumn" data-time="dusk" style="background-image:url('/static/images/autumn_dusk.jpg')" onclick="pgSwitchTo('autumn','dusk')"><div class="bg-matrix-cell-label">秋·傍晚</div></div>
-<div class="bg-matrix-cell" data-season="autumn" data-time="night" style="background-image:url('/static/images/autumn_night.jpg')" onclick="pgSwitchTo('autumn','night')"><div class="bg-matrix-cell-label">秋·夜晚</div></div>
-<div class="bg-matrix-season-label">❄️ 冬</div>
-<div class="bg-matrix-cell" data-season="winter" data-time="morning" style="background-image:url('/static/images/winter_morning.jpg')" onclick="pgSwitchTo('winter','morning')"><div class="bg-matrix-cell-label">冬·清晨</div></div>
-<div class="bg-matrix-cell" data-season="winter" data-time="noon" style="background-image:url('/static/images/winter_noon.jpg')" onclick="pgSwitchTo('winter','noon')"><div class="bg-matrix-cell-label">冬·正午</div></div>
-<div class="bg-matrix-cell" data-season="winter" data-time="dusk" style="background-image:url('/static/images/winter_dusk.jpg')" onclick="pgSwitchTo('winter','dusk')"><div class="bg-matrix-cell-label">冬·傍晚</div></div>
-<div class="bg-matrix-cell" data-season="winter" data-time="night" style="background-image:url('/static/images/winter_night.jpg')" onclick="pgSwitchTo('winter','night')"><div class="bg-matrix-cell-label">冬·夜晚</div></div>
+            <div class="bg-matrix-cell" data-season="spring" data-time="morning" style="background-image:url('/static/images/tree_bg_morning.png')" onclick="pgSwitchTo('spring','morning')"><div class="bg-matrix-cell-label">春·清晨</div></div>
+            <div class="bg-matrix-cell" data-season="spring" data-time="noon" style="background-image:url('/static/images/tree_bg_noon.png')" onclick="pgSwitchTo('spring','noon')"><div class="bg-matrix-cell-label">春·正午</div></div>
+            <div class="bg-matrix-cell" data-season="spring" data-time="dusk" style="background-image:url('/static/images/tree_bg.png')" onclick="pgSwitchTo('spring','dusk')"><div class="bg-matrix-cell-label">春·傍晚</div></div>
+            <div class="bg-matrix-cell" data-season="spring" data-time="night" style="background-image:url('/static/images/tree_bg_night.png')" onclick="pgSwitchTo('spring','night')"><div class="bg-matrix-cell-label">春·夜晚</div></div>
+            <div class="bg-matrix-season-label">🌿 夏</div>
+            <div class="bg-matrix-cell" data-season="summer" data-time="morning" style="background-image:url('/static/images/summer_morning.png')" onclick="pgSwitchTo('summer','morning')"><div class="bg-matrix-cell-label">夏·清晨</div></div>
+            <div class="bg-matrix-cell" data-season="summer" data-time="noon" style="background-image:url('/static/images/summer_noon.png')" onclick="pgSwitchTo('summer','noon')"><div class="bg-matrix-cell-label">夏·正午</div></div>
+            <div class="bg-matrix-cell" data-season="summer" data-time="dusk" style="background-image:url('/static/images/summer_dusk.png')" onclick="pgSwitchTo('summer','dusk')"><div class="bg-matrix-cell-label">夏·傍晚</div></div>
+            <div class="bg-matrix-cell" data-season="summer" data-time="night" style="background-image:url('/static/images/summer_night.png')" onclick="pgSwitchTo('summer','night')"><div class="bg-matrix-cell-label">夏·夜晚</div></div>
+            <div class="bg-matrix-season-label">🍂 秋</div>
+            <div class="bg-matrix-cell" data-season="autumn" data-time="morning" style="background-image:url('/static/images/autumn_morning.png')" onclick="pgSwitchTo('autumn','morning')"><div class="bg-matrix-cell-label">秋·清晨</div></div>
+            <div class="bg-matrix-cell" data-season="autumn" data-time="noon" style="background-image:url('/static/images/autumn_noon.png')" onclick="pgSwitchTo('autumn','noon')"><div class="bg-matrix-cell-label">秋·正午</div></div>
+            <div class="bg-matrix-cell" data-season="autumn" data-time="dusk" style="background-image:url('/static/images/autumn_dusk.png')" onclick="pgSwitchTo('autumn','dusk')"><div class="bg-matrix-cell-label">秋·傍晚</div></div>
+            <div class="bg-matrix-cell" data-season="autumn" data-time="night" style="background-image:url('/static/images/autumn_night.png')" onclick="pgSwitchTo('autumn','night')"><div class="bg-matrix-cell-label">秋·夜晚</div></div>
+            <div class="bg-matrix-season-label">❄️ 冬</div>
+            <div class="bg-matrix-cell" data-season="winter" data-time="morning" style="background-image:url('/static/images/winter_morning.png')" onclick="pgSwitchTo('winter','morning')"><div class="bg-matrix-cell-label">冬·清晨</div></div>
+            <div class="bg-matrix-cell" data-season="winter" data-time="noon" style="background-image:url('/static/images/winter_noon.png')" onclick="pgSwitchTo('winter','noon')"><div class="bg-matrix-cell-label">冬·正午</div></div>
+            <div class="bg-matrix-cell" data-season="winter" data-time="dusk" style="background-image:url('/static/images/winter_dusk.png')" onclick="pgSwitchTo('winter','dusk')"><div class="bg-matrix-cell-label">冬·傍晚</div></div>
+            <div class="bg-matrix-cell" data-season="winter" data-time="night" style="background-image:url('/static/images/winter_night.png')" onclick="pgSwitchTo('winter','night')"><div class="bg-matrix-cell-label">冬·夜晚</div></div>
 </div>
 </div>
 <div style="font-size:11px;color:#9A8070;font-family:'Noto Serif SC',serif;letter-spacing:0.5px;padding-top:8px;">· 4 季 × 4 时段，共 16 幅吉卜力风格场景 · 点击任意格子手动切换 ·</div>
@@ -2844,9 +2844,9 @@ async function openStory(ribbonId) {
                 item.className = 'story-resonance-item';
                 item.innerHTML = `
                     <span class="story-resonance-text">${e.content}</span>
-                    <button class="story-resonance-like" onclick="likeResonance(this)">
+                    <button class="story-resonance-like" data-echo-id="${e.id}" onclick="likeResonance(this)">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                        <span class="like-count">0</span>
+                        <span class="like-count">${e.like_count || 0}</span>
                     </button>`;
                 resonancesEl.appendChild(item);
             });
@@ -2914,15 +2914,32 @@ function shareStory() {
 }
 
 // ---- 回响点赞 ----
-function likeResonance(btn) {
-    if (btn.classList.contains('liked')) return;
-    btn.classList.add('liked');
+async function likeResonance(btn) {
+    if (btn.classList.contains('liked') || btn.dataset.liking) return;
+    const echoId = btn.dataset.echoId;
     const countEl = btn.querySelector('.like-count');
-    countEl.textContent = parseInt(countEl.textContent) + 1;
-    countEl.animate([
-        { transform: 'scale(1.6)', opacity: 0.5 },
-        { transform: 'scale(1)',   opacity: 1   }
-    ], { duration: 220, easing: 'ease-out' });
+    btn.dataset.liking = '1';
+    try {
+        let newCount;
+        if (echoId) {
+            const res = await fetch(`/api/echo/${echoId}/like`, { method: 'POST' });
+            const data = await res.json();
+            if (!data.ok) throw new Error('like failed');
+            newCount = data.like_count;
+        } else {
+            newCount = parseInt(countEl.textContent) + 1;
+        }
+        btn.classList.add('liked');
+        countEl.textContent = newCount;
+        countEl.animate([
+            { transform: 'scale(1.6)', opacity: 0.5 },
+            { transform: 'scale(1)',   opacity: 1   }
+        ], { duration: 220, easing: 'ease-out' });
+    } catch(e) {
+        console.error('[Like] failed', e);
+    } finally {
+        delete btn.dataset.liking;
+    }
 }
 
 // ---- 提交新回响 ----
@@ -2962,6 +2979,7 @@ function submitResonance() {
                 const err = await res.json().catch(() => ({}));
                 throw new Error(err.detail || `服务器错误 ${res.status}`);
             }
+            const data = await res.json();
             const container = document.getElementById('storyResonances');
             const titleEl   = document.getElementById('storyResonancesTitle');
 
@@ -2969,7 +2987,7 @@ function submitResonance() {
             item.className = 'story-resonance-item new-echo';
             item.innerHTML = `
                 <span class="story-resonance-text">${text}</span>
-                <button class="story-resonance-like" onclick="likeResonance(this)">
+                <button class="story-resonance-like" data-echo-id="${data.echo_id || ''}" onclick="likeResonance(this)">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                     <span class="like-count">0</span>
                 </button>`;
@@ -3671,24 +3689,24 @@ const TIME_META = {
     night:   { label: '夜晚', color: '#7A9FC8', hours: [19, 29] },
 };
 
-// 图片映射表（季节_时段 → 路径，秋冬图片生成后自动解锁）
+// 图片映射表（季节_时段 → 路径，已补齐 16 张 2K PNG）
 const BG_MAP = {
-    spring_morning: '/static/images/tree_bg_morning.jpg',
-    spring_noon:    '/static/images/tree_bg_noon.jpg',
-    spring_dusk:    '/static/images/tree_bg.jpg',
-    spring_night:   '/static/images/tree_bg_night.jpg',
-    summer_morning: '/static/images/summer_morning.jpg',
-    summer_noon:    '/static/images/summer_noon.jpg',
-    summer_dusk:    '/static/images/summer_dusk.jpg',
-    summer_night:   '/static/images/summer_night.jpg',
-    autumn_morning: '/static/images/autumn_morning.jpg',
-    autumn_noon:    '/static/images/autumn_noon.jpg',
-    autumn_dusk:    '/static/images/autumn_dusk.jpg',
-    autumn_night:   '/static/images/autumn_night.jpg',
-    winter_morning: '/static/images/winter_morning.jpg',
-    winter_noon:    '/static/images/winter_noon.jpg',
-    winter_dusk:    '/static/images/winter_dusk.jpg',
-    winter_night:   '/static/images/winter_night.jpg',
+    spring_morning: '/static/images/tree_bg_morning.png',
+    spring_noon:    '/static/images/tree_bg_noon.png',
+    spring_dusk:    '/static/images/tree_bg.png',
+    spring_night:   '/static/images/tree_bg_night.png',
+    summer_morning: '/static/images/summer_morning.png',
+    summer_noon:    '/static/images/summer_noon.png',
+    summer_dusk:    '/static/images/summer_dusk.png',
+    summer_night:   '/static/images/summer_night.png',
+    autumn_morning: '/static/images/autumn_morning.png',
+    autumn_noon:    '/static/images/autumn_noon.png',
+    autumn_dusk:    '/static/images/autumn_dusk.png',
+    autumn_night:   '/static/images/autumn_night.png',
+    winter_morning: '/static/images/winter_morning.png',
+    winter_noon:    '/static/images/winter_noon.png',
+    winter_dusk:    '/static/images/winter_dusk.png',
+    winter_night:   '/static/images/winter_night.png',
 };
 
 // 图片是否真实存在（已生成的才使用，否则降级到春天）
@@ -3854,12 +3872,14 @@ function pgSwitchTo(season, time) {
     if (manualBtn) manualBtn.classList.add('active');
     document.getElementById('bgAutoHint').style.display = 'none';
     document.getElementById('bgDemoHint').style.display = 'none';
+    document.getElementById('demoProgressWrap').style.display = 'none';
 }
 function pgSetRealMode() {
     document.querySelectorAll('.pg-mode-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('pgModeReal').classList.add('active');
     document.getElementById('bgAutoHint').style.display = 'flex';
     document.getElementById('bgDemoHint').style.display = 'none';
+    document.getElementById('demoProgressWrap').style.display = 'none';
     startRealMode();
 }
 function pgSetDemoMode() {
@@ -3867,6 +3887,7 @@ function pgSetDemoMode() {
     document.getElementById('pgModeDemo').classList.add('active');
     document.getElementById('bgAutoHint').style.display = 'none';
     document.getElementById('bgDemoHint').style.display = 'flex';
+    document.getElementById('demoProgressWrap').style.display = 'block';
     // 从当前所在季节时段开始演示
     const cur = (_bgCurrentKey || 'spring_noon').split('_');
     startDemoMode(cur[0], cur[1]);
@@ -3907,11 +3928,8 @@ function preloadBgImages() {
             el.dataset.season === season && el.dataset.time === time);
     });
 
-    // 默认真实时间模式
-    startRealMode();
-    document.getElementById('pgModeReal')?.classList.add('active');
-    const autoHint = document.getElementById('bgAutoHint');
-    if (autoHint) autoHint.style.display = 'flex';
+    // 默认开启“加速演示”模式（每30s切换一个时段，转完一季切下一季）
+    pgSetDemoMode();
 })();
 </script>
 {% endblock %}
