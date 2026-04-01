@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>回响管理</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0f0f0f;
+      color: #ccc;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      min-height: 100vh;
+    }
+    .topbar {
+      background: #1a1a1a;
+      border-bottom: 1px solid #2a2a2a;
+      padding: 0 24px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .topbar-title { color: #fff; font-weight: 600; font-size: 16px; }
+    .topbar-nav { display: flex; gap: 20px; align-items: center; }
+    .topbar-nav a { color: #888; text-decoration: none; font-size: 13px; }
+    .topbar-nav a:hover { color: #fff; }
+    .topbar-nav a.active { color: #fff; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 28px 24px; }
+    .stats { display: flex; gap: 16px; margin-bottom: 24px; }
+    .stat-card {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      padding: 16px 20px;
+      flex: 1;
+    }
+    .stat-label { color: #666; font-size: 12px; margin-bottom: 6px; }
+    .stat-value { color: #fff; font-size: 24px; font-weight: 700; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #1a1a1a;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    thead { background: #222; }
+    th {
+      text-align: left;
+      padding: 12px 16px;
+      color: #666;
+      font-weight: 500;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    td {
+      padding: 11px 16px;
+      border-bottom: 1px solid #1f1f1f;
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr.hidden-row td { opacity: 0.45; }
+    tr:hover td { background: #1f1f1f; }
+    .ribbon-link {
+      font-family: monospace;
+      font-size: 12px;
+      color: #888;
+      text-decoration: none;
+      background: #222;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+    .ribbon-link:hover { color: #fff; }
+    .content-cell {
+      max-width: 420px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #ccc;
+    }
+    .badge-hidden {
+      display: inline-block;
+      background: #2a1a1a;
+      color: #f87171;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+    .badge-visible {
+      display: inline-block;
+      background: #1a2a1a;
+      color: #4ade80;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+    .action-btn {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 5px;
+      font-size: 12px;
+      cursor: pointer;
+      border: 1px solid #333;
+      background: transparent;
+      color: #aaa;
+      margin-left: 4px;
+    }
+    .action-btn:hover { border-color: #555; color: #fff; }
+    .action-btn.danger { color: #f87171; border-color: #5a2a2a; }
+    .action-btn.danger:hover { background: #2a1a1a; }
+    .pagination {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 24px;
+    }
+    .page-btn {
+      padding: 6px 14px;
+      border-radius: 6px;
+      border: 1px solid #333;
+      background: transparent;
+      color: #aaa;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .page-btn:hover { border-color: #555; color: #fff; }
+    .page-btn.active { background: #fff; color: #000; border-color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <span class="topbar-title">TiedStory 管理后台</span>
+    <div class="topbar-nav">
+      <a href="/admin/dashboard">丝带列表</a>
+      <a href="/admin/echoes" class="active">回响管理</a>
+      <a href="/admin/banned">封禁 IP</a>
+      <a href="/admin/logout">登出</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-label">总回响数</div>
+        <div class="stat-value">{{ total }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">当前页</div>
+        <div class="stat-value">{{ page }} / {{ total_pages }}</div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>所属丝带</th>
+          <th>回响内容</th>
+          <th>来源 IP</th>
+          <th>状态</th>
+          <th>时间</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in echoes %}
+        <tr id="echo-row-{{ e.id }}" {% if e.hidden %}class="hidden-row"{% endif %}>
+          <td style="color:#555;font-size:12px;">{{ e.id }}</td>
+          <td>
+            <a class="ribbon-link" href="/admin/ribbon/{{ e.ribbon_id }}" target="_blank">{{ e.ribbon_id }}</a>
+          </td>
+          <td><div class="content-cell">{{ e.content }}</div></td>
+          <td style="font-family:monospace;font-size:12px;color:#666;white-space:nowrap;">
+            {% if e.ip %}
+            {{ e.ip }}
+            <button class="action-btn danger" style="margin-left:4px;" onclick="banIP('{{ e.ip }}', this)">拉黑</button>
+            {% else %}—{% endif %}
+          </td>
+          <td>
+            {% if e.hidden %}
+            <span class="badge-hidden" id="echo-status-{{ e.id }}">隐藏</span>
+            {% else %}
+            <span class="badge-visible" id="echo-status-{{ e.id }}">显示</span>
+            {% endif %}
+          </td>
+          <td style="white-space:nowrap;color:#666;">{{ e.time_ago }}</td>
+          <td style="white-space:nowrap;">
+            <button class="action-btn" onclick="toggleEcho({{ e.id }})">显隐</button>
+            <button class="action-btn danger" onclick="deleteEcho({{ e.id }})">删除</button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    {% if total_pages > 1 %}
+    <div class="pagination">
+      {% if page > 1 %}
+      <a class="page-btn" href="?page={{ page - 1 }}">上一页</a>
+      {% endif %}
+      {% for p in range(1, total_pages + 1) %}
+      <a class="page-btn {% if p == page %}active{% endif %}" href="?page={{ p }}">{{ p }}</a>
+      {% endfor %}
+      {% if page < total_pages %}
+      <a class="page-btn" href="?page={{ page + 1 }}">下一页</a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+
+  <script>
+    async function deleteEcho(id) {
+      if (!confirm('确认删除这条回响？')) return;
+      const res = await fetch(`/admin/api/echo/${id}/delete`, { method: 'POST' });
+      const data = await res.json();
+      if (data.ok) {
+        document.getElementById(`echo-row-${id}`)?.remove();
+      } else {
+        alert('删除失败');
+      }
+    }
+
+    async function toggleEcho(id) {
+      const res = await fetch(`/admin/api/echo/${id}/toggle_hidden`, { method: 'POST' });
+      const data = await res.json();
+      if (data.ok) {
+        const row = document.getElementById(`echo-row-${id}`);
+        const badge = document.getElementById(`echo-status-${id}`);
+        if (data.hidden) {
+          badge.className = 'badge-hidden';
+          badge.textContent = '隐藏';
+          row.classList.add('hidden-row');
+        } else {
+          badge.className = 'badge-visible';
+          badge.textContent = '显示';
+          row.classList.remove('hidden-row');
+        }
+      }
+    }
+
+    async function banIP(ip, btn) {
+      if (!confirm(`确认拉黑 IP：${ip}？封禁 30 天。`)) return;
+      const res = await fetch('/admin/api/ban', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ip })
+      });
+      const data = await res.json();
+      if (data.ok) {
+        btn.textContent = '已拉黑';
+        btn.disabled = true;
+        btn.style.opacity = '0.4';
+      } else {
+        alert('操作失败');
+      }
+    }
+  </script>
+</body>
+</html>

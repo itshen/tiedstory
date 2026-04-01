@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TiedStory — 每一条丝带，都是你认真生活的证明</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+        /* 禁止全页面文字选中 */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+{% block content %}{% endblock %}
+<script>
+    /* 禁止复制、剪切、右键菜单 */
+    document.addEventListener('copy', function(e){ e.preventDefault(); });
+    document.addEventListener('cut', function(e){ e.preventDefault(); });
+    document.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+    document.addEventListener('selectstart', function(e){ e.preventDefault(); });
+</script>
+</body>
+</html>

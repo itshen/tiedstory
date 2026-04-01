@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>封禁 IP 列表</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0f0f0f;
+      color: #ccc;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      min-height: 100vh;
+    }
+    .topbar {
+      background: #1a1a1a;
+      border-bottom: 1px solid #2a2a2a;
+      padding: 0 24px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .topbar-title { color: #fff; font-weight: 600; font-size: 16px; }
+    .topbar-nav { display: flex; gap: 20px; }
+    .topbar-nav a { color: #888; text-decoration: none; font-size: 13px; }
+    .topbar-nav a:hover { color: #fff; }
+    .topbar-nav a.active { color: #fff; }
+    .container { max-width: 900px; margin: 0 auto; padding: 28px 24px; }
+    .page-title { color: #fff; font-size: 18px; font-weight: 600; margin-bottom: 20px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #1a1a1a;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    thead { background: #222; }
+    th {
+      text-align: left;
+      padding: 12px 16px;
+      color: #666;
+      font-weight: 500;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #222;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #1f1f1f; }
+    .ip-text { font-family: monospace; color: #fff; }
+    .reason-badge {
+      display: inline-block;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 11px;
+    }
+    .reason-honeypot { background: #2a1a2a; color: #c084fc; }
+    .reason-brute_force { background: #2a1a1a; color: #f87171; }
+    .action-btn {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      border: 1px solid #333;
+      background: transparent;
+      color: #aaa;
+    }
+    .action-btn:hover { border-color: #555; color: #fff; }
+    .empty-tip { color: #555; text-align: center; padding: 40px; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <span class="topbar-title">TiedStory 管理后台</span>
+    <div class="topbar-nav">
+      <a href="/admin/dashboard">丝带列表</a>
+      <a href="/admin/echoes">回响管理</a>
+      <a href="/admin/banned" class="active">封禁 IP</a>
+      <a href="/admin/logout">登出</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="page-title">封禁 IP 列表（{{ bans | length }} 条）</div>
+
+    {% if bans %}
+    <table>
+      <thead>
+        <tr>
+          <th>IP</th>
+          <th>封禁原因</th>
+          <th>封禁时间</th>
+          <th>剩余天数</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for b in bans %}
+        <tr id="ban-{{ loop.index }}">
+          <td class="ip-text">{{ b.ip }}</td>
+          <td>
+            <span class="reason-badge reason-{{ b.reason }}">
+              {% if b.reason == 'honeypot' %}蜜罐触发{% else %}暴力破解{% endif %}
+            </span>
+          </td>
+          <td>{{ b.banned_at_str }}</td>
+          <td>{{ b.remain_days }} 天</td>
+          <td>
+            <button class="action-btn" onclick="unban('{{ b.ip }}', this)">解封</button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-tip">暂无封禁记录</div>
+    {% endif %}
+  </div>
+
+  <script>
+    async function unban(ip, btn) {
+      if (!confirm(`确认解封 ${ip}？`)) return;
+      const res = await fetch('/admin/api/unban', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ip })
+      });
+      const data = await res.json();
+      if (data.ok) {
+        btn.closest('tr').remove();
+      } else {
+        alert('解封失败');
+      }
+    }
+  </script>
+</body>
+</html>

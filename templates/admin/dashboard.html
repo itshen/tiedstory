@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>后台管理 · 丝带列表</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0f0f0f;
+      color: #ccc;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px;
+      min-height: 100vh;
+    }
+    .topbar {
+      background: #1a1a1a;
+      border-bottom: 1px solid #2a2a2a;
+      padding: 0 24px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .topbar-title { color: #fff; font-weight: 600; font-size: 15px; }
+    .topbar-nav { display: flex; gap: 20px; align-items: center; }
+    .topbar-nav a { color: #666; text-decoration: none; font-size: 13px; }
+    .topbar-nav a:hover { color: #fff; }
+    .topbar-nav a.active { color: #fff; }
+    .container { max-width: 1280px; margin: 0 auto; padding: 20px 24px; }
+    .stats { display: flex; gap: 12px; margin-bottom: 20px; }
+    .stat-card {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      padding: 12px 18px;
+    }
+    .stat-label { color: #555; font-size: 11px; margin-bottom: 4px; }
+    .stat-value { color: #fff; font-size: 20px; font-weight: 700; }
+
+    /* 表格包一层允许横向滚动 */
+    .table-wrap {
+      overflow-x: auto;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 860px;
+    }
+    thead { background: #1f1f1f; }
+    th {
+      text-align: left;
+      padding: 9px 12px;
+      color: #555;
+      font-weight: 500;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid #2a2a2a;
+      white-space: nowrap;
+    }
+    td {
+      padding: 9px 12px;
+      border-bottom: 1px solid #202020;
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #1f1f1f; }
+
+    /* 列宽固定 */
+    .col-id    { width: 72px; }
+    .col-color { width: 90px; }
+    .col-story { width: auto; }
+    .col-echo  { width: 48px; text-align: center; }
+    .col-vec   { width: 90px; }
+    .col-stat  { width: 56px; }
+    .col-ip    { width: 140px; }
+    .col-time  { width: 72px; white-space: nowrap; }
+    .col-ops   { width: 170px; }
+
+    .ribbon-id { font-family: monospace; font-size: 12px; color: #fff; font-weight: 600; }
+    .story-preview {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 340px;
+      color: #aaa;
+      display: block;
+    }
+    .color-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      margin-right: 5px;
+      flex-shrink: 0;
+    }
+    .color-cell { display: flex; align-items: center; white-space: nowrap; }
+    .badge-hidden {
+      display: inline-block;
+      background: #2a1414;
+      color: #f87171;
+      border-radius: 3px;
+      padding: 1px 6px;
+      font-size: 11px;
+    }
+    .badge-visible {
+      display: inline-block;
+      background: #142a14;
+      color: #4ade80;
+      border-radius: 3px;
+      padding: 1px 6px;
+      font-size: 11px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+      border: 1px solid #333;
+      background: transparent;
+      color: #999;
+      text-decoration: none;
+      line-height: 1.4;
+    }
+    .btn + .btn { margin-left: 3px; }
+    .btn:hover { border-color: #555; color: #fff; }
+    .btn.danger { color: #f87171; border-color: #4a2020; }
+    .btn.danger:hover { background: #2a1414; }
+    .ip-text { font-family: monospace; font-size: 11px; color: #666; }
+    .vec-row { display: flex; align-items: center; gap: 4px; }
+    .vec-num { color: #ccc; min-width: 20px; }
+    .pagination {
+      display: flex; gap: 6px; justify-content: center; margin-top: 20px;
+    }
+    .page-btn {
+      padding: 5px 12px;
+      border-radius: 5px;
+      border: 1px solid #2a2a2a;
+      background: transparent;
+      color: #666;
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .page-btn:hover { border-color: #555; color: #fff; }
+    .page-btn.active { background: #fff; color: #000; border-color: #fff; }
+    .color-blue   { background: #3b82f6; }
+    .color-orange { background: #f97316; }
+    .color-pink   { background: #ec4899; }
+    .color-green  { background: #22c55e; }
+    .color-purple { background: #a855f7; }
+    .color-grey, .color-gray { background: #6b7280; }
+    .color-gold   { background: #eab308; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <span class="topbar-title">TiedStory 管理后台</span>
+    <div class="topbar-nav">
+      <a href="/admin/dashboard" class="active">丝带列表</a>
+      <a href="/admin/echoes">回响管理</a>
+      <a href="/admin/banned">封禁 IP</a>
+      <a href="/admin/logout">登出</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-label">总丝带数</div>
+        <div class="stat-value">{{ total }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">页码</div>
+        <div class="stat-value">{{ page }} / {{ total_pages }}</div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <colgroup>
+          <col class="col-id">
+          <col class="col-color">
+          <col class="col-story">
+          <col class="col-echo">
+          <col class="col-vec">
+          <col class="col-stat">
+          <col class="col-ip">
+          <col class="col-time">
+          <col class="col-ops">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>颜色</th>
+            <th>内容</th>
+            <th style="text-align:center">回响</th>
+            <th>虚拟数</th>
+            <th>状态</th>
+            <th>来源 IP</th>
+            <th>时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in ribbons %}
+          <tr id="row-{{ r.id }}">
+            <td class="ribbon-id">{{ r.id }}</td>
+            <td>
+              <div class="color-cell">
+                <span class="color-dot color-{{ r.color }}"></span>
+                <span style="color:#777;font-size:12px;">{{ r.color }}</span>
+              </div>
+            </td>
+            <td><span class="story-preview">{{ r.story }}</span></td>
+            <td style="text-align:center;color:#888;">{{ r.echo_count }}</td>
+            <td>
+              <div class="vec-row">
+                <span class="vec-num" id="vec-{{ r.id }}">{{ r.virtual_echo_count }}</span>
+                <button class="btn" onclick="editVec('{{ r.id }}', {{ r.virtual_echo_count }})">改</button>
+              </div>
+            </td>
+            <td>
+              {% if r.hidden %}
+              <span class="badge-hidden" id="status-{{ r.id }}">隐藏</span>
+              {% else %}
+              <span class="badge-visible" id="status-{{ r.id }}">显示</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if r.ip %}
+              <div style="display:flex;align-items:center;gap:4px;flex-wrap:nowrap;">
+                <span class="ip-text">{{ r.ip }}</span>
+                <button class="btn danger" onclick="banIP('{{ r.ip }}', this)">拉黑</button>
+              </div>
+              {% else %}<span style="color:#444;">—</span>{% endif %}
+            </td>
+            <td style="color:#555;font-size:12px;">{{ r.time_ago }}</td>
+            <td>
+              <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-start;">
+                <div>
+                  <a class="btn" href="/admin/ribbon/{{ r.id }}">详情</a>
+                  <button class="btn" onclick="toggleHidden('{{ r.id }}')">显隐</button>
+                </div>
+                <button class="btn danger" onclick="deleteRibbon('{{ r.id }}')">删除</button>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if total_pages > 1 %}
+    <div class="pagination">
+      {% if page > 1 %}<a class="page-btn" href="?page={{ page - 1 }}">上一页</a>{% endif %}
+      {% for p in range(1, total_pages + 1) %}
+      <a class="page-btn {% if p == page %}active{% endif %}" href="?page={{ p }}">{{ p }}</a>
+      {% endfor %}
+      {% if page < total_pages %}<a class="page-btn" href="?page={{ page + 1 }}">下一页</a>{% endif %}
+    </div>
+    {% endif %}
+  </div>
+
+  <script>
+    async function deleteRibbon(id) {
+      if (!confirm(`确认删除丝带 ${id}？此操作不可撤销，连带删除所有回响。`)) return;
+      const res = await fetch(`/admin/api/ribbon/${id}/delete`, { method: 'POST' });
+      const data = await res.json();
+      if (data.ok) document.getElementById(`row-${id}`)?.remove();
+      else alert('删除失败');
+    }
+
+    async function toggleHidden(id) {
+      const res = await fetch(`/admin/api/ribbon/${id}/toggle_hidden`, { method: 'POST' });
+      const data = await res.json();
+      if (data.ok) {
+        const el = document.getElementById(`status-${id}`);
+        el.className = data.hidden ? 'badge-hidden' : 'badge-visible';
+        el.textContent = data.hidden ? '隐藏' : '显示';
+      }
+    }
+
+    async function editVec(id, current) {
+      const val = prompt(`设置虚拟回响数（当前：${current}）：`, current);
+      if (val === null) return;
+      const count = parseInt(val);
+      if (isNaN(count) || count < 0) { alert('请输入有效数字'); return; }
+      const res = await fetch(`/admin/api/ribbon/${id}/virtual_echo`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ count })
+      });
+      const data = await res.json();
+      if (data.ok) document.getElementById(`vec-${id}`).textContent = count;
+    }
+
+    async function banIP(ip, btn) {
+      if (!confirm(`确认拉黑 IP：${ip}？封禁 30 天。`)) return;
+      const res = await fetch('/admin/api/ban', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ip })
+      });
+      const data = await res.json();
+      if (data.ok) {
+        btn.textContent = '已拉黑';
+        btn.disabled = true;
+        btn.style.opacity = '0.4';
+      } else {
+        alert('操作失败');
+      }
+    }
+  </script>
+</body>
+</html>

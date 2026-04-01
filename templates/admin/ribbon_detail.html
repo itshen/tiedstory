@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>丝带详情 · {{ ribbon.id }}</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0f0f0f;
+      color: #ccc;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      min-height: 100vh;
+    }
+    .topbar {
+      background: #1a1a1a;
+      border-bottom: 1px solid #2a2a2a;
+      padding: 0 24px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .topbar-title { color: #fff; font-weight: 600; font-size: 16px; }
+    .topbar-nav { display: flex; gap: 20px; align-items: center; }
+    .topbar-nav a { color: #888; text-decoration: none; font-size: 13px; }
+    .topbar-nav a:hover { color: #fff; }
+    .container { max-width: 800px; margin: 0 auto; padding: 28px 24px; }
+    .back-link { color: #666; text-decoration: none; font-size: 13px; display: inline-block; margin-bottom: 20px; }
+    .back-link:hover { color: #fff; }
+    .card {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    .card-title { color: #fff; font-weight: 600; font-size: 15px; }
+    .meta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+    .meta-item { color: #666; font-size: 12px; }
+    .meta-item span { color: #aaa; }
+    .story-text {
+      color: #ddd;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .badge-hidden {
+      display: inline-block;
+      background: #2a1a1a;
+      color: #f87171;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 11px;
+    }
+    .badge-visible {
+      display: inline-block;
+      background: #1a2a1a;
+      color: #4ade80;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 11px;
+    }
+    .action-btn {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      border: 1px solid #333;
+      background: transparent;
+      color: #aaa;
+      margin-left: 6px;
+    }
+    .action-btn:hover { border-color: #555; color: #fff; }
+    .action-btn.danger { color: #f87171; border-color: #5a2a2a; }
+    .action-btn.danger:hover { background: #2a1a1a; }
+    .section-title {
+      color: #fff;
+      font-weight: 600;
+      font-size: 15px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .echo-item {
+      padding: 12px 0;
+      border-bottom: 1px solid #222;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .echo-item:last-child { border-bottom: none; }
+    .echo-content { color: #ccc; line-height: 1.6; flex: 1; word-break: break-all; }
+    .echo-meta { color: #555; font-size: 12px; margin-top: 4px; }
+    .echo-actions { flex-shrink: 0; }
+    .empty-tip { color: #555; font-size: 13px; padding: 20px 0; text-align: center; }
+    .vec-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #2a2a2a;
+    }
+    .vec-label { color: #666; font-size: 13px; }
+    .vec-val { color: #fff; font-weight: 600; }
+    .color-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 4px;
+    }
+    .color-blue { background: #3b82f6; }
+    .color-orange { background: #f97316; }
+    .color-pink { background: #ec4899; }
+    .color-green { background: #22c55e; }
+    .color-purple { background: #a855f7; }
+    .color-grey, .color-gray { background: #6b7280; }
+    .color-gold { background: #eab308; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <span class="topbar-title">TiedStory 管理后台</span>
+    <div class="topbar-nav">
+      <a href="/admin/dashboard">丝带列表</a>
+      <a href="/admin/echoes">回响管理</a>
+      <a href="/admin/banned">封禁 IP</a>
+      <a href="/admin/logout">登出</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <a href="/admin/dashboard" class="back-link">← 返回列表</a>
+
+    <!-- 丝带信息 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">丝带 {{ ribbon.id }}</span>
+        <div>
+          {% if ribbon.hidden %}
+          <span class="badge-hidden" id="ribbon-status">隐藏</span>
+          {% else %}
+          <span class="badge-visible" id="ribbon-status">显示</span>
+          {% endif %}
+          <button class="action-btn" onclick="toggleRibbon('{{ ribbon.id }}')">显隐</button>
+          <button class="action-btn danger" onclick="deleteRibbon('{{ ribbon.id }}')">删除丝带</button>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="meta-item">颜色：<span><span class="color-dot color-{{ ribbon.color }}"></span>{{ ribbon.color }}</span></div>
+        <div class="meta-item">发布：<span>{{ ribbon.time_ago }}</span></div>
+        <div class="meta-item">真实回响：<span>{{ ribbon.echoes | length }}</span></div>
+      </div>
+      <div class="story-text">{{ ribbon.story }}</div>
+      <div class="vec-row">
+        <span class="vec-label">虚拟回响数：</span>
+        <span class="vec-val" id="vec-val">{{ ribbon.virtual_echo_count }}</span>
+        <button class="action-btn" onclick="editVec('{{ ribbon.id }}', {{ ribbon.virtual_echo_count }})">调整</button>
+      </div>
+    </div>
+
+    <!-- 回响列表 -->
+    <div class="card">
+      <div class="section-title">
+        回响
+        <span style="color:#555;font-weight:400;font-size:13px;">{{ ribbon.echoes | length }} 条</span>
+      </div>
+      {% if ribbon.echoes %}
+        {% for echo in ribbon.echoes %}
+        <div class="echo-item" id="echo-{{ echo.id }}">
+          <div style="flex:1">
+            <div class="echo-content">{{ echo.content }}</div>
+            <div class="echo-meta">{{ echo.time_ago }}</div>
+          </div>
+          <div class="echo-actions">
+            {% if echo.hidden %}
+            <span class="badge-hidden" id="echo-status-{{ echo.id }}">隐藏</span>
+            {% else %}
+            <span class="badge-visible" id="echo-status-{{ echo.id }}">显示</span>
+            {% endif %}
+            <button class="action-btn" onclick="toggleEcho({{ echo.id }})">显隐</button>
+            <button class="action-btn danger" onclick="deleteEcho({{ echo.id }})">删除</button>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="empty-tip">暂无回响</div>
+      {% endif %}
+    </div>
+
+    <!-- 追加内容 -->
+    {% if ribbon.appends %}
+    <div class="card">
+      <div class="section-title">作者追加</div>
+      {% for ap in ribbon.appends %}
+      <div class="echo-item">
+        <div>
+          <div class="echo-content">{{ ap.content }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+  <script>
+    async function deleteRibbon(id) {
+      if (!confirm(`确认删除丝带 ${id}？`)) return;
+      const res = await fetch(`/admin/api/ribbon/${id}/delete`, { method: 'POST' });
+      const data = await res.json();
+      if (data.ok) location.href = '/admin/dashboard';
+      else alert('删除失败');
+    }
+
+    async function toggleRibbon(id) {
+      const res = await fetch(`/admin/api/ribbon/${id}/toggle_hidden`, { method: 'POST' });
+      const data = await res.json();
+      if (data.ok) {
+        const el = document.getElementById('ribbon-status');
+        if (data.hidden) { el.className = 'badge-hidden'; el.textContent = '隐藏'; }
+        else { el.className = 'badge-visible'; el.textContent = '显示'; }
+      }
+    }
+
+    async function editVec(id, current) {
+      const val = prompt(`设置虚拟回响数（当前：${current}）：`, current);
+      if (val === null) return;
+      const count = parseInt(val);
+      if (isNaN(count) || count < 0) { alert('请输入有效数字'); return; }
+      const res = await fetch(`/admin/api/ribbon/${id}/virtual_echo`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ count })
+      });
+      const data = await res.json();
+      if (data.ok) document.getElementById('vec-val').textContent = count;
+    }
+
+    async function deleteEcho(id) {
+      if (!confirm('确认删除这条回响？')) return;
+      const res = await fetch(`/admin/api/echo/${id}/delete`, { method: 'POST' });
+      const data = await res.json();
+      if (data.ok) document.getElementById(`echo-${id}`)?.remove();
+      else alert('删除失败');
+    }
+
+    async function toggleEcho(id) {
+      const res = await fetch(`/admin/api/echo/${id}/toggle_hidden`, { method: 'POST' });
+      const data = await res.json();
+      if (data.ok) {
+        const el = document.getElementById(`echo-status-${id}`);
+        if (data.hidden) { el.className = 'badge-hidden'; el.textContent = '隐藏'; }
+        else { el.className = 'badge-visible'; el.textContent = '显示'; }
+      }
+    }
+  </script>
+</body>
+</html>

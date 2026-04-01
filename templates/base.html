@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TiedStory Playground</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+<div class="pg-wrap">
+    {% if request.url.path == '/playground/ai' %}
+    <header class="pg-topbar">
+        <div class="logo">Tied<span>Story</span> <span style="font-size:11px; opacity:0.5; font-family:Inter;">Playground</span></div>
+        <nav class="pg-nav">
+            <a href="/playground/ui" class="{% if request.url.path == '/playground/ui' or request.url.path == '/' %}active{% endif %}">UI 视觉</a>
+            <a href="/playground/ai" class="{% if request.url.path == '/playground/ai' %}active{% endif %}">AI 调试</a>
+        </nav>
+    </header>
+    {% endif %}
+
+    <main class="pg-main">
+        {% block content %}{% endblock %}
+        {% block extra_scripts %}{% endblock %}
+    </main>
+</div>
+</body>
+</html>
