@@ -906,6 +906,11 @@
     color: rgba(200,155,80,0.95);
     font-family: 'Courier New', monospace;
     margin-bottom: 10px;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+    cursor: text;
 }
 .tie-witness-hint {
     font-size: 12px;
@@ -1913,12 +1918,12 @@
             <span class="ribbon-browse-count" id="ribbonTotalCount">共 0 条丝带</span>
             <div class="ribbon-browse-actions">
                 <button class="ribbon-browse-btn shuffle-btn" onclick="shuffleRibbon()">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
                     随机遇见
                 </button>
                 <button class="ribbon-browse-btn expand-toggle" onclick="toggleAllPanel()">
-                    <svg class="icon-expand" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-                    <svg class="icon-collapse" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+                    <svg class="icon-expand" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                    <svg class="icon-collapse" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
                     <span class="toggle-label-expand">查看全部</span>
                     <span class="toggle-label-collapse">收起</span>
                 </button>
@@ -1933,7 +1938,7 @@
     <div class="hero-float-actions">
         <!-- 我的丝带（辅助操作，最弱） -->
         <button class="btn-float btn-my-ribbons-float" id="myRibbonsBtn" onclick="openMyRibbons()" title="我的丝带">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
             我的丝带
             <span class="my-ribbons-badge" id="myRibbonsBadge" style="display:none;">0</span>
         </button>
@@ -1942,7 +1947,7 @@
         <div class="witness-input-wrap">
             <input class="witness-input" id="witnessInput" type="text" placeholder="输入见证码…" maxlength="16">
             <button class="btn-float btn-witness-float" onclick="toggleWitnessInput()">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg>
                 凭码查看
             </button>
         </div>
@@ -1950,7 +1955,7 @@
         <!-- 系上一条（主操作） -->
         <div class="hero-float-divider"></div>
         <button class="btn-float btn-tie-float" onclick="openTieModal()">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
             系上一条
         </button>
     </div>
@@ -1983,7 +1988,7 @@
     <div class="story-modal" style="--rc: var(--ribbon-orange);" id="storyModal">
         <!-- AI 拦截提示条（sticky 顶部） -->
         <div class="moderation-bar" id="storyModerationBar">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
             <div class="moderation-bar-text" id="storyModerationText">内容包含敏感信息，已阻止发送。</div>
             <button class="moderation-bar-dismiss" onclick="dismissModerationBar('storyModerationBar')">×</button>
         </div>
@@ -1995,7 +2000,7 @@
             <div class="story-meta">
                 <span class="story-id" id="storyIdLabel"># TS-0001</span>
                 <button class="story-share-btn" id="storyShareBtn" onclick="shareStory()">
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
                     复制分享链接
                 </button>
             </div>
@@ -2018,21 +2023,21 @@
                 <div class="story-resonance-item">
                     <span class="story-resonance-text">我也是，撑着撑着就习惯了。</span>
                     <button class="story-resonance-like" onclick="likeResonance(this)">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                         <span class="like-count">14</span>
                     </button>
                 </div>
                 <div class="story-resonance-item">
                     <span class="story-resonance-text">你已经很厉害了，真的。</span>
                     <button class="story-resonance-like" onclick="likeResonance(this)">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                         <span class="like-count">9</span>
                     </button>
                 </div>
                 <div class="story-resonance-item">
                     <span class="story-resonance-text">不需要解释，能撑到今天已经不容易了。</span>
                     <button class="story-resonance-like" onclick="likeResonance(this)">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                         <span class="like-count">6</span>
                     </button>
                 </div>
@@ -2047,7 +2052,7 @@
             <!-- 见证码验证区 → 作者追加 -->
             <div class="story-witness-area" id="storyWitnessArea">
                 <button class="story-witness-toggle" onclick="toggleWitnessPanel()">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                     我是这条丝带的作者，想追加内容
                 </button>
                 <div class="story-witness-panel" id="storyWitnessPanel">
@@ -2077,7 +2082,7 @@
     <div class="tie-modal" id="tieModal">
         <!-- AI 拦截提示条 -->
         <div class="moderation-bar" id="tieModerationBar" style="border-radius:10px 10px 0 0;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
             <div class="moderation-bar-text" id="tieModerationText">内容包含敏感信息，已阻止发送。</div>
             <button class="moderation-bar-dismiss" onclick="dismissModerationBar('tieModerationBar')">×</button>
         </div>
@@ -2123,7 +2128,7 @@
                 <!-- 危机告警 -->
                 <div class="tie-crisis-box" id="tieCrisisBox">
                     <div class="tie-crisis-title">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                         我们注意到一些让你痛苦的字句
                     </div>
                     <div class="tie-crisis-body">
@@ -2154,14 +2159,14 @@
                 </div>
                 <!-- 本地缓存提示 -->
                 <div class="tie-local-notice">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                     <span>已自动保存到<strong>本机浏览器</strong>。换浏览器或清除记录后会消失。如需长期保管，推荐存到 WPS 笔记。</span>
                 </div>
                 <!-- WPS 笔记推荐 -->
                 <a class="tie-wps-btn" href="https://ainote.wps.cn" target="_blank" rel="noopener">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                     存到 WPS 笔记，永久保管
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                 </a>
                 <div class="tie-actions">
                     <span></span>
@@ -2188,9 +2193,9 @@
         </div>
 
         <a class="tie-wps-btn" href="https://ainote.wps.cn" target="_blank" rel="noopener" style="text-decoration:none;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
             前往 WPS 笔记永久保管
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
         </a>
     </div>
 </div>
@@ -2228,7 +2233,7 @@
             <!-- 操作 -->
             <div class="welcome-actions">
                 <button class="welcome-btn-primary" onclick="closeWelcomeDirect(); openTieModal();">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
                     我也想系上一条
                 </button>
                 <button class="welcome-btn-secondary" onclick="closeWelcomeDirect()">
@@ -2253,25 +2258,25 @@
 <div class="bg-matrix">
 <div class="bg-matrix-head"></div><div class="bg-matrix-head">清晨</div><div class="bg-matrix-head">正午</div><div class="bg-matrix-head">傍晚</div><div class="bg-matrix-head">夜晚</div>
 <div class="bg-matrix-season-label">🌸 春</div>
-<div class="bg-matrix-cell" data-season="spring" data-time="morning" style="background-image:url('/static/images/tree_bg_morning.png')" onclick="pgSwitchTo('spring','morning')"><div class="bg-matrix-cell-label">春·清晨</div></div>
-<div class="bg-matrix-cell" data-season="spring" data-time="noon" style="background-image:url('/static/images/tree_bg_noon.png')" onclick="pgSwitchTo('spring','noon')"><div class="bg-matrix-cell-label">春·正午</div></div>
-<div class="bg-matrix-cell" data-season="spring" data-time="dusk" style="background-image:url('/static/images/tree_bg.png')" onclick="pgSwitchTo('spring','dusk')"><div class="bg-matrix-cell-label">春·傍晚</div></div>
-<div class="bg-matrix-cell" data-season="spring" data-time="night" style="background-image:url('/static/images/tree_bg_night.png')" onclick="pgSwitchTo('spring','night')"><div class="bg-matrix-cell-label">春·夜晚</div></div>
+<div class="bg-matrix-cell" data-season="spring" data-time="morning" style="background-image:url('/static/images/tree_bg_morning.jpg')" onclick="pgSwitchTo('spring','morning')"><div class="bg-matrix-cell-label">春·清晨</div></div>
+<div class="bg-matrix-cell" data-season="spring" data-time="noon" style="background-image:url('/static/images/tree_bg_noon.jpg')" onclick="pgSwitchTo('spring','noon')"><div class="bg-matrix-cell-label">春·正午</div></div>
+<div class="bg-matrix-cell" data-season="spring" data-time="dusk" style="background-image:url('/static/images/tree_bg.jpg')" onclick="pgSwitchTo('spring','dusk')"><div class="bg-matrix-cell-label">春·傍晚</div></div>
+<div class="bg-matrix-cell" data-season="spring" data-time="night" style="background-image:url('/static/images/tree_bg_night.jpg')" onclick="pgSwitchTo('spring','night')"><div class="bg-matrix-cell-label">春·夜晚</div></div>
 <div class="bg-matrix-season-label">🌿 夏</div>
-<div class="bg-matrix-cell" data-season="summer" data-time="morning" style="background-image:url('/static/images/summer_morning.png')" onclick="pgSwitchTo('summer','morning')"><div class="bg-matrix-cell-label">夏·清晨</div></div>
-<div class="bg-matrix-cell" data-season="summer" data-time="noon" style="background-image:url('/static/images/summer_noon.png')" onclick="pgSwitchTo('summer','noon')"><div class="bg-matrix-cell-label">夏·正午</div></div>
-<div class="bg-matrix-cell" data-season="summer" data-time="dusk" style="background-image:url('/static/images/summer_dusk.png')" onclick="pgSwitchTo('summer','dusk')"><div class="bg-matrix-cell-label">夏·傍晚</div></div>
-<div class="bg-matrix-cell" data-season="summer" data-time="night" style="background-image:url('/static/images/summer_night.png')" onclick="pgSwitchTo('summer','night')"><div class="bg-matrix-cell-label">夏·夜晚</div></div>
+<div class="bg-matrix-cell" data-season="summer" data-time="morning" style="background-image:url('/static/images/summer_morning.jpg')" onclick="pgSwitchTo('summer','morning')"><div class="bg-matrix-cell-label">夏·清晨</div></div>
+<div class="bg-matrix-cell" data-season="summer" data-time="noon" style="background-image:url('/static/images/summer_noon.jpg')" onclick="pgSwitchTo('summer','noon')"><div class="bg-matrix-cell-label">夏·正午</div></div>
+<div class="bg-matrix-cell" data-season="summer" data-time="dusk" style="background-image:url('/static/images/summer_dusk.jpg')" onclick="pgSwitchTo('summer','dusk')"><div class="bg-matrix-cell-label">夏·傍晚</div></div>
+<div class="bg-matrix-cell" data-season="summer" data-time="night" style="background-image:url('/static/images/summer_night.jpg')" onclick="pgSwitchTo('summer','night')"><div class="bg-matrix-cell-label">夏·夜晚</div></div>
 <div class="bg-matrix-season-label">🍂 秋</div>
-<div class="bg-matrix-cell" data-season="autumn" data-time="morning" style="background-image:url('/static/images/autumn_morning.png')" onclick="pgSwitchTo('autumn','morning')"><div class="bg-matrix-cell-label">秋·清晨</div></div>
-<div class="bg-matrix-cell" data-season="autumn" data-time="noon" style="background-image:url('/static/images/autumn_noon.png')" onclick="pgSwitchTo('autumn','noon')"><div class="bg-matrix-cell-label">秋·正午</div></div>
-<div class="bg-matrix-cell" data-season="autumn" data-time="dusk" style="background-image:url('/static/images/autumn_dusk.png')" onclick="pgSwitchTo('autumn','dusk')"><div class="bg-matrix-cell-label">秋·傍晚</div></div>
-<div class="bg-matrix-cell" data-season="autumn" data-time="night" style="background-image:url('/static/images/autumn_night.png')" onclick="pgSwitchTo('autumn','night')"><div class="bg-matrix-cell-label">秋·夜晚</div></div>
+<div class="bg-matrix-cell" data-season="autumn" data-time="morning" style="background-image:url('/static/images/autumn_morning.jpg')" onclick="pgSwitchTo('autumn','morning')"><div class="bg-matrix-cell-label">秋·清晨</div></div>
+<div class="bg-matrix-cell" data-season="autumn" data-time="noon" style="background-image:url('/static/images/autumn_noon.jpg')" onclick="pgSwitchTo('autumn','noon')"><div class="bg-matrix-cell-label">秋·正午</div></div>
+<div class="bg-matrix-cell" data-season="autumn" data-time="dusk" style="background-image:url('/static/images/autumn_dusk.jpg')" onclick="pgSwitchTo('autumn','dusk')"><div class="bg-matrix-cell-label">秋·傍晚</div></div>
+<div class="bg-matrix-cell" data-season="autumn" data-time="night" style="background-image:url('/static/images/autumn_night.jpg')" onclick="pgSwitchTo('autumn','night')"><div class="bg-matrix-cell-label">秋·夜晚</div></div>
 <div class="bg-matrix-season-label">❄️ 冬</div>
-<div class="bg-matrix-cell" data-season="winter" data-time="morning" style="background-image:url('/static/images/winter_morning.png')" onclick="pgSwitchTo('winter','morning')"><div class="bg-matrix-cell-label">冬·清晨</div></div>
-<div class="bg-matrix-cell" data-season="winter" data-time="noon" style="background-image:url('/static/images/winter_noon.png')" onclick="pgSwitchTo('winter','noon')"><div class="bg-matrix-cell-label">冬·正午</div></div>
-<div class="bg-matrix-cell" data-season="winter" data-time="dusk" style="background-image:url('/static/images/winter_dusk.png')" onclick="pgSwitchTo('winter','dusk')"><div class="bg-matrix-cell-label">冬·傍晚</div></div>
-<div class="bg-matrix-cell" data-season="winter" data-time="night" style="background-image:url('/static/images/winter_night.png')" onclick="pgSwitchTo('winter','night')"><div class="bg-matrix-cell-label">冬·夜晚</div></div>
+<div class="bg-matrix-cell" data-season="winter" data-time="morning" style="background-image:url('/static/images/winter_morning.jpg')" onclick="pgSwitchTo('winter','morning')"><div class="bg-matrix-cell-label">冬·清晨</div></div>
+<div class="bg-matrix-cell" data-season="winter" data-time="noon" style="background-image:url('/static/images/winter_noon.jpg')" onclick="pgSwitchTo('winter','noon')"><div class="bg-matrix-cell-label">冬·正午</div></div>
+<div class="bg-matrix-cell" data-season="winter" data-time="dusk" style="background-image:url('/static/images/winter_dusk.jpg')" onclick="pgSwitchTo('winter','dusk')"><div class="bg-matrix-cell-label">冬·傍晚</div></div>
+<div class="bg-matrix-cell" data-season="winter" data-time="night" style="background-image:url('/static/images/winter_night.jpg')" onclick="pgSwitchTo('winter','night')"><div class="bg-matrix-cell-label">冬·夜晚</div></div>
 </div>
 </div>
 <div style="font-size:11px;color:#9A8070;font-family:'Noto Serif SC',serif;letter-spacing:0.5px;padding-top:8px;">· 4 季 × 4 时段，共 16 幅吉卜力风格场景 · 点击任意格子手动切换 ·</div>
@@ -2315,7 +2320,7 @@ const RIBBON_DATA = [
 ];
 
 // ---- 渲染丝带卡片 ----
-const HEART_SVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
+const HEART_SVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
 
 // 服务端数据缓存
 let _ribbonsCache = [];
@@ -2840,7 +2845,7 @@ async function openStory(ribbonId) {
                 item.innerHTML = `
                     <span class="story-resonance-text">${e.content}</span>
                     <button class="story-resonance-like" onclick="likeResonance(this)">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                         <span class="like-count">0</span>
                     </button>`;
                 resonancesEl.appendChild(item);
@@ -2902,7 +2907,7 @@ function shareStory() {
         btn.textContent = '✓ 已复制';
         btn.classList.add('copied');
         setTimeout(() => {
-            btn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> 复制分享链接`;
+            btn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> 复制分享链接`;
             btn.classList.remove('copied');
         }, 2000);
     });
@@ -2965,7 +2970,7 @@ function submitResonance() {
             item.innerHTML = `
                 <span class="story-resonance-text">${text}</span>
                 <button class="story-resonance-like" onclick="likeResonance(this)">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                     <span class="like-count">0</span>
                 </button>`;
             container.appendChild(item);
@@ -3668,22 +3673,22 @@ const TIME_META = {
 
 // 图片映射表（季节_时段 → 路径，秋冬图片生成后自动解锁）
 const BG_MAP = {
-    spring_morning: '/static/images/tree_bg_morning.png',
-    spring_noon:    '/static/images/tree_bg_noon.png',
-    spring_dusk:    '/static/images/tree_bg.png',
-    spring_night:   '/static/images/tree_bg_night.png',
-    summer_morning: '/static/images/summer_morning.png',
-    summer_noon:    '/static/images/summer_noon.png',
-    summer_dusk:    '/static/images/summer_dusk.png',
-    summer_night:   '/static/images/summer_night.png',
-    autumn_morning: '/static/images/autumn_morning.png',
-    autumn_noon:    '/static/images/autumn_noon.png',
-    autumn_dusk:    '/static/images/autumn_dusk.png',
-    autumn_night:   '/static/images/autumn_night.png',
-    winter_morning: '/static/images/winter_morning.png',
-    winter_noon:    '/static/images/winter_noon.png',
-    winter_dusk:    '/static/images/winter_dusk.png',
-    winter_night:   '/static/images/winter_night.png',
+    spring_morning: '/static/images/tree_bg_morning.jpg',
+    spring_noon:    '/static/images/tree_bg_noon.jpg',
+    spring_dusk:    '/static/images/tree_bg.jpg',
+    spring_night:   '/static/images/tree_bg_night.jpg',
+    summer_morning: '/static/images/summer_morning.jpg',
+    summer_noon:    '/static/images/summer_noon.jpg',
+    summer_dusk:    '/static/images/summer_dusk.jpg',
+    summer_night:   '/static/images/summer_night.jpg',
+    autumn_morning: '/static/images/autumn_morning.jpg',
+    autumn_noon:    '/static/images/autumn_noon.jpg',
+    autumn_dusk:    '/static/images/autumn_dusk.jpg',
+    autumn_night:   '/static/images/autumn_night.jpg',
+    winter_morning: '/static/images/winter_morning.jpg',
+    winter_noon:    '/static/images/winter_noon.jpg',
+    winter_dusk:    '/static/images/winter_dusk.jpg',
+    winter_night:   '/static/images/winter_night.jpg',
 };
 
 // 图片是否真实存在（已生成的才使用，否则降级到春天）
