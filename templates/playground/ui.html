@@ -2342,7 +2342,6 @@ async function loadRibbons(append = false, color = _currentFilterColor) {
     
     try {
         const offset = append ? _ribbonsCache.length : 0;
-        // 每次只加载20条，避免一次性加载过多
         let url = `/api/ribbons?limit=20&offset=${offset}`;
         if (color && color !== 'all') {
             url += `&color=${encodeURIComponent(color)}`;
@@ -2362,30 +2361,25 @@ async function loadRibbons(append = false, color = _currentFilterColor) {
             _ribbonsCache = [..._ribbonsCache, ...newRibbons];
             // 把新数据加入未展示队列
             _unshownRibbons = [...newRibbons.sort(() => 0.5 - Math.random()), ..._unshownRibbons];
+            // 展开态下只追加新卡片，不重建整个列表（避免 scrollTop 被重置）
+            renderRibbonCards(newRibbons, _totalRibbonsCount, true);
         } else {
             _ribbonsCache = newRibbons;
             _unshownRibbons = [..._ribbonsCache].sort(() => 0.5 - Math.random());
-            
-            // 如果是重新加载(如切换颜色)，并且当前是展开态，我们要清空并重新渲染内容
-            const bottom = document.querySelector('.hero-bottom');
-            if (bottom && bottom.classList.contains('expanded')) {
-                // 如果需要动画，也可以在这里加
-            }
+            renderRibbonCards(_ribbonsCache, _totalRibbonsCount, false);
         }
         
-        renderRibbonCards(_ribbonsCache, _totalRibbonsCount);
-        console.log(`[RibbonCards] 从服务端加载了 ${newRibbons.length} 条 (color: ${color}), 缓冲池共 ${_ribbonsCache.length} 条`);
+        console.log(`[RibbonCards] 从服务端加载了 ${newRibbons.length} 条 (offset=${offset}, color: ${color}), 缓冲池共 ${_ribbonsCache.length} 条, hasMore=${_hasMoreRibbons}`);
     } catch(e) {
         console.error('[RibbonCards] 加载失败，使用demo数据:', e);
         if (!append) {
-            // Demo data filtering
             let demoData = RIBBON_DATA;
             if (color && color !== 'all') {
                 demoData = demoData.filter(d => d.color === color);
             }
             _ribbonsCache = demoData.map((d, i) => ({...d, id: `DEMO${i}`}));
             _totalRibbonsCount = _ribbonsCache.length;
-            renderRibbonCards(_ribbonsCache, _totalRibbonsCount);
+            renderRibbonCards(_ribbonsCache, _totalRibbonsCount, false);
             _hasMoreRibbons = false;
         }
     } finally {
@@ -2565,11 +2559,13 @@ function spawnBreathingCard(specificData = null) {
     startFadeOut();
 }
 
-function renderRibbonCards(list, total) {
+function renderRibbonCards(list, total, appendOnly = false) {
     const container = document.getElementById('ribbonScroll');
     if (!list || list.length === 0) {
-        container.innerHTML = '<div style="padding:20px 24px;color:rgba(247,244,238,0.3);font-size:12px;">还没有人系上丝带，成为第一个吧。</div>';
-        document.getElementById('ribbonTotalCount').textContent = '共 0 条丝带';
+        if (!appendOnly) {
+            container.innerHTML = '<div style="padding:20px 24px;color:rgba(247,244,238,0.3);font-size:12px;">还没有人系上丝带，成为第一个吧。</div>';
+            document.getElementById('ribbonTotalCount').textContent = '共 0 条丝带';
+        }
         return;
     }
 
@@ -2578,33 +2574,48 @@ function renderRibbonCards(list, total) {
 
     // 只有展开时才实际渲染卡片到DOM
     if (!isExpanded) {
-        document.getElementById('ribbonTotalCount').textContent = `共 ${total || list.length} 条丝带`;
+        document.getElementById('ribbonTotalCount').textContent = `共 ${total || _ribbonsCache.length} 条丝带`;
         const panelCount = document.getElementById('panelTotalCount');
-        if (panelCount) panelCount.textContent = `共 ${total || list.length} 条丝带`;
+        if (panelCount) panelCount.textContent = `共 ${total || _ribbonsCache.length} 条丝带`;
         return;
     }
 
-    container.innerHTML = list.map((d, idx) => {
-        const delay = Math.min(idx * 28, 400); // 网格：逐行错落，最多延迟 400ms
-        const animName = 'ribbonCardGridIn';
-        return `
-        <div class="ribbon-card"
-             style="--rc:var(--ribbon-${d.color}); animation: ${animName} 0.42s cubic-bezier(0.22,1,0.36,1) ${delay}ms both;"
-             data-color="${d.color}"
-             onclick="openStory('${d.id}')">
-            <div class="ribbon-card-body">
-                <p class="ribbon-card-text">${d.text}</p>
-                <div class="ribbon-card-meta">
-                    <span>${d.time}</span>
-                    <span class="ribbon-card-count">${HEART_SVG}${d.echo}</span>
+    if (appendOnly) {
+        // 懒加载追加：只插入新卡片，保留 scrollTop，不重建整个列表
+        const startIdx = _ribbonsCache.length - list.length; // 新卡片在总列表中的起始下标
+        const fragment = document.createDocumentFragment();
+        list.forEach((d, i) => {
+            const div = document.createElement('div');
+            div.className = 'ribbon-card';
+            div.style.cssText = `--rc:var(--ribbon-${d.color}); animation: ribbonCardGridIn 0.42s cubic-bezier(0.22,1,0.36,1) ${Math.min(i * 28, 400)}ms both;`;
+            div.dataset.color = d.color;
+            div.onclick = () => openStory(d.id);
+            div.innerHTML = `<div class="ribbon-card-body"><p class="ribbon-card-text">${d.text}</p><div class="ribbon-card-meta"><span>${d.time}</span><span class="ribbon-card-count">${HEART_SVG}${d.echo}</span></div></div>`;
+            fragment.appendChild(div);
+        });
+        container.appendChild(fragment);
+    } else {
+        container.innerHTML = list.map((d, idx) => {
+            const delay = Math.min(idx * 28, 400);
+            return `
+            <div class="ribbon-card"
+                 style="--rc:var(--ribbon-${d.color}); animation: ribbonCardGridIn 0.42s cubic-bezier(0.22,1,0.36,1) ${delay}ms both;"
+                 data-color="${d.color}"
+                 onclick="openStory('${d.id}')">
+                <div class="ribbon-card-body">
+                    <p class="ribbon-card-text">${d.text}</p>
+                    <div class="ribbon-card-meta">
+                        <span>${d.time}</span>
+                        <span class="ribbon-card-count">${HEART_SVG}${d.echo}</span>
+                    </div>
                 </div>
-            </div>
-        </div>`;
-    }).join('');
+            </div>`;
+        }).join('');
+    }
 
-    document.getElementById('ribbonTotalCount').textContent = `共 ${total || list.length} 条丝带`;
+    document.getElementById('ribbonTotalCount').textContent = `共 ${total || _ribbonsCache.length} 条丝带`;
     const panelCount = document.getElementById('panelTotalCount');
-    if (panelCount) panelCount.textContent = `共 ${total || list.length} 条丝带`;
+    if (panelCount) panelCount.textContent = `共 ${total || _ribbonsCache.length} 条丝带`;
 }
 
 /**
@@ -2695,6 +2706,14 @@ function openAllPanel() {
     // 滚动到顶部
     const scroll = document.getElementById('ribbonScroll');
     if (scroll) scroll.scrollTop = 0;
+    // 面板打开后检查内容是否填满，如没有则触发一次懒加载
+    setTimeout(() => {
+        if (scroll && _hasMoreRibbons && !_isLoadingMore) {
+            if (scroll.scrollHeight <= scroll.clientHeight + 50) {
+                loadRibbons(true);
+            }
+        }
+    }, 300);
 }
 
 function closeAllPanel(immediate = false) {
