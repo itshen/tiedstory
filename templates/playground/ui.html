@@ -1350,31 +1350,30 @@
 
 /* 心形爆炸粒子 */
 @keyframes heart-fly {
-    0%   { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
-    60%  { opacity: 0.8; }
-    100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.1); opacity: 0; }
+    0%   { transform: translate(-50%, -50%) scale(var(--s0)) rotate(var(--r0)); opacity: 1; }
+    70%  { opacity: 0.7; }
+    100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.05) rotate(var(--r1)); opacity: 0; }
 }
 @keyframes heart-burst-anim {
-    0%   { transform: translate(-50%, -50%) scale(0.2); opacity: 1; }
-    50%  { transform: translate(-50%, -50%) scale(2.6); opacity: 0.85; }
-    100% { transform: translate(-50%, -50%) scale(3.4); opacity: 0; }
+    0%   { transform: translate(-50%, -50%) scale(0.1); opacity: 0.9; }
+    40%  { transform: translate(-50%, -50%) scale(2.2); opacity: 0.7; }
+    100% { transform: translate(-50%, -50%) scale(3.2); opacity: 0; }
 }
 .heart-particle {
     position: fixed;
     pointer-events: none;
     z-index: 99999;
-    color: #e07070;
     line-height: 1;
-    animation: heart-fly 0.9s ease-out forwards;
+    animation: heart-fly var(--dur) cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    animation-delay: var(--delay);
+    opacity: 0;
 }
 .heart-burst {
     position: fixed;
     pointer-events: none;
     z-index: 99999;
-    color: #e87878;
-    font-size: 22px;
     line-height: 1;
-    animation: heart-burst-anim 0.7s ease-out forwards;
+    animation: heart-burst-anim 0.65s ease-out forwards;
 }
 .story-input-row {
     display: flex;
@@ -2984,26 +2983,42 @@ function spawnHeartParticles(btn) {
     const rect = btn.getBoundingClientRect();
     const cx = rect.left + rect.width / 2;
     const cy = rect.top + rect.height / 2;
-    const count = 8;
+
+    const colors = ['#e85c5c','#f08080','#e06080','#d45f5f','#f0a0a0','#c45858','#eb7070','#f5b8b8'];
+    const heartSVG = (color, size) =>
+        `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${color}" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
+
+    const count = 12;
     for (let i = 0; i < count; i++) {
         const el = document.createElement('div');
         el.className = 'heart-particle';
-        el.textContent = '♥';
-        const angle = (360 / count) * i + (Math.random() * 20 - 10);
-        const dist = 55 + Math.random() * 40;
+
+        const angle = Math.random() * 360;
+        const dist = 45 + Math.random() * 65;
         const rad = (angle * Math.PI) / 180;
         const dx = Math.cos(rad) * dist;
         const dy = Math.sin(rad) * dist;
-        const size = 11 + Math.random() * 9;
-        el.style.cssText = `left:${cx}px;top:${cy}px;font-size:${size}px;--dx:${dx}px;--dy:${dy}px;`;
+        const size = 7 + Math.random() * 10;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const dur = (0.7 + Math.random() * 0.5).toFixed(2);
+        const delay = (Math.random() * 0.08).toFixed(3);
+        const r0 = Math.round(Math.random() * 40 - 20);
+        const r1 = Math.round(Math.random() * 60 - 30);
+        const s0 = (0.6 + Math.random() * 0.8).toFixed(2);
+
+        el.style.cssText = `left:${cx}px;top:${cy}px;--dx:${dx}px;--dy:${dy}px;--dur:${dur}s;--delay:${delay}s;--r0:${r0}deg;--r1:${r1}deg;--s0:${s0};`;
+        el.innerHTML = heartSVG(color, size);
         document.body.appendChild(el);
         el.addEventListener('animationend', () => el.remove());
     }
+
     // 中心大心跳
+    const burstSize = 28;
+    const burstColor = '#e86060';
     const big = document.createElement('div');
     big.className = 'heart-burst';
-    big.textContent = '♥';
     big.style.cssText = `left:${cx}px;top:${cy}px;`;
+    big.innerHTML = `<svg width="${burstSize}" height="${burstSize}" viewBox="0 0 24 24" fill="${burstColor}" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
     document.body.appendChild(big);
     big.addEventListener('animationend', () => big.remove());
 }
