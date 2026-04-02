@@ -50,10 +50,19 @@ CREATE TABLE IF NOT EXISTS login_attempts (
     attempted_at INTEGER NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS ai_echo_tasks (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    ribbon_id   TEXT NOT NULL,
+    scheduled_at INTEGER NOT NULL,
+    done        INTEGER NOT NULL DEFAULT 0,
+    FOREIGN KEY(ribbon_id) REFERENCES ribbons(id)
+);
+
 CREATE INDEX IF NOT EXISTS idx_ribbons_created ON ribbons(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_echoes_ribbon ON echoes(ribbon_id);
 CREATE INDEX IF NOT EXISTS idx_appends_ribbon ON appends(ribbon_id);
 CREATE INDEX IF NOT EXISTS idx_login_attempts_ip ON login_attempts(ip);
+CREATE INDEX IF NOT EXISTS idx_ai_echo_tasks_scheduled ON ai_echo_tasks(scheduled_at);
 """
 
 
@@ -94,6 +103,15 @@ def _migrate():
         "ALTER TABLE echoes ADD COLUMN hidden INTEGER NOT NULL DEFAULT 0",
         "ALTER TABLE echoes ADD COLUMN ip TEXT NOT NULL DEFAULT ''",
         "ALTER TABLE echoes ADD COLUMN likes INTEGER NOT NULL DEFAULT 0",
+        "ALTER TABLE echoes ADD COLUMN is_ai INTEGER NOT NULL DEFAULT 0",
+        """CREATE TABLE IF NOT EXISTS ai_echo_tasks (
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            ribbon_id   TEXT NOT NULL,
+            scheduled_at INTEGER NOT NULL,
+            done        INTEGER NOT NULL DEFAULT 0,
+            FOREIGN KEY(ribbon_id) REFERENCES ribbons(id)
+        )""",
+        "CREATE INDEX IF NOT EXISTS idx_ai_echo_tasks_scheduled ON ai_echo_tasks(scheduled_at)",
     ]
     conn = get_conn()
     try:
@@ -143,7 +161,7 @@ def get_ribbon(ribbon_id: str) -> Optional[dict]:
         if not row:
             return None
         echoes = conn.execute(
-            "SELECT id, content, created_at, likes FROM echoes WHERE ribbon_id=? AND hidden=0 ORDER BY created_at ASC",
+            "SELECT id, content, created_at, likes, is_ai FROM echoes WHERE ribbon_id=? AND hidden=0 ORDER BY created_at ASC",
             (ribbon_id,)
         ).fetchall()
         appends = conn.execute(
@@ -194,15 +212,15 @@ def total_ribbons(color: str = None) -> int:
         return row["c"]
 
 
-def add_echo(ribbon_id: str, content: str, ip: str = "") -> bool:
+def add_echo(ribbon_id: str, content: str, ip: str = "", is_ai: bool = False) -> bool:
     with db() as conn:
         exists = conn.execute("SELECT 1 FROM ribbons WHERE id=?", (ribbon_id,)).fetchone()
         if not exists:
             return False
         ts = int(time.time())
         conn.execute(
-            "INSERT INTO echoes(ribbon_id, content, created_at, ip) VALUES(?,?,?,?)",
-            (ribbon_id, content, ts, ip)
+            "INSERT INTO echoes(ribbon_id, content, created_at, ip, is_ai) VALUES(?,?,?,?,?)",
+            (ribbon_id, content, ts, ip, 1 if is_ai else 0)
         )
     return True
 
@@ -405,3 +423,34 @@ def admin_total_echoes() -> int:
     with db() as conn:
         row = conn.execute("SELECT COUNT(*) AS c FROM echoes").fetchone()
         return row["c"]
+
+
+# ==========================================
+# AI 回响任务调度
+# ==========================================
+
+def schedule_ai_echo(ribbon_id: str, delay_seconds: int):
+    """为指定丝带安排一个 AI 延迟回响任务"""
+    scheduled_at = int(time.time()) + delay_seconds
+    with db() as conn:
+        conn.execute(
+            "INSERT INTO ai_echo_tasks(ribbon_id, scheduled_at, done) VALUES(?,?,0)",
+            (ribbon_id, scheduled_at)
+        )
+
+
+def get_pending_ai_tasks(now: int = None) -> list[dict]:
+    """获取当前时间已到期但未执行的 AI 任务"""
+    if now is None:
+        now = int(time.time())
+    with db() as conn:
+        rows = conn.execute(
+            "SELECT id, ribbon_id FROM ai_echo_tasks WHERE done=0 AND scheduled_at <= ?",
+            (now,)
+        ).fetchall()
+        return [dict(r) for r in rows]
+
+
+def mark_ai_task_done(task_id: int):
+    with db() as conn:
+        conn.execute("UPDATE ai_echo_tasks SET done=1 WHERE id=?", (task_id,))

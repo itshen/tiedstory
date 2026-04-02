@@ -38,7 +38,9 @@ def time_ago(ts: int) -> str:
 async def lifespan(app: FastAPI):
     database.init_db()
     logger.info("Starting TiedStory Server... DB initialized.")
+    task = asyncio.create_task(_ai_echo_scheduler())
     yield
+    task.cancel()
     logger.info("Shutting down TiedStory Server...")
 
 app = FastAPI(title="TiedStory", lifespan=lifespan)
@@ -177,6 +179,95 @@ REWRITE_PROMPT = """你是 TiedStory 平台的故事改写者。
 
 import datetime as _dt
 import re as _re
+import random
+import asyncio
+
+# ==========================================
+# AI 自动回响
+# ==========================================
+
+_AI_ECHO_PROMPT = """你是一个温柔的陌生人，正在浏览一个匿名情感倾诉平台。
+你看到了别人写下的一段心事，想留下一句简短的回应。
+
+要求：
+- 只写一句话，不超过20个字
+- 语气温柔、克制，像真实陌生人的真实感受
+- 不说教，不给建议，不假装懂对方
+- 可以是共鸣、可以是陪伴感、也可以是一句简单的"我看到你了"
+- 不用问号结尾，不用叹号，不用"加油"之类的话
+- 直接输出那句话，不要任何前缀或解释
+
+示例输出：
+你也很棒的。
+有人和你一样，你不是一个人。
+这种感觉我明白。
+还好有你把它说出来了。
+"""
+
+
+async def _generate_ai_echo(story: str) -> str | None:
+    """调用 LLM 生成一句 AI 回响，返回回响文本或 None"""
+    import httpx
+    actual_key = os.getenv("DASHSCOPE_API_KEY")
+    if not actual_key:
+        return None
+    url = "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {actual_key}"}
+    payload = {
+        "model": "qwen-plus",
+        "messages": [
+            {"role": "system", "content": _AI_ECHO_PROMPT},
+            {"role": "user", "content": story}
+        ],
+        "stream": False,
+        "enable_thinking": False,
+        "max_tokens": 60,
+    }
+    try:
+        async with httpx.AsyncClient(timeout=20.0) as client:
+            resp = await client.post(url, headers=headers, json=payload)
+            resp.raise_for_status()
+            content = resp.json()["choices"][0]["message"]["content"].strip()
+            # 截断超长内容
+            if len(content) > 30:
+                content = content[:30]
+            logger.info(f"[AI Echo] generated: {content}")
+            return content
+    except Exception as e:
+        logger.error(f"[AI Echo] generate failed: {e}")
+        return None
+
+
+async def _ai_echo_scheduler():
+    """后台调度器：每30秒扫描一次到期的 AI 回响任务"""
+    logger.info("[AI Echo Scheduler] started")
+    while True:
+        try:
+            await asyncio.sleep(30)
+            tasks = database.get_pending_ai_tasks()
+            if tasks:
+                logger.info(f"[AI Echo Scheduler] {len(tasks)} task(s) due")
+            for task in tasks:
+                ribbon_id = task["ribbon_id"]
+                task_id = task["id"]
+                # 先标记为已完成，防止重复执行
+                database.mark_ai_task_done(task_id)
+                # 获取丝带内容
+                ribbon = database.get_ribbon(ribbon_id)
+                if not ribbon:
+                    logger.warning(f"[AI Echo] ribbon {ribbon_id} not found, skip")
+                    continue
+                story = ribbon.get("story", "")
+                echo_text = await _generate_ai_echo(story)
+                if echo_text:
+                    database.add_echo(ribbon_id, echo_text, ip="ai", is_ai=True)
+                    logger.info(f"[AI Echo] ribbon={ribbon_id} echo saved: {echo_text}")
+        except asyncio.CancelledError:
+            logger.info("[AI Echo Scheduler] stopped")
+            break
+        except Exception as e:
+            logger.error(f"[AI Echo Scheduler] error: {e}")
+
 
 # ==========================================
 # Prompt Injection 防护层
@@ -646,6 +737,12 @@ async def api_save_ribbon(request: Request):
     ip = _get_client_ip(request)
     saved = database.save_ribbon(color=color, story=story, ip=ip)
     logger.info(f"[Save] id={saved['id']} color={color} ip={ip}")
+
+    # 安排随机延迟 AI 回响（5分钟 ~ 2小时）
+    delay = random.randint(5 * 60, 2 * 60 * 60)
+    database.schedule_ai_echo(saved["id"], delay)
+    logger.info(f"[AI Echo] scheduled for ribbon={saved['id']} delay={delay}s (~{delay//60}min)")
+
     return saved
 
 

@@ -1294,6 +1294,23 @@
     line-height: 1.65;
     flex: 1;
 }
+/* AI 回响样式 */
+.story-resonance-item.ai-echo {
+    opacity: 0.75;
+}
+.story-resonance-item.ai-echo .story-resonance-text {
+    color: rgba(247,244,238,0.45);
+    font-style: italic;
+}
+.ai-echo-label {
+    display: inline-block;
+    font-size: 10px;
+    color: rgba(247,244,238,0.25);
+    letter-spacing: 0.04em;
+    margin-right: 6px;
+    vertical-align: middle;
+    font-style: normal;
+}
 .story-resonance-like {
     flex-shrink: 0;
     display: flex;
@@ -2888,9 +2905,10 @@ async function openStory(ribbonId) {
         if (data.echoes && data.echoes.length > 0) {
             data.echoes.forEach(e => {
                 const item = document.createElement('div');
-                item.className = 'story-resonance-item';
+                item.className = 'story-resonance-item' + (e.is_ai ? ' ai-echo' : '');
+                const labelHtml = e.is_ai ? '<span class="ai-echo-label">树语</span>' : '';
                 item.innerHTML = `
-                    <span class="story-resonance-text">${e.content}</span>
+                    <span class="story-resonance-text">${labelHtml}${e.content}</span>
                     <button class="story-resonance-like" data-echo-id="${e.id}" onclick="likeResonance(this)">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                         <span class="like-count">${e.likes || 0}</span>
