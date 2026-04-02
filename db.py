@@ -51,10 +51,12 @@ CREATE TABLE IF NOT EXISTS login_attempts (
 );
 
 CREATE TABLE IF NOT EXISTS ai_echo_tasks (
-    id          INTEGER PRIMARY KEY AUTOINCREMENT,
-    ribbon_id   TEXT NOT NULL,
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    ribbon_id    TEXT NOT NULL,
     scheduled_at INTEGER NOT NULL,
-    done        INTEGER NOT NULL DEFAULT 0,
+    done         INTEGER NOT NULL DEFAULT 0,
+    slot         INTEGER NOT NULL DEFAULT 0,
+    is_final     INTEGER NOT NULL DEFAULT 0,
     FOREIGN KEY(ribbon_id) REFERENCES ribbons(id)
 );
 
@@ -63,6 +65,7 @@ CREATE INDEX IF NOT EXISTS idx_echoes_ribbon ON echoes(ribbon_id);
 CREATE INDEX IF NOT EXISTS idx_appends_ribbon ON appends(ribbon_id);
 CREATE INDEX IF NOT EXISTS idx_login_attempts_ip ON login_attempts(ip);
 CREATE INDEX IF NOT EXISTS idx_ai_echo_tasks_scheduled ON ai_echo_tasks(scheduled_at);
+CREATE INDEX IF NOT EXISTS idx_ai_echo_tasks_ribbon ON ai_echo_tasks(ribbon_id);
 """
 
 
@@ -112,6 +115,9 @@ def _migrate():
             FOREIGN KEY(ribbon_id) REFERENCES ribbons(id)
         )""",
         "CREATE INDEX IF NOT EXISTS idx_ai_echo_tasks_scheduled ON ai_echo_tasks(scheduled_at)",
+        "ALTER TABLE ai_echo_tasks ADD COLUMN slot INTEGER NOT NULL DEFAULT 0",
+        "ALTER TABLE ai_echo_tasks ADD COLUMN is_final INTEGER NOT NULL DEFAULT 0",
+        "CREATE INDEX IF NOT EXISTS idx_ai_echo_tasks_ribbon ON ai_echo_tasks(ribbon_id)",
     ]
     conn = get_conn()
     try:
@@ -212,17 +218,18 @@ def total_ribbons(color: str = None) -> int:
         return row["c"]
 
 
-def add_echo(ribbon_id: str, content: str, ip: str = "", is_ai: bool = False) -> bool:
+def add_echo(ribbon_id: str, content: str, ip: str = "", is_ai: bool = False) -> Optional[int]:
+    """插入回响，返回新记录的 id；ribbon_id 不存在时返回 None"""
     with db() as conn:
         exists = conn.execute("SELECT 1 FROM ribbons WHERE id=?", (ribbon_id,)).fetchone()
         if not exists:
-            return False
+            return None
         ts = int(time.time())
-        conn.execute(
+        cur = conn.execute(
             "INSERT INTO echoes(ribbon_id, content, created_at, ip, is_ai) VALUES(?,?,?,?,?)",
             (ribbon_id, content, ts, ip, 1 if is_ai else 0)
         )
-    return True
+        return cur.lastrowid
 
 
 def like_echo(echo_id: int) -> Optional[int]:
@@ -429,13 +436,23 @@ def admin_total_echoes() -> int:
 # AI 回响任务调度
 # ==========================================
 
-def schedule_ai_echo(ribbon_id: str, delay_seconds: int):
-    """为指定丝带安排一个 AI 延迟回响任务"""
-    scheduled_at = int(time.time()) + delay_seconds
+def schedule_ai_echo_slots(ribbon_id: str, delays: list[int], final_delay: int):
+    """
+    为指定丝带安排 6 个随机时间节点 + 1 个兜底节点。
+    delays: 6个时间节点距离当前的秒数列表（已排序，相互间隔 >= 30分钟）
+    final_delay: 兜底节点距离当前的秒数（在所有节点之后）
+    """
+    now = int(time.time())
     with db() as conn:
+        for i, d in enumerate(delays):
+            conn.execute(
+                "INSERT INTO ai_echo_tasks(ribbon_id, scheduled_at, done, slot, is_final) VALUES(?,?,0,?,0)",
+                (ribbon_id, now + d, i)
+            )
+        # 兜底节点
         conn.execute(
-            "INSERT INTO ai_echo_tasks(ribbon_id, scheduled_at, done) VALUES(?,?,0)",
-            (ribbon_id, scheduled_at)
+            "INSERT INTO ai_echo_tasks(ribbon_id, scheduled_at, done, slot, is_final) VALUES(?,?,0,6,1)",
+            (ribbon_id, now + final_delay)
         )
 
 
@@ -445,7 +462,7 @@ def get_pending_ai_tasks(now: int = None) -> list[dict]:
         now = int(time.time())
     with db() as conn:
         rows = conn.execute(
-            "SELECT id, ribbon_id FROM ai_echo_tasks WHERE done=0 AND scheduled_at <= ?",
+            "SELECT id, ribbon_id, slot, is_final FROM ai_echo_tasks WHERE done=0 AND scheduled_at <= ?",
             (now,)
         ).fetchall()
         return [dict(r) for r in rows]
@@ -454,3 +471,32 @@ def get_pending_ai_tasks(now: int = None) -> list[dict]:
 def mark_ai_task_done(task_id: int):
     with db() as conn:
         conn.execute("UPDATE ai_echo_tasks SET done=1 WHERE id=?", (task_id,))
+
+
+def count_ribbon_ai_echoes(ribbon_id: str) -> int:
+    """统计该丝带已生成的 AI 回响数量"""
+    with db() as conn:
+        row = conn.execute(
+            "SELECT COUNT(*) AS c FROM echoes WHERE ribbon_id=? AND is_ai=1",
+            (ribbon_id,)
+        ).fetchone()
+        return row["c"]
+
+
+def get_ribbon_ai_echo_contents(ribbon_id: str) -> list[str]:
+    """获取该丝带所有 AI 回响的文本（用于去重参考）"""
+    with db() as conn:
+        rows = conn.execute(
+            "SELECT content FROM echoes WHERE ribbon_id=? AND is_ai=1 ORDER BY created_at ASC",
+            (ribbon_id,)
+        ).fetchall()
+        return [r["content"] for r in rows]
+
+
+def cancel_remaining_ai_tasks(ribbon_id: str):
+    """将该丝带剩余未执行的所有 AI 任务标记为完成（用于兜底后清理）"""
+    with db() as conn:
+        conn.execute(
+            "UPDATE ai_echo_tasks SET done=1 WHERE ribbon_id=? AND done=0",
+            (ribbon_id,)
+        )
