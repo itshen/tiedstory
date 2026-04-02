@@ -1330,6 +1330,34 @@
     fill: rgba(220,130,130,0.5);
     stroke: rgba(220,130,130,0.9);
 }
+
+/* 心形爆炸粒子 */
+@keyframes heart-fly {
+    0%   { transform: translate(-50%, -50%) scale(1);   opacity: 1; }
+    100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.2); opacity: 0; }
+}
+@keyframes heart-burst-anim {
+    0%   { transform: translate(-50%, -50%) scale(0.2); opacity: 1; }
+    50%  { transform: translate(-50%, -50%) scale(1.8); opacity: 0.85; }
+    100% { transform: translate(-50%, -50%) scale(2.4); opacity: 0; }
+}
+.heart-particle {
+    position: fixed;
+    pointer-events: none;
+    z-index: 99999;
+    color: #e07070;
+    line-height: 1;
+    animation: heart-fly 0.55s ease-out forwards;
+}
+.heart-burst {
+    position: fixed;
+    pointer-events: none;
+    z-index: 99999;
+    color: #e87878;
+    font-size: 22px;
+    line-height: 1;
+    animation: heart-burst-anim 0.4s ease-out forwards;
+}
 .story-input-row {
     display: flex;
     gap: 10px;
@@ -2865,7 +2893,7 @@ async function openStory(ribbonId) {
                     <span class="story-resonance-text">${e.content}</span>
                     <button class="story-resonance-like" data-echo-id="${e.id}" onclick="likeResonance(this)">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                        <span class="like-count">${e.like_count || 0}</span>
+                        <span class="like-count">${e.likes || 0}</span>
                     </button>`;
                 resonancesEl.appendChild(item);
             });
@@ -2933,6 +2961,34 @@ function shareStory() {
 }
 
 // ---- 回响点赞 ----
+function spawnHeartParticles(btn) {
+    const rect = btn.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const count = 8;
+    for (let i = 0; i < count; i++) {
+        const el = document.createElement('div');
+        el.className = 'heart-particle';
+        el.textContent = '♥';
+        const angle = (360 / count) * i + (Math.random() * 20 - 10);
+        const dist = 28 + Math.random() * 22;
+        const rad = (angle * Math.PI) / 180;
+        const dx = Math.cos(rad) * dist;
+        const dy = Math.sin(rad) * dist;
+        const size = 9 + Math.random() * 7;
+        el.style.cssText = `left:${cx}px;top:${cy}px;font-size:${size}px;--dx:${dx}px;--dy:${dy}px;`;
+        document.body.appendChild(el);
+        el.addEventListener('animationend', () => el.remove());
+    }
+    // 中心大心跳
+    const big = document.createElement('div');
+    big.className = 'heart-burst';
+    big.textContent = '♥';
+    big.style.cssText = `left:${cx}px;top:${cy}px;`;
+    document.body.appendChild(big);
+    big.addEventListener('animationend', () => big.remove());
+}
+
 async function likeResonance(btn) {
     if (btn.classList.contains('liked') || btn.dataset.liking) return;
     const echoId = btn.dataset.echoId;
@@ -2950,10 +3006,11 @@ async function likeResonance(btn) {
         }
         btn.classList.add('liked');
         countEl.textContent = newCount;
+        spawnHeartParticles(btn);
         countEl.animate([
-            { transform: 'scale(1.6)', opacity: 0.5 },
+            { transform: 'scale(1.8)', opacity: 0.6 },
             { transform: 'scale(1)',   opacity: 1   }
-        ], { duration: 220, easing: 'ease-out' });
+        ], { duration: 280, easing: 'ease-out' });
     } catch(e) {
         console.error('[Like] failed', e);
     } finally {
