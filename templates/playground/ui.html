@@ -1350,13 +1350,14 @@
 
 /* 心形爆炸粒子 */
 @keyframes heart-fly {
-    0%   { transform: translate(-50%, -50%) scale(1);   opacity: 1; }
-    100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.2); opacity: 0; }
+    0%   { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+    60%  { opacity: 0.8; }
+    100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.1); opacity: 0; }
 }
 @keyframes heart-burst-anim {
     0%   { transform: translate(-50%, -50%) scale(0.2); opacity: 1; }
-    50%  { transform: translate(-50%, -50%) scale(1.8); opacity: 0.85; }
-    100% { transform: translate(-50%, -50%) scale(2.4); opacity: 0; }
+    50%  { transform: translate(-50%, -50%) scale(2.6); opacity: 0.85; }
+    100% { transform: translate(-50%, -50%) scale(3.4); opacity: 0; }
 }
 .heart-particle {
     position: fixed;
@@ -1364,7 +1365,7 @@
     z-index: 99999;
     color: #e07070;
     line-height: 1;
-    animation: heart-fly 0.55s ease-out forwards;
+    animation: heart-fly 0.9s ease-out forwards;
 }
 .heart-burst {
     position: fixed;
@@ -1373,7 +1374,7 @@
     color: #e87878;
     font-size: 22px;
     line-height: 1;
-    animation: heart-burst-anim 0.4s ease-out forwards;
+    animation: heart-burst-anim 0.7s ease-out forwards;
 }
 .story-input-row {
     display: flex;
@@ -2989,11 +2990,11 @@ function spawnHeartParticles(btn) {
         el.className = 'heart-particle';
         el.textContent = '♥';
         const angle = (360 / count) * i + (Math.random() * 20 - 10);
-        const dist = 28 + Math.random() * 22;
+        const dist = 55 + Math.random() * 40;
         const rad = (angle * Math.PI) / 180;
         const dx = Math.cos(rad) * dist;
         const dy = Math.sin(rad) * dist;
-        const size = 9 + Math.random() * 7;
+        const size = 11 + Math.random() * 9;
         el.style.cssText = `left:${cx}px;top:${cy}px;font-size:${size}px;--dx:${dx}px;--dy:${dy}px;`;
         document.body.appendChild(el);
         el.addEventListener('animationend', () => el.remove());
