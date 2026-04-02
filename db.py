@@ -93,6 +93,7 @@ def _migrate():
         "ALTER TABLE ribbons ADD COLUMN ip TEXT NOT NULL DEFAULT ''",
         "ALTER TABLE echoes ADD COLUMN hidden INTEGER NOT NULL DEFAULT 0",
         "ALTER TABLE echoes ADD COLUMN ip TEXT NOT NULL DEFAULT ''",
+        "ALTER TABLE echoes ADD COLUMN likes INTEGER NOT NULL DEFAULT 0",
     ]
     conn = get_conn()
     try:
@@ -142,7 +143,7 @@ def get_ribbon(ribbon_id: str) -> Optional[dict]:
         if not row:
             return None
         echoes = conn.execute(
-            "SELECT id, content, created_at FROM echoes WHERE ribbon_id=? ORDER BY created_at ASC",
+            "SELECT id, content, created_at, likes FROM echoes WHERE ribbon_id=? AND hidden=0 ORDER BY created_at ASC",
             (ribbon_id,)
         ).fetchall()
         appends = conn.execute(
@@ -204,6 +205,17 @@ def add_echo(ribbon_id: str, content: str, ip: str = "") -> bool:
             (ribbon_id, content, ts, ip)
         )
     return True
+
+
+def like_echo(echo_id: int) -> Optional[int]:
+    """给回响点赞，返回更新后的点赞数；echo_id 不存在时返回 None"""
+    with db() as conn:
+        row = conn.execute("SELECT likes FROM echoes WHERE id=?", (echo_id,)).fetchone()
+        if row is None:
+            return None
+        new_count = row["likes"] + 1
+        conn.execute("UPDATE echoes SET likes=? WHERE id=?", (new_count, echo_id))
+    return new_count
 
 
 def verify_witness(ribbon_id: str, witness: str) -> bool:
