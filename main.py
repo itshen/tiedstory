@@ -45,6 +45,16 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="TiedStory", lifespan=lifespan)
 
+
+@app.middleware("http")
+async def static_cache_middleware(request, call_next):
+    response = await call_next(request)
+    path = request.url.path
+    if path.startswith("/static/images/") and path.lower().endswith(('.png', '.jpg', '.jpeg', '.webp', '.gif')):
+        response.headers["Cache-Control"] = "public, max-age=604800, immutable"
+    return response
+
+
 # 挂载静态文件
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -55,6 +65,17 @@ templates = Jinja2Templates(directory="templates")
 async def index(request: Request):
     # 首页暂时重定向到 playground 或显示简单信息
     return templates.TemplateResponse("playground/ui.html", {"request": request})
+
+
+@app.get("/sw.js")
+async def service_worker():
+    """Service Worker 必须从根路径提供才能覆盖整个站点 scope"""
+    from fastapi.responses import FileResponse
+    return FileResponse(
+        "static/sw.js",
+        media_type="application/javascript",
+        headers={"Cache-Control": "no-cache, no-store, must-revalidate", "Service-Worker-Allowed": "/"}
+    )
 
 # ==========================================
 # Playground 路由

@@ -4003,12 +4003,28 @@ function pgSetDemoMode() {
     startDemoMode(cur[0], cur[1]);
 }
 
-// ── 预加载所有图片 ────────────────────────────────────────
-function preloadBgImages() {
-    Object.values(BG_MAP).forEach(url => {
-        const img = new Image(); img.src = url;
-    });
+// ── 预加载所有图片（Cache API 持久化本地缓存，刷新后不重新拉取）────
+const BG_CACHE_NAME = 'tiedstory-bg-v1';
+
+async function preloadBgImages() {
+    const urls = Object.values(BG_MAP);
+    if (!('caches' in window)) {
+        // 降级：普通 new Image() 预热浏览器内存缓存
+        urls.forEach(url => { const img = new Image(); img.src = url; });
+        return;
+    }
+    const cache = await caches.open(BG_CACHE_NAME);
+    await Promise.all(urls.map(async url => {
+        // 已缓存则跳过，完全不发网络请求
+        const hit = await cache.match(url);
+        if (hit) return;
+        try {
+            const resp = await fetch(url);
+            if (resp.ok) await cache.put(url, resp);
+        } catch(e) { /* 离线时忽略 */ }
+    }));
 }
+
 
 // ── 初始化 ────────────────────────────────────────────────
 (function initBg() {
