@@ -305,6 +305,8 @@ async def _ai_echo_scheduler():
                 ai_count = len(existing)
 
                 if is_final:
+                    # 兜底节点到期，先把该丝带所有剩余任务全部标记完成
+                    database.cancel_remaining_ai_tasks(ribbon_id)
                     if ai_count > 0:
                         logger.info(f"[AI Echo] ribbon={ribbon_id} final slot skipped (already has {ai_count} AI echoes)")
                         continue
