@@ -1350,21 +1350,22 @@
 
 /* 心形爆炸粒子 */
 @keyframes heart-fly {
-    0%   { transform: translate(-50%, -50%) scale(var(--s0)) rotate(var(--r0)); opacity: 1; }
-    70%  { opacity: 0.7; }
-    100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.05) rotate(var(--r1)); opacity: 0; }
+    0%   { transform: translate(-50%, -50%) scale(var(--s0)) rotate(var(--r0)); opacity: 0; }
+    8%   { opacity: 1; }
+    75%  { opacity: 0.85; }
+    100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.08) rotate(var(--r1)); opacity: 0; }
 }
 @keyframes heart-burst-anim {
-    0%   { transform: translate(-50%, -50%) scale(0.1); opacity: 0.9; }
-    40%  { transform: translate(-50%, -50%) scale(2.2); opacity: 0.7; }
-    100% { transform: translate(-50%, -50%) scale(3.2); opacity: 0; }
+    0%   { transform: translate(-50%, -50%) scale(0.15) rotate(var(--br0)); opacity: 1; }
+    35%  { transform: translate(-50%, -50%) scale(1.6)  rotate(var(--br1)); opacity: 0.9; }
+    100% { transform: translate(-50%, -50%) scale(2.8)  rotate(var(--br2)); opacity: 0; }
 }
 .heart-particle {
     position: fixed;
     pointer-events: none;
     z-index: 99999;
     line-height: 1;
-    animation: heart-fly var(--dur) cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    animation: heart-fly var(--dur) cubic-bezier(0.2, 0.6, 0.4, 1) forwards;
     animation-delay: var(--delay);
     opacity: 0;
 }
@@ -1373,7 +1374,9 @@
     pointer-events: none;
     z-index: 99999;
     line-height: 1;
-    animation: heart-burst-anim 0.65s ease-out forwards;
+    animation: heart-burst-anim var(--bdur) ease-out forwards;
+    animation-delay: var(--bdelay);
+    opacity: 0;
 }
 .story-input-row {
     display: flex;
@@ -2984,27 +2987,29 @@ function spawnHeartParticles(btn) {
     const cx = rect.left + rect.width / 2;
     const cy = rect.top + rect.height / 2;
 
-    const colors = ['#e85c5c','#f08080','#e06080','#d45f5f','#f0a0a0','#c45858','#eb7070','#f5b8b8'];
+    const colors = ['#e85c5c','#f07070','#e06080','#d45f5f','#f0a0a0','#c45858','#eb7070','#f5b0b0','#e8446a','#f08898'];
     const heartSVG = (color, size) =>
         `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${color}" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
 
-    const count = 12;
+    // 飞散粒子：完全随机角度 + 随机初始倾斜
+    const count = 14;
     for (let i = 0; i < count; i++) {
         const el = document.createElement('div');
         el.className = 'heart-particle';
 
         const angle = Math.random() * 360;
-        const dist = 45 + Math.random() * 65;
+        const dist = 40 + Math.random() * 70;
         const rad = (angle * Math.PI) / 180;
         const dx = Math.cos(rad) * dist;
         const dy = Math.sin(rad) * dist;
-        const size = 7 + Math.random() * 10;
+        const size = Math.round(6 + Math.random() * 11);
         const color = colors[Math.floor(Math.random() * colors.length)];
-        const dur = (0.7 + Math.random() * 0.5).toFixed(2);
-        const delay = (Math.random() * 0.08).toFixed(3);
-        const r0 = Math.round(Math.random() * 40 - 20);
-        const r1 = Math.round(Math.random() * 60 - 30);
-        const s0 = (0.6 + Math.random() * 0.8).toFixed(2);
+        const dur = (0.75 + Math.random() * 0.55).toFixed(2);
+        const delay = (Math.random() * 0.07).toFixed(3);
+        // 初始倾斜角度 (-45 ~ +45)，终点旋转继续偏转
+        const r0 = Math.round(Math.random() * 90 - 45);
+        const r1 = r0 + Math.round(Math.random() * 120 - 60);
+        const s0 = (0.5 + Math.random() * 0.9).toFixed(2);
 
         el.style.cssText = `left:${cx}px;top:${cy}px;--dx:${dx}px;--dy:${dy}px;--dur:${dur}s;--delay:${delay}s;--r0:${r0}deg;--r1:${r1}deg;--s0:${s0};`;
         el.innerHTML = heartSVG(color, size);
@@ -3012,15 +3017,21 @@ function spawnHeartParticles(btn) {
         el.addEventListener('animationend', () => el.remove());
     }
 
-    // 中心大心跳
-    const burstSize = 28;
-    const burstColor = '#e86060';
-    const big = document.createElement('div');
-    big.className = 'heart-burst';
-    big.style.cssText = `left:${cx}px;top:${cy}px;`;
-    big.innerHTML = `<svg width="${burstSize}" height="${burstSize}" viewBox="0 0 24 24" fill="${burstColor}" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
-    document.body.appendChild(big);
-    big.addEventListener('animationend', () => big.remove());
+    // 中心绽开：3~4 颗大心错开延迟依次放大消失，营造"绽开"层次感
+    const burstConfigs = [
+        { size: 22, color: '#e86060', delay: 0,    dur: 0.55, r0: -15, r1: -30, r2: -42 },
+        { size: 18, color: '#f07878', delay: 0.06, dur: 0.6,  r0:  20, r1:  38, r2:  55 },
+        { size: 14, color: '#f0a0a0', delay: 0.12, dur: 0.65, r0: -35, r1: -20, r2:  10 },
+        { size: 10, color: '#e84470', delay: 0.18, dur: 0.7,  r0:  40, r1:  10, r2: -20 },
+    ];
+    burstConfigs.forEach(cfg => {
+        const big = document.createElement('div');
+        big.className = 'heart-burst';
+        big.style.cssText = `left:${cx}px;top:${cy}px;--bdur:${cfg.dur}s;--bdelay:${cfg.delay}s;--br0:${cfg.r0}deg;--br1:${cfg.r1}deg;--br2:${cfg.r2}deg;`;
+        big.innerHTML = heartSVG(cfg.color, cfg.size);
+        document.body.appendChild(big);
+        big.addEventListener('animationend', () => big.remove());
+    });
 }
 
 async function likeResonance(btn) {
