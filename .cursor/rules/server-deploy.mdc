@@ -1,0 +1,28 @@
+---
+description: TiedStory 服务器部署信息与 git 工作流
+alwaysApply: true
+---
+
+# 服务器 & 部署规范
+
+## 服务器信息
+- **IP**: `43.134.174.117`
+- **用户**: `ubuntu`
+- **密码**: `Itshen369*`
+- **项目路径**: `/var/www/tiedstory`
+- **连接方式**: `sshpass -p 'Itshen369*' ssh -o StrictHostKeyChecking=no ubuntu@43.134.174.117`
+
+## Git 远程仓库
+- **Remote**: `https://github.com/itshen/tiedstory.git`
+- **主分支**: `main`
+
+## 标准发布流程
+1. 本地 commit → `git push origin main`
+2. SSH 到服务器执行 `cd /var/www/tiedstory && git pull origin main`
+3. FastAPI + Jinja2 模板无需重启即可生效；若修改了 `main.py` 或 Python 文件则需重启服务
+
+## 重启服务命令（如需）
+```bash
+sshpass -p 'Itshen369*' ssh -o StrictHostKeyChecking=no ubuntu@43.134.174.117 \
+  'cd /var/www/tiedstory && pkill -f main.py; sleep 1 && nohup python3.11 main.py > app.log 2>&1 &'
+```

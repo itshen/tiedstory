@@ -60,12 +60,22 @@ CREATE TABLE IF NOT EXISTS ai_echo_tasks (
     FOREIGN KEY(ribbon_id) REFERENCES ribbons(id)
 );
 
+CREATE TABLE IF NOT EXISTS page_views (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    date        TEXT NOT NULL,
+    ip          TEXT NOT NULL DEFAULT '',
+    path        TEXT NOT NULL DEFAULT '/',
+    visited_at  INTEGER NOT NULL
+);
+
 CREATE INDEX IF NOT EXISTS idx_ribbons_created ON ribbons(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_echoes_ribbon ON echoes(ribbon_id);
 CREATE INDEX IF NOT EXISTS idx_appends_ribbon ON appends(ribbon_id);
 CREATE INDEX IF NOT EXISTS idx_login_attempts_ip ON login_attempts(ip);
 CREATE INDEX IF NOT EXISTS idx_ai_echo_tasks_scheduled ON ai_echo_tasks(scheduled_at);
 CREATE INDEX IF NOT EXISTS idx_ai_echo_tasks_ribbon ON ai_echo_tasks(ribbon_id);
+CREATE INDEX IF NOT EXISTS idx_page_views_date ON page_views(date);
+CREATE INDEX IF NOT EXISTS idx_page_views_ip_date ON page_views(ip, date);
 """
 
 
@@ -118,6 +128,15 @@ def _migrate():
         "ALTER TABLE ai_echo_tasks ADD COLUMN slot INTEGER NOT NULL DEFAULT 0",
         "ALTER TABLE ai_echo_tasks ADD COLUMN is_final INTEGER NOT NULL DEFAULT 0",
         "CREATE INDEX IF NOT EXISTS idx_ai_echo_tasks_ribbon ON ai_echo_tasks(ribbon_id)",
+        """CREATE TABLE IF NOT EXISTS page_views (
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            date        TEXT NOT NULL,
+            ip          TEXT NOT NULL DEFAULT '',
+            path        TEXT NOT NULL DEFAULT '/',
+            visited_at  INTEGER NOT NULL
+        )""",
+        "CREATE INDEX IF NOT EXISTS idx_page_views_date ON page_views(date)",
+        "CREATE INDEX IF NOT EXISTS idx_page_views_ip_date ON page_views(ip, date)",
     ]
     conn = get_conn()
     try:
@@ -500,3 +519,52 @@ def cancel_remaining_ai_tasks(ribbon_id: str):
             "UPDATE ai_echo_tasks SET done=1 WHERE ribbon_id=? AND done=0",
             (ribbon_id,)
         )
+
+
+# ==========================================
+# 用户访问统计 (PV / UV)
+# ==========================================
+
+def record_page_view(ip: str, path: str):
+    """记录一次页面访问（PV），同时用于 UV 去重统计"""
+    import datetime
+    date_str = datetime.date.today().isoformat()
+    with db() as conn:
+        conn.execute(
+            "INSERT INTO page_views(date, ip, path, visited_at) VALUES(?,?,?,?)",
+            (date_str, ip, path, int(time.time()))
+        )
+
+
+def get_daily_stats(days: int = 14) -> list[dict]:
+    """返回最近 N 天的每日 PV 和 UV 统计"""
+    import datetime
+    today = datetime.date.today()
+    dates = [(today - datetime.timedelta(days=i)).isoformat() for i in range(days - 1, -1, -1)]
+    with db() as conn:
+        rows = conn.execute(
+            """SELECT date,
+                      COUNT(*) AS pv,
+                      COUNT(DISTINCT ip) AS uv
+               FROM page_views
+               WHERE date >= ?
+               GROUP BY date""",
+            (dates[0],)
+        ).fetchall()
+    stat_map = {r["date"]: {"pv": r["pv"], "uv": r["uv"]} for r in rows}
+    return [
+        {"date": d, "pv": stat_map.get(d, {}).get("pv", 0), "uv": stat_map.get(d, {}).get("uv", 0)}
+        for d in dates
+    ]
+
+
+def get_today_stats() -> dict:
+    """返回今日 PV 和 UV"""
+    import datetime
+    date_str = datetime.date.today().isoformat()
+    with db() as conn:
+        row = conn.execute(
+            "SELECT COUNT(*) AS pv, COUNT(DISTINCT ip) AS uv FROM page_views WHERE date=?",
+            (date_str,)
+        ).fetchone()
+    return {"pv": row["pv"], "uv": row["uv"]} if row else {"pv": 0, "uv": 0}

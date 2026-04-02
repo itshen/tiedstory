@@ -55,6 +55,29 @@ async def static_cache_middleware(request, call_next):
     return response
 
 
+# 统计前台页面 PV/UV（排除静态资源、API 接口和管理后台）
+_TRACK_PREFIXES = ("/", )
+_SKIP_PREFIXES = ("/static/", "/admin", "/sw.js", "/favicon")
+
+@app.middleware("http")
+async def pv_tracking_middleware(request: Request, call_next):
+    response = await call_next(request)
+    path = request.url.path
+    # 只统计 GET 请求，且排除管理后台、静态文件、API 接口
+    if (
+        request.method == "GET"
+        and response.status_code == 200
+        and not any(path.startswith(p) for p in _SKIP_PREFIXES)
+        and not path.startswith("/playground/api")
+    ):
+        ip = request.headers.get("X-Forwarded-For", "").split(",")[0].strip() or (request.client.host if request.client else "unknown")
+        try:
+            database.record_page_view(ip, path)
+        except Exception as e:
+            logger.warning(f"[PV] record failed: {e}")
+    return response
+
+
 # 挂载静态文件
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -1196,6 +1219,18 @@ async def admin_ban_ip(request: Request):
     database.ban_ip(ip, "manual", days=30)
     logger.info(f"[Admin] Manual ban IP {ip}")
     return {"ok": True}
+
+
+# ── 用户统计 ──
+
+@app.get("/admin/api/stats")
+async def admin_get_stats(request: Request, days: int = 14):
+    if not _check_session(request):
+        raise HTTPException(status_code=401)
+    daily = database.get_daily_stats(days=min(days, 90))
+    today = database.get_today_stats()
+    logger.info(f"[Admin] Stats requested days={days}")
+    return {"daily": daily, "today": today}
 
 
 if __name__ == "__main__":
