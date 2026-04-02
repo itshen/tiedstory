@@ -4095,13 +4095,13 @@ async function preloadBgImages() {
     try {
         const res = await fetch('/api/site_stats');
         if (!res.ok) return;
-        const { pv, uv } = await res.json();
+        const { today, total } = await res.json();
         const badge = document.getElementById('heroStatsBadge');
         const label = document.getElementById('heroStatsLabel');
         if (!badge || !label) return;
-        label.textContent = `今日 ${uv} 人在场 · ${pv} 次驻足`;
+        label.textContent = `今日 ${today.uv} 人 · 累计 ${total.uv} 人`;
         badge.style.display = 'flex';
-        console.log('[SiteStats] pv=%d uv=%d', pv, uv);
+        console.log('[SiteStats] today=', today, 'total=', total);
     } catch(e) {
         console.warn('[SiteStats] load failed', e);
     }

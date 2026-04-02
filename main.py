@@ -796,9 +796,10 @@ async def api_list_ribbons(limit: int = 60, offset: int = 0, color: str = None):
 
 @app.get("/api/site_stats")
 async def api_site_stats():
-    """公开的站点统计（今日 PV/UV）"""
+    """公开的站点统计（今日 PV/UV + 累计 PV/UV）"""
     today = database.get_today_stats()
-    return {"pv": today["pv"], "uv": today["uv"]}
+    total = database.get_total_stats()
+    return {"today": today, "total": total}
 
 
 @app.post("/api/ribbon/save")

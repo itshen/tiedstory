@@ -568,3 +568,12 @@ def get_today_stats() -> dict:
             (date_str,)
         ).fetchone()
     return {"pv": row["pv"], "uv": row["uv"]} if row else {"pv": 0, "uv": 0}
+
+
+def get_total_stats() -> dict:
+    """返回累计总 PV 和去重总 UV"""
+    with db() as conn:
+        row = conn.execute(
+            "SELECT COUNT(*) AS pv, COUNT(DISTINCT ip) AS uv FROM page_views"
+        ).fetchone()
+    return {"pv": row["pv"], "uv": row["uv"]} if row else {"pv": 0, "uv": 0}
