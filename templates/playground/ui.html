@@ -3035,9 +3035,17 @@ function spawnHeartParticles(btn) {
 }
 
 async function likeResonance(btn) {
-    if (btn.classList.contains('liked') || btn.dataset.liking) return;
+    if (btn.dataset.liking) return; // 防并发双击
     const echoId = btn.dataset.echoId;
     const countEl = btn.querySelector('.like-count');
+    const alreadyLiked = btn.classList.contains('liked');
+
+    // 已点过：只触发动效，不再请求 API
+    if (alreadyLiked) {
+        spawnHeartParticles(btn);
+        return;
+    }
+
     btn.dataset.liking = '1';
     try {
         let newCount;
@@ -3051,11 +3059,11 @@ async function likeResonance(btn) {
         }
         btn.classList.add('liked');
         countEl.textContent = newCount;
-        spawnHeartParticles(btn);
         countEl.animate([
             { transform: 'scale(1.8)', opacity: 0.6 },
             { transform: 'scale(1)',   opacity: 1   }
         ], { duration: 280, easing: 'ease-out' });
+        spawnHeartParticles(btn);
     } catch(e) {
         console.error('[Like] failed', e);
     } finally {
