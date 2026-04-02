@@ -44,16 +44,22 @@
 }
 
 /* ====== 时段标签 ====== */
-.hero-time-badge {
+.hero-top-right {
     position: absolute;
     top: 32px;
     right: 40px;
     z-index: 10;
     display: flex;
     align-items: center;
+    gap: 8px;
+}
+.hero-time-badge {
+    display: flex;
+    align-items: center;
     gap: 6px;
     background: rgba(10,6,3,0.35);
     backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border: 1px solid rgba(255,255,255,0.12);
     border-radius: 20px;
     padding: 5px 13px 5px 9px;
@@ -1881,7 +1887,8 @@
     .ribbon-browse-count { padding: 4px 10px; font-size: 10px; }
     .ribbon-browse-btn { padding: 4px 10px; font-size: 10px; }
     
-    .hero-time-badge { top: 20px; right: 20px; padding: 4px 10px 4px 8px; font-size: 11px; }
+    .hero-top-right { top: 20px; right: 20px; gap: 6px; }
+    .hero-time-badge { padding: 4px 10px 4px 8px; font-size: 11px; }
     
     /* 右下悬浮操作区（底部按钮） */
     .hero-float-actions {
@@ -1948,10 +1955,16 @@
     <div class="hero-bg-layer active" id="heroBgA"></div>
     <div class="hero-bg-layer inactive" id="heroBgB"></div>
 
-    <!-- 右上角时段标签 -->
-    <div class="hero-time-badge" id="heroTimeBadge">
-        <span class="hero-time-badge-dot" id="heroTimeDot"></span>
-        <span id="heroTimeLabel">傍晚</span>
+    <!-- 右上角标签组：时段 + 今日访客 -->
+    <div class="hero-top-right">
+        <div class="hero-time-badge" id="heroStatsBadge" style="display:none;">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.6;flex-shrink:0"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span id="heroStatsLabel">—</span>
+        </div>
+        <div class="hero-time-badge" id="heroTimeBadge">
+            <span class="hero-time-badge-dot" id="heroTimeDot"></span>
+            <span id="heroTimeLabel">傍晚</span>
+        </div>
     </div>
 
     <!-- 左上角品牌及控制栏 -->
@@ -4075,6 +4088,23 @@ async function preloadBgImages() {
 
     // 默认开启“加速演示”模式（每30s切换一个时段，转完一季切下一季）
     pgSetDemoMode();
+})();
+
+// ── 今日访客统计（右上角） ────────────────────────────────
+(async function loadSiteStats() {
+    try {
+        const res = await fetch('/api/site_stats');
+        if (!res.ok) return;
+        const { pv, uv } = await res.json();
+        const badge = document.getElementById('heroStatsBadge');
+        const label = document.getElementById('heroStatsLabel');
+        if (!badge || !label) return;
+        label.textContent = `今日 ${uv} 人在场 · ${pv} 次驻足`;
+        badge.style.display = 'flex';
+        console.log('[SiteStats] pv=%d uv=%d', pv, uv);
+    } catch(e) {
+        console.warn('[SiteStats] load failed', e);
+    }
 })();
 </script>
 {% endblock %}
