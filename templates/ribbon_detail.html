@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ ribbon.detail }} — TiedStory 树洞</title>
+    <meta name="description" content="「{{ ribbon.story[:80] }}…」— 在 TiedStory 树洞，有 {{ ribbon.echo_count }} 人回响了这条心声。匿名倾诉，陌生人的陪伴。">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://tiedstory.com/ribbon/{{ ribbon.id }}">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="{{ ribbon.detail }} — TiedStory 树洞">
+    <meta property="og:description" content="「{{ ribbon.story[:80] }}」— 有 {{ ribbon.echo_count }} 人回响。">
+    <meta property="og:url" content="https://tiedstory.com/ribbon/{{ ribbon.id }}">
+    <meta property="og:image" content="https://tiedstory.com/static/images/tree_bg.jpg">
+    <link rel="icon" type="image/svg+xml" href="/static/icons/favicon.svg">
+    <meta name="theme-color" content="#0a0603">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "{{ ribbon.detail }}",
+      "description": "{{ ribbon.story[:120] }}",
+      "url": "https://tiedstory.com/ribbon/{{ ribbon.id }}",
+      "datePublished": "{{ ribbon.created_iso }}",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "TiedStory 树洞",
+        "url": "https://tiedstory.com"
+      },
+      "interactionStatistic": {
+        "@type": "InteractionCounter",
+        "interactionType": "https://schema.org/CommentAction",
+        "userInteractionCount": {{ ribbon.echo_count }}
+      }
+    }
+    </script>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: -apple-system, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: #0a0603;
+            color: #e8ddd0;
+            line-height: 1.8;
+        }
+        a { color: #c9a97a; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .nav {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(10,6,3,0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding: 16px 24px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .nav-logo { font-size: 18px; font-weight: 700; color: #e8ddd0; }
+        .nav-logo span { color: #c9a97a; }
+        .nav-back { font-size: 14px; color: rgba(232,221,208,0.5); }
+        .nav-back:hover { color: #e8ddd0; text-decoration: none; }
+
+        .ribbon-page {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 48px 24px 80px;
+        }
+
+        .ribbon-main {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 32px 28px;
+            margin-bottom: 32px;
+            position: relative;
+        }
+        .ribbon-main::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 20px; bottom: 20px;
+            width: 3px;
+            border-radius: 0 2px 2px 0;
+            background: var(--ribbon-color, #8a8a8a);
+        }
+        .ribbon-story {
+            font-size: 18px;
+            color: #f0e8dc;
+            line-height: 1.75;
+            margin: 0 0 20px;
+            font-weight: 300;
+        }
+        .ribbon-meta {
+            display: flex; gap: 16px;
+            font-size: 13px;
+            color: rgba(232,221,208,0.4);
+        }
+        .ribbon-detail {
+            font-size: 13px;
+            color: rgba(232,221,208,0.45);
+            margin-bottom: 10px;
+        }
+
+        .echoes-section h2 {
+            font-size: 16px;
+            font-weight: 500;
+            color: rgba(232,221,208,0.6);
+            margin: 0 0 16px;
+            letter-spacing: 0.05em;
+        }
+        .echo-item {
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 15px;
+            color: rgba(232,221,208,0.75);
+        }
+        .echo-meta {
+            font-size: 12px;
+            color: rgba(232,221,208,0.3);
+            margin-top: 6px;
+        }
+
+        .cta-box {
+            text-align: center;
+            padding: 40px 24px;
+            border-top: 1px solid rgba(255,255,255,0.07);
+            margin-top: 40px;
+        }
+        .cta-box p {
+            font-size: 15px;
+            color: rgba(232,221,208,0.55);
+            margin: 0 0 20px;
+        }
+        .btn-primary {
+            display: inline-block;
+            padding: 13px 32px;
+            background: linear-gradient(135deg, #c9a97a, #a8845a);
+            color: #0a0603;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .btn-primary:hover { opacity: 0.85; text-decoration: none; }
+
+        footer {
+            text-align: center; padding: 32px 24px;
+            font-size: 12px; color: rgba(232,221,208,0.3);
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        footer a { color: rgba(201,169,122,0.6); }
+    </style>
+</head>
+<body>
+    <nav class="nav" aria-label="主导航">
+        <a href="/" class="nav-logo">Tied<span>Story</span></a>
+        <a href="/" class="nav-back">← 回到树洞</a>
+    </nav>
+
+    <main class="ribbon-page">
+        <article itemscope itemtype="https://schema.org/Article">
+            <meta itemprop="headline" content="{{ ribbon.detail }}">
+            <meta itemprop="datePublished" content="{{ ribbon.created_iso }}">
+
+            <div class="ribbon-main" style="--ribbon-color: var(--color-{{ ribbon.color }}, #8a8a8a)">
+                <div class="ribbon-detail">{{ ribbon.detail }}</div>
+                <p class="ribbon-story" itemprop="text">{{ ribbon.story }}</p>
+                <div class="ribbon-meta">
+                    <span>{{ ribbon.time }}</span>
+                    <span>{{ ribbon.echo_count }} 人回响</span>
+                </div>
+            </div>
+
+            {% if echoes %}
+            <section class="echoes-section" aria-label="回响列表">
+                <h2>{{ echoes | length }} 条回响</h2>
+                {% for echo in echoes %}
+                <div class="echo-item" itemscope itemtype="https://schema.org/Comment">
+                    <span itemprop="text">{{ echo.content }}</span>
+                    <div class="echo-meta">{{ echo.time }}</div>
+                </div>
+                {% endfor %}
+            </section>
+            {% endif %}
+
+            <div class="cta-box">
+                <p>你也有话想说吗？<br>TiedStory 树洞，随时为你开着</p>
+                <a href="/" class="btn-primary">说出你的心声</a>
+            </div>
+        </article>
+    </main>
+
+    <footer>
+        <p>© 2025 TiedStory · <a href="/about">关于</a> · <a href="/topics">情绪专题</a> · <a href="/">进入树洞</a></p>
+        <p style="margin-top:6px;">心理援助热线：400-161-9995</p>
+    </footer>
+    <style>
+        :root {
+            --color-blue: #5b8fd4; --color-orange: #e0884a;
+            --color-pink: #d98fa0; --color-green: #6aab7c;
+            --color-purple: #9b7ec8; --color-gray: #8a8a8a;
+            --color-grey: #8a8a8a; --color-gold: #d4aa45;
+        }
+    </style>
+</body>
+</html>

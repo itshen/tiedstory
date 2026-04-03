@@ -3,7 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TiedStory — 每一条丝带，都是你认真生活的证明</title>
+    <title>TiedStory 树洞 — 说出你的难过，有人在听</title>
+
+    <!-- SEO 核心 meta -->
+    <meta name="description" content="TiedStory 是一个匿名情感树洞，让你说出难过、委屈、失落、迷茫——不评判，只陪伴。每一条心声都会被温柔对待，陌生人的共鸣让你不再孤单。">
+    <meta name="keywords" content="树洞,匿名树洞,情感倾诉,说出难过,心情发泄,匿名倾诉,情绪宣泄,失恋难过,焦虑压力,心事分享,陌生人倾听,暗恋失落,孤独,迷茫,委屈,崩溃,抑郁,难过,心情不好,倾诉心声,情感支持,心理疏导,树洞网站,匿名说话">
+    <meta name="author" content="TiedStory">
+    <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow">
+    <link rel="canonical" href="https://tiedstory.com/">
+
+    <!-- Open Graph (微信/微博/QQ 分享) -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="TiedStory 树洞">
+    <meta property="og:title" content="TiedStory 树洞 — 说出你的难过，有人在听">
+    <meta property="og:description" content="匿名情感树洞，说出难过、委屈、失落、迷茫。不评判，只陪伴。陌生人的共鸣让你不再孤单。">
+    <meta property="og:url" content="https://tiedstory.com/">
+    <meta property="og:image" content="https://tiedstory.com/static/images/tree_bg.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="zh_CN">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="TiedStory 树洞 — 说出你的难过，有人在听">
+    <meta name="twitter:description" content="匿名情感树洞，说出难过、委屈、失落。不评判，只陪伴。">
+    <meta name="twitter:image" content="https://tiedstory.com/static/images/tree_bg.jpg">
+
+    <!-- PWA & 图标 -->
+    <link rel="icon" type="image/svg+xml" href="/static/icons/favicon.svg">
+    <link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png">
+    <meta name="theme-color" content="#0a0603">
+    <meta name="application-name" content="TiedStory 树洞">
+    <meta name="apple-mobile-web-app-title" content="树洞">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+    <!-- JSON-LD 结构化数据 -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "TiedStory 树洞",
+      "alternateName": ["树洞", "TiedStory", "丝带故事"],
+      "url": "https://tiedstory.com",
+      "description": "TiedStory 是一个匿名情感树洞，让你说出难过、委屈、失落、迷茫——不评判，只陪伴。",
+      "inLanguage": "zh-CN",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://tiedstory.com/topics?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "TiedStory 树洞",
+      "url": "https://tiedstory.com",
+      "applicationCategory": "SocialNetworkingApplication",
+      "operatingSystem": "Web",
+      "description": "匿名情感倾诉平台，说出你的难过、委屈、失落。陌生人的温柔回应让你不再孤单。",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "CNY"
+      }
+    }
+    </script>
+
     <link rel="stylesheet" href="/static/css/style.css">
     <style>
         *, *::before, *::after { box-sizing: border-box; }
@@ -18,6 +90,20 @@
     </style>
 </head>
 <body>
+<!-- SEO 语义内容区（搜索引擎可见，用户不可见） -->
+<div style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;" aria-hidden="true">
+  <h1>TiedStory 树洞 — 匿名情感倾诉平台</h1>
+  <p>TiedStory 是一个完全匿名的情感树洞，让你说出难过、委屈、失落、迷茫——不评判，只陪伴。</p>
+  <p>无论你是失恋难过、感到孤独、工作委屈、家庭烦恼、焦虑压力还是莫名难过，都可以在这里倾诉。</p>
+  <nav>
+    <a href="/about">关于 TiedStory 树洞</a>
+    <a href="/topics">情绪专题</a>
+    <a href="/topics/loss">失恋难过</a>
+    <a href="/topics/lonely">孤独无助</a>
+    <a href="/topics/anxiety">焦虑压力</a>
+    <a href="/topics/sad">莫名难过</a>
+  </nav>
+</div>
 {% block content %}{% endblock %}
 <script>
     /* 禁止复制、剪切、右键菜单（见证码区域除外） */

@@ -86,8 +86,332 @@ templates = Jinja2Templates(directory="templates")
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
-    # 首页暂时重定向到 playground 或显示简单信息
     return templates.TemplateResponse("playground/ui.html", {"request": request})
+
+
+# ==========================================
+# SEO 路由
+# ==========================================
+
+SITE_DOMAIN = os.getenv("SITE_DOMAIN", "https://tiedstory.com")
+
+# 所有情绪专题配置
+_TOPICS = {
+    "loss": {
+        "slug": "loss",
+        "title": "失恋难过",
+        "color": "pink",
+        "description": "失恋了，难过是正常的。在 TiedStory 树洞，说出那些没来得及说的话，有人会懂你的感受。",
+        "keywords": "失恋难过,分手伤心,暗恋失败,单相思,失恋怎么办,失恋倾诉,失恋树洞",
+        "lead": "那个人走了，心里空了一块。说出来，就轻了一些。",
+        "article": """
+            <h3>失恋了，你可以难过</h3>
+            <p>失恋是一种真实的失去。无论关系持续了多久，无论对方是主动离开还是被迫分开，那种心里空了一块的感觉，是真实的、有重量的。</p>
+            <p>很多人在失恋后会试图"快点好起来"，用忙碌、旅行、新关系来填满那个空缺。但情绪不会因为被压住就消失，它只是在等待被看见。</p>
+            <h3>在这里，你可以说</h3>
+            <ul>
+                <li>那些还没来得及说的话</li>
+                <li>对那个人的思念、愤怒或不甘</li>
+                <li>不知道该怎么面对的日子</li>
+                <li>害怕再也爱不了人的恐惧</li>
+            </ul>
+            <p>TiedStory 树洞，不评判，不给建议，只是陪着你。</p>
+        """,
+    },
+    "lonely": {
+        "slug": "lonely",
+        "title": "孤独无助",
+        "color": "blue",
+        "description": "孤独不是没有人，而是没有人真的懂你。TiedStory 树洞，陌生人的陪伴，让你不再一个人。",
+        "keywords": "孤独无助,感到孤单,没人懂我,孤独倾诉,孤独树洞,一个人难过,社交孤立",
+        "lead": "身边有人，却依然觉得孤单。这种感觉，很多人都有过。",
+        "article": """
+            <h3>孤独是一种说不出口的痛</h3>
+            <p>有时候孤独不是因为身边没有人，而是即使有人围着你，你也感觉自己好像隔着一层玻璃，触碰不到真正的连接。</p>
+            <p>这种孤独比"一个人待着"更难受——因为你没办法解释，没办法让别人理解，甚至自己都觉得"我有什么资格孤独"。</p>
+            <h3>你不是一个人</h3>
+            <p>在 TiedStory 树洞，每天都有人写下"我很孤独"。你说出来，会有真实的陌生人看见，留下一句简单的"我懂"。那一句话，有时候就够了。</p>
+        """,
+    },
+    "anxiety": {
+        "slug": "anxiety",
+        "title": "焦虑压力",
+        "color": "purple",
+        "description": "睡不着，脑子停不下来，对未来的恐惧压得人喘不过气。TiedStory 树洞，说出你的焦虑。",
+        "keywords": "焦虑压力,睡不着焦虑,压力大倾诉,内耗严重,焦虑树洞,心理压力,焦虑怎么办",
+        "lead": "睡不着，脑子停不下来。说出来，是第一步。",
+        "article": """
+            <h3>焦虑不是你的错</h3>
+            <p>焦虑是大脑在试图保护你——只是有时候它保护得太用力，让你觉得什么都是威胁。对未来的不确定、对结果的恐惧、对"我够不够好"的疑问，都可能触发这种状态。</p>
+            <p>很多人扛着焦虑假装没事，因为"显得脆弱"是一件让人不安全的事。但焦虑一直压着不说，只会越压越重。</p>
+            <h3>把焦虑写下来</h3>
+            <p>研究表明，把担忧和恐惧写出来，能帮助大脑从"预警模式"切换出来。TiedStory 树洞就是这样一个地方——把那些盘旋在脑子里的话，写出来，让它飘走一点。</p>
+        """,
+    },
+    "work": {
+        "slug": "work",
+        "title": "工作委屈",
+        "color": "orange",
+        "description": "被老板骂、被同事排挤、努力没人看见……职场里的委屈，在 TiedStory 树洞说出来。",
+        "keywords": "工作委屈,职场烦恼,被老板骂,同事关系,工作压力倾诉,上班痛苦,工作树洞",
+        "lead": "职场里憋着一口气，说出来吧。",
+        "article": """
+            <h3>职场里的委屈最难说出口</h3>
+            <p>被领导否定、付出没有回报、同事之间的明争暗斗、"你应该感恩有这份工作"……这些话让人把委屈咽下去，表面上继续正常工作。</p>
+            <p>但咽下去的委屈不会消失。它变成了晚上睡不着的那颗心，变成了对工作越来越提不起劲的倦意。</p>
+            <h3>你值得被听见</h3>
+            <p>在 TiedStory 树洞，你可以说那些没办法在公司里说的话——对领导的愤怒，对不公平的委屈，对自己是不是选错了路的困惑。没有人会评判你，也没有人会把你的话截图发出去。</p>
+        """,
+    },
+    "family": {
+        "slug": "family",
+        "title": "家庭烦恼",
+        "color": "orange",
+        "description": "和父母的矛盾，原生家庭的伤，家人之间说不清的疏离……TiedStory 树洞，让你倾诉家庭的烦恼。",
+        "keywords": "家庭烦恼,亲子矛盾,原生家庭,父母压力,和家人吵架,家庭关系倾诉,家庭树洞",
+        "lead": "和家人之间，那些说不清楚的距离。",
+        "article": """
+            <h3>家是最难说清楚的地方</h3>
+            <p>有时候最深的伤不是来自陌生人，而是来自最亲近的家人。被误解、被控制、被比较、被冷落——这些伤因为"那是我家人"而更难开口，更难被理解。</p>
+            <p>很多人觉得在家庭问题上倾诉是一件"背叛"或"不孝"的事。但说出来并不是指责，只是承认那些真实存在的痛。</p>
+        """,
+    },
+    "confused": {
+        "slug": "confused",
+        "title": "迷茫困惑",
+        "color": "purple",
+        "description": "不知道该往哪走，感觉失去了方向——迷茫的时候，来 TiedStory 树洞说说你的困惑。",
+        "keywords": "迷茫困惑,不知道该怎么办,人生迷茫,方向感缺失,迷茫倾诉,迷茫树洞,找不到目标",
+        "lead": "不知道该往哪走，这种感觉很正常。",
+        "article": """
+            <h3>迷茫是成长的一部分</h3>
+            <p>在某个阶段，你可能对一切都失去了确定感——不知道自己想要什么，不知道现在做的事有没有意义，不知道未来会怎样。这种迷茫很正常，但在当下却让人难以承受。</p>
+            <p>迷茫最难受的地方是：它没有一个明确的"原因"，所以也很难找到"解决方案"。有时候只需要一个出口，把那些盘旋在心里的困惑说出来。</p>
+        """,
+    },
+    "tired": {
+        "slug": "tired",
+        "title": "身心疲惫",
+        "color": "green",
+        "description": "太累了，不想动，身体和心都在透支。TiedStory 树洞，允许你说「我好累」。",
+        "keywords": "身心疲惫,太累了,精力透支,倦怠感,疲惫倾诉,疲惫树洞,不想努力了,躺平",
+        "lead": "太累了，只想被允许休息一下。",
+        "article": """
+            <h3>"我好累"这三个字，很难说出口</h3>
+            <p>在一个鼓励"努力""坚持""加油"的环境里，承认自己累了需要一点勇气。好像说累了就等于放弃，等于不够努力，等于辜负了什么人。</p>
+            <p>但疲惫是真实的。持续透支的身体和心理，会在某一刻崩溃。允许自己说出"我好累"，是照顾自己的第一步。</p>
+        """,
+    },
+    "miss": {
+        "slug": "miss",
+        "title": "思念某人",
+        "color": "pink",
+        "description": "想一个联系不到的人。思念、遗憾、想说却没机会说的话——TiedStory 树洞，让你说出来。",
+        "keywords": "思念某人,想一个人,思念树洞,想念但联系不到,遗憾思念,暗恋思念倾诉",
+        "lead": "想一个联系不到的人，那些没说出口的话。",
+        "article": """
+            <h3>思念是一种很重的东西</h3>
+            <p>思念一个人的感觉很奇怪——你明明知道没有结果，知道联系了也回不到从前，但那种想念还是会在某个不经意的时刻突然涌上来。</p>
+            <p>那些没来得及说的话，说不出口的话，在心里反复排练却永远没机会讲的话——可以在这里说。没有人会知道是谁，但有人会看见。</p>
+        """,
+    },
+    "sad": {
+        "slug": "sad",
+        "title": "莫名难过",
+        "color": "blue",
+        "description": "说不清楚为什么，就是很难过。TiedStory 树洞，你不需要解释原因，难过本身就值得被倾诉。",
+        "keywords": "莫名难过,说不出原因的难过,无缘无故难过,难过倾诉,难过树洞,心情低落",
+        "lead": "说不出原因，就是很难过。不需要解释。",
+        "article": """
+            <h3>难过不需要理由</h3>
+            <p>有时候人们会对自己说"我没有资格难过，比我惨的人多的是"。但情绪不是这样运作的——难过不需要排名，不需要"够格"，它就是存在着。</p>
+            <p>莫名难过有时候是一种信号，提示你有什么东西被压抑了太久，或者你需要休息了，或者有什么正在悄悄消耗你。说出来，是听见自己的开始。</p>
+        """,
+    },
+    "angry": {
+        "slug": "angry",
+        "title": "委屈愤怒",
+        "color": "orange",
+        "description": "被误解、被辜负、憋着一口气发不出来。TiedStory 树洞，把愤怒和委屈说出来。",
+        "keywords": "委屈愤怒,被误解,被辜负,发泄愤怒,委屈倾诉,愤怒树洞,气愤发泄",
+        "lead": "被误解、被辜负，憋着那口气。",
+        "article": """
+            <h3>愤怒和委屈都值得被说出来</h3>
+            <p>愤怒往往是因为某种重要的东西被侵犯——你的边界、你的付出、你的尊严。它不是"小气"，它是一种信号。</p>
+            <p>委屈比愤怒更难说出口，因为它需要你承认自己"在乎"——在乎那个人的看法，在乎那件事的结果，在乎自己被不公平对待。在这里，可以说。</p>
+        """,
+    },
+    "numb": {
+        "slug": "numb",
+        "title": "麻木空洞",
+        "color": "gray",
+        "description": "感觉不到自己，什么都无所谓，空洞洞的。TiedStory 树洞，即使说不出什么，也可以来这里待一会儿。",
+        "keywords": "麻木空洞,感觉不到情绪,情感麻木,内心空洞,麻木倾诉,情绪空洞树洞",
+        "lead": "感觉不到自己，什么都无所谓。",
+        "article": """
+            <h3>麻木也是一种情绪</h3>
+            <p>有时候情绪不是涌出来，而是消失了——你觉得自己什么都感觉不到，笑不出来，哭不出来，对什么都提不起兴趣。这种麻木感有时候比悲伤更让人困惑。</p>
+            <p>麻木通常是长期压力或悲伤之后，心理的一种自我保护机制。但它不代表你没事了。你还在，你只是暂时听不见自己的声音。</p>
+        """,
+    },
+    "hope": {
+        "slug": "hope",
+        "title": "期待感恩",
+        "color": "gold",
+        "description": "有好消息，有感动，有想分享的小幸运——TiedStory 树洞，也接受温暖和喜悦。",
+        "keywords": "期待感恩,好消息分享,感恩倾诉,开心分享树洞,小确幸,正向情绪倾诉",
+        "lead": "有好事，也想和某个人说说。",
+        "article": """
+            <h3>喜悦也需要一个出口</h3>
+            <p>树洞不只是装难过的地方。有时候你有一件很开心的事，但身边没有合适的人分享——或者你不想给别人增加负担，或者对方不会理解你高兴的原因。</p>
+            <p>在这里，你可以说出那些小小的好事、让你感动的瞬间、让你觉得"活着真好"的片刻。陌生人会为你高兴的。</p>
+        """,
+    },
+}
+
+_RELATED_MAP = {
+    "loss":     ["miss", "lonely", "sad", "angry"],
+    "lonely":   ["sad", "numb", "confused", "miss"],
+    "anxiety":  ["work", "confused", "tired", "numb"],
+    "work":     ["anxiety", "angry", "tired", "confused"],
+    "family":   ["angry", "sad", "lonely", "confused"],
+    "confused": ["anxiety", "tired", "numb", "hope"],
+    "tired":    ["numb", "work", "anxiety", "confused"],
+    "miss":     ["loss", "sad", "lonely", "pink"],
+    "sad":      ["lonely", "numb", "loss", "miss"],
+    "angry":    ["work", "family", "loss", "sad"],
+    "numb":     ["sad", "tired", "lonely", "confused"],
+    "hope":     ["loss", "tired", "confused", "sad"],
+}
+
+
+@app.get("/robots.txt")
+async def robots_txt():
+    from fastapi.responses import PlainTextResponse
+    content = f"""User-agent: *
+Allow: /
+Allow: /about
+Allow: /topics
+Allow: /topics/
+Allow: /ribbon/
+
+Disallow: /admin
+Disallow: /admin/
+Disallow: /playground/
+Disallow: /api/
+
+Sitemap: {SITE_DOMAIN}/sitemap.xml
+"""
+    return PlainTextResponse(content, headers={"Cache-Control": "public, max-age=86400"})
+
+
+@app.get("/sitemap.xml")
+async def sitemap_xml():
+    from fastapi.responses import Response
+    import datetime
+
+    now = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    # 静态页面
+    static_urls = [
+        ("", "1.0", "daily"),
+        ("about", "0.8", "monthly"),
+        ("topics", "0.9", "weekly"),
+    ] + [(f"topics/{slug}", "0.8", "weekly") for slug in _TOPICS.keys()]
+
+    url_entries = ""
+    for path, priority, changefreq in static_urls:
+        loc = f"{SITE_DOMAIN}/{path}" if path else SITE_DOMAIN
+        url_entries += f"""  <url>
+    <loc>{loc}</loc>
+    <lastmod>{now}</lastmod>
+    <changefreq>{changefreq}</changefreq>
+    <priority>{priority}</priority>
+  </url>
+"""
+
+    # 动态丝带页（最新 200 条）
+    try:
+        ribbons = database.list_ribbons(limit=200, offset=0)
+        for r in ribbons:
+            import datetime as _dtt
+            dt = _dtt.datetime.utcfromtimestamp(r["created_at"]).strftime("%Y-%m-%dT%H:%M:%SZ")
+            url_entries += f"""  <url>
+    <loc>{SITE_DOMAIN}/ribbon/{r['id']}</loc>
+    <lastmod>{dt}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+"""
+    except Exception as e:
+        logger.warning(f"[Sitemap] Failed to fetch ribbons: {e}")
+
+    xml = f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{url_entries}</urlset>"""
+
+    return Response(
+        content=xml,
+        media_type="application/xml",
+        headers={"Cache-Control": "public, max-age=3600"}
+    )
+
+
+@app.get("/about", response_class=HTMLResponse)
+async def about_page(request: Request):
+    return templates.TemplateResponse("about.html", {"request": request})
+
+
+@app.get("/topics", response_class=HTMLResponse)
+async def topics_page(request: Request):
+    return templates.TemplateResponse("topics.html", {"request": request})
+
+
+@app.get("/topics/{slug}", response_class=HTMLResponse)
+async def topic_detail(request: Request, slug: str):
+    topic = _TOPICS.get(slug)
+    if not topic:
+        raise HTTPException(status_code=404, detail="Topic not found")
+
+    # 获取该话题对应颜色的最新丝带
+    color = topic["color"]
+    try:
+        raw_ribbons = database.list_ribbons(limit=8, offset=0, color=color)
+        ribbons = [{"id": r["id"], "color": r["color"], "text": r["story"][:100], "echo": r["echo_count"], "time": time_ago(r["created_at"])} for r in raw_ribbons]
+    except Exception:
+        ribbons = []
+
+    related_slugs = _RELATED_MAP.get(slug, [])[:6]
+    related_topics = [{"slug": s, "title": _TOPICS[s]["title"]} for s in related_slugs if s in _TOPICS]
+
+    return templates.TemplateResponse("topic.html", {
+        "request": request,
+        "topic": topic,
+        "ribbons": ribbons,
+        "related_topics": related_topics,
+    })
+
+
+@app.get("/ribbon/{ribbon_id}", response_class=HTMLResponse)
+async def ribbon_detail_page(request: Request, ribbon_id: str):
+    """丝带详情 SEO 页面"""
+    import datetime as _dt_ribbon
+    ribbon_id = ribbon_id.upper()
+    data = database.get_ribbon(ribbon_id)
+    if not data:
+        raise HTTPException(status_code=404, detail="Ribbon not found")
+    data["time"] = time_ago(data["created_at"])
+    data["created_iso"] = _dt_ribbon.datetime.utcfromtimestamp(data["created_at"]).strftime("%Y-%m-%dT%H:%M:%SZ")
+    if not data.get("detail"):
+        data["detail"] = data["story"][:30] + "…" if len(data["story"]) > 30 else data["story"]
+    for e in data.get("echoes", []):
+        e["time"] = time_ago(e["created_at"])
+    logger.info(f"[RibbonPage] id={ribbon_id}")
+    return templates.TemplateResponse("ribbon_detail.html", {
+        "request": request,
+        "ribbon": data,
+        "echoes": data.get("echoes", []),
+    })
 
 
 @app.get("/sw.js")

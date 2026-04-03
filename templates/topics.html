@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>情绪专题 — TiedStory 树洞 · 难过、失恋、迷茫、委屈……都在这里</title>
+    <meta name="description" content="TiedStory 树洞情绪专题：失恋难过、孤独无助、焦虑压力、迷茫困惑、工作委屈、家庭烦恼……不管你正在经历什么，这里都有人能懂你。">
+    <meta name="keywords" content="情绪专题,失恋难过,孤独无助,焦虑压力,迷茫困惑,工作委屈,家庭烦恼,身心疲惫,思念某人,莫名难过,心情不好,树洞话题,情感分类">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://tiedstory.com/topics">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="情绪专题 — TiedStory 树洞">
+    <meta property="og:description" content="失恋、孤独、焦虑、迷茫……找到和你一样的人，你不是一个人。">
+    <meta property="og:url" content="https://tiedstory.com/topics">
+    <meta property="og:image" content="https://tiedstory.com/static/images/tree_bg.jpg">
+    <link rel="icon" type="image/svg+xml" href="/static/icons/favicon.svg">
+    <meta name="theme-color" content="#0a0603">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "TiedStory 情绪专题",
+      "description": "失恋难过、孤独无助、焦虑压力……找到和你一样正在经历这些的人。",
+      "url": "https://tiedstory.com/topics",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "TiedStory 树洞",
+        "url": "https://tiedstory.com"
+      }
+    }
+    </script>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: -apple-system, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: #0a0603;
+            color: #e8ddd0;
+            line-height: 1.8;
+        }
+        a { color: #c9a97a; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .nav {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(10,6,3,0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding: 16px 24px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .nav-logo { font-size: 18px; font-weight: 700; color: #e8ddd0; }
+        .nav-logo span { color: #c9a97a; }
+        .nav-links { display: flex; gap: 24px; font-size: 14px; }
+        .nav-links a { color: rgba(232,221,208,0.7); }
+        .nav-links a:hover { color: #e8ddd0; text-decoration: none; }
+
+        .hero {
+            text-align: center;
+            padding: 64px 24px 48px;
+            max-width: 640px;
+            margin: 0 auto;
+        }
+        .hero h1 {
+            font-size: clamp(26px, 4vw, 40px);
+            font-weight: 300;
+            color: #f0e8dc;
+            margin: 0 0 16px;
+            letter-spacing: 0.03em;
+        }
+        .hero p {
+            font-size: 15px;
+            color: rgba(232,221,208,0.6);
+        }
+
+        .topics-container {
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 0 24px 80px;
+        }
+        .topics-group { margin-bottom: 48px; }
+        .topics-group h2 {
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(232,221,208,0.4);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin: 0 0 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        .topic-card {
+            display: block;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 14px;
+            padding: 20px 18px;
+            transition: background 0.2s, border-color 0.2s, transform 0.15s;
+        }
+        .topic-card:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(201,169,122,0.25);
+            transform: translateY(-2px);
+            text-decoration: none;
+        }
+        .topic-card-color {
+            width: 28px; height: 4px;
+            border-radius: 2px;
+            margin-bottom: 14px;
+        }
+        .topic-card h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #f0e8dc;
+            margin: 0 0 8px;
+        }
+        .topic-card p {
+            font-size: 13px;
+            color: rgba(232,221,208,0.5);
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        footer {
+            text-align: center; padding: 36px 24px;
+            font-size: 13px; color: rgba(232,221,208,0.35);
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        footer a { color: rgba(201,169,122,0.7); }
+    </style>
+</head>
+<body>
+    <nav class="nav" aria-label="主导航">
+        <a href="/" class="nav-logo">Tied<span>Story</span></a>
+        <div class="nav-links">
+            <a href="/">树洞</a>
+            <a href="/topics" aria-current="page">专题</a>
+            <a href="/about">关于</a>
+        </div>
+    </nav>
+
+    <main>
+        <div class="hero">
+            <h1>你现在的感受<br>这里都有人懂</h1>
+            <p>选一个最接近你此刻心情的话题，看看有多少人和你一样</p>
+        </div>
+
+        <div class="topics-container">
+            <div class="topics-group">
+                <h2>关系与情感</h2>
+                <div class="topics-grid" role="list">
+                    <a href="/topics/loss" class="topic-card" role="listitem">
+                        <div class="topic-card-color" style="background:#d98fa0;"></div>
+                        <h3>失恋难过</h3>
+                        <p>那个人走了，心里空了一块</p>
+                    </a>
+                    <a href="/topics/miss" class="topic-card" role="listitem">
+                        <div class="topic-card-color" style="background:#d98fa0;"></div>
+                        <h3>思念某人</h3>
+                        <p>想一个联系不到的人</p>
+                    </a>
+                    <a href="/topics/lonely" class="topic-card" role="listitem">
+                        <div class="topic-card-color" style="background:#5b8fd4;"></div>
+                        <h3>孤独无助</h3>
+                        <p>身边有人却依然觉得孤单</p>
+                    </a>
+                    <a href="/topics/family" class="topic-card" role="listitem">
+                        <div class="topic-card-color" style="background:#e0884a;"></div>
+                        <h3>家庭烦恼</h3>
+                        <p>和家人之间说不清楚的距离</p>
+                    </a>
+                </div>
+            </div>
+
+            <div class="topics-group">
+                <h2>心情与情绪</h2>
+                <div class="topics-grid" role="list">
+                    <a href="/topics/sad" class="topic-card" role="listitem">
+                        <div class="topic-card-color" style="background:#5b8fd4;"></div>
+                        <h3>莫名难过</h3>
+                        <p>说不出原因，就是很难过</p>
+                    </a>
+                    <a href="/topics/angry" class="topic-card" role="listitem">
+                        <div class="topic-card-color" style="background:#e0884a;"></div>
+                        <h3>委屈愤怒</h3>
+                        <p>被误解、被辜负、压着火</p>
+                    </a>
+                    <a href="/topics/numb" class="topic-card" role="listitem">
+                        <div class="topic-card-color" style="background:#8a8a8a;"></div>
+                        <h3>麻木空洞</h3>
+                        <p>感觉不到自己，什么都无所谓</p>
+                    </a>
+                    <a href="/topics/hope" class="topic-card" role="listitem">
+                        <div class="topic-card-color" style="background:#d4aa45;"></div>
+                        <h3>期待感恩</h3>
+                        <p>有好事想和某个人分享</p>
+                    </a>
+                </div>
+            </div>
+
+            <div class="topics-group">
+                <h2>压力与状态</h2>
+                <div class="topics-grid" role="list">
+                    <a href="/topics/anxiety" class="topic-card" role="listitem">
+                        <div class="topic-card-color" style="background:#9b7ec8;"></div>
+                        <h3>焦虑压力</h3>
+                        <p>睡不着，脑子停不下来</p>
+                    </a>
+                    <a href="/topics/work" class="topic-card" role="listitem">
+                        <div class="topic-card-color" style="background:#e0884a;"></div>
+                        <h3>工作委屈</h3>
+                        <p>职场里憋着一口气</p>
+                    </a>
+                    <a href="/topics/tired" class="topic-card" role="listitem">
+                        <div class="topic-card-color" style="background:#6aab7c;"></div>
+                        <h3>身心疲惫</h3>
+                        <p>太累了，只想休息一下</p>
+                    </a>
+                    <a href="/topics/confused" class="topic-card" role="listitem">
+                        <div class="topic-card-color" style="background:#9b7ec8;"></div>
+                        <h3>迷茫困惑</h3>
+                        <p>不知道该往哪走</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2025 TiedStory · <a href="/about">关于</a> · <a href="/topics">情绪专题</a> · <a href="/">进入树洞</a></p>
+        <p style="margin-top:6px; font-size:11px; opacity:0.6;">心理援助热线：400-161-9995</p>
+    </footer>
+</body>
+</html>
