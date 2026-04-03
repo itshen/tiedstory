@@ -57,7 +57,7 @@ async def static_cache_middleware(request, call_next):
 
 # 统计前台页面 PV/UV（排除静态资源、API 接口和管理后台）
 _TRACK_PREFIXES = ("/", )
-_SKIP_PREFIXES = ("/static/", "/admin", "/sw.js", "/favicon")
+_SKIP_PREFIXES = ("/static/", "/admin", "/sw.js")
 
 @app.middleware("http")
 async def pv_tracking_middleware(request: Request, call_next):
