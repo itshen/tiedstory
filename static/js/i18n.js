@@ -3,6 +3,121 @@
  * 支持：zh-CN（简中）、zh-TW（繁中）、en、ja、ko、fr、ru
  */
 
+// 主题专题翻译（供 about.html / topics.html 等页面使用）
+const TOPIC_I18N = {
+  'zh-CN': {
+    loss: '失恋难过', lonely: '孤独无助', anxiety: '焦虑压力', work: '工作委屈',
+    family: '家庭烦恼', confused: '迷茫困惑', tired: '身心疲惫', miss: '思念某人',
+    sad: '莫名想倾诉', angry: '委屈愤怒', numb: '麻木空洞', hope: '期待感恩'
+  },
+  'zh-TW': {
+    loss: '失戀難過', lonely: '孤獨無助', anxiety: '焦慮壓力', work: '工作委屈',
+    family: '家庭煩惱', confused: '迷茫困惑', tired: '身心疲憊', miss: '思念某人',
+    sad: '莫名想傾訴', angry: '委屈憤怒', numb: '麻木空洞', hope: '期待感恩'
+  },
+  'en': {
+    loss: 'Heartbreak', lonely: 'Loneliness', anxiety: 'Anxiety', work: 'Work Stress',
+    family: 'Family Issues', confused: 'Confused', tired: 'Exhausted', miss: 'Missing Someone',
+    sad: 'Need to Talk', angry: 'Anger & Grievance', numb: 'Numb & Empty', hope: 'Joy & Gratitude'
+  },
+  'ja': {
+    loss: '失恋・悲しみ', lonely: '孤独', anxiety: '不安・ストレス', work: '職場の不満',
+    family: '家族の悩み', confused: '迷い・困惑', tired: '疲労・倦怠', miss: '人を想う',
+    sad: '話したい', angry: '怒り・悔しさ', numb: '無感覚・虚無', hope: '喜び・感謝'
+  },
+  'ko': {
+    loss: '이별 슬픔', lonely: '외로움', anxiety: '불안 스트레스', work: '직장 고충',
+    family: '가족 고민', confused: '방황 혼란', tired: '피로 권태', miss: '그리움',
+    sad: '토로하고 싶음', angry: '분노 억울함', numb: '무감각 공허', hope: '기쁨 감사'
+  },
+  'fr': {
+    loss: 'Peine de cœur', lonely: 'Solitude', anxiety: 'Anxiété', work: 'Stress au travail',
+    family: 'Problèmes familiaux', confused: 'Confusion', tired: 'Épuisement', miss: 'Manque de quelqu\'un',
+    sad: 'Besoin de parler', angry: 'Colère & Rancœur', numb: 'Engourdissement', hope: 'Joie & Gratitude'
+  },
+  'ru': {
+    loss: 'Боль расставания', lonely: 'Одиночество', anxiety: 'Тревога', work: 'Рабочий стресс',
+    family: 'Семейные проблемы', confused: 'Растерянность', tired: 'Усталость', miss: 'Скучаю по кому-то',
+    sad: 'Нужно выговориться', angry: 'Гнев и обида', numb: 'Оцепенение', hope: 'Радость и благодарность'
+  }
+};
+
+// about.html 页面专用翻译
+const ABOUT_PAGE_I18N = {
+  'zh-CN': {
+    heroTitle: '说出来就好<br>这里不会有人知道是你',
+    heroDesc: '不需要注册，不需要账号，没有任何记录能追溯到你。<br>只是写下来——我们都在这里。',
+    heroBtn: '系一条丝带',
+    statRibbons: '条心声', statEchoes: '次回响', statAnytime: '随时倾诉',
+    ctaTitle: '准备好了吗？', ctaDesc: '把那句憋在心里的话，写下来吧。没有账号，没有记录。', ctaBtn: '进入树洞，系一条丝带'
+  },
+  'zh-TW': {
+    heroTitle: '說出來就好<br>這裡不會有人知道是你',
+    heroDesc: '不需要註冊，不需要帳號，沒有任何記錄能追溯到你。<br>只是寫下來——我們都在這裡。',
+    heroBtn: '繫一條絲帶',
+    statRibbons: '條心聲', statEchoes: '次回響', statAnytime: '隨時傾訴',
+    ctaTitle: '準備好了嗎？', ctaDesc: '把那句憋在心裡的話，寫下來吧。沒有帳號，沒有記錄。', ctaBtn: '進入樹洞，繫一條絲帶'
+  },
+  'en': {
+    heroTitle: 'Just say it.<br>No one here will know it\'s you.',
+    heroDesc: 'No registration. No account. No traces leading to you.<br>Just write it down — we\'re here.',
+    heroBtn: 'Tie a Ribbon',
+    statRibbons: 'stories', statEchoes: 'echoes', statAnytime: 'available anytime',
+    ctaTitle: 'Ready?', ctaDesc: 'Write down the words you\'ve been holding back. No account. No trace.', ctaBtn: 'Enter the Tree'
+  },
+  'ja': {
+    heroTitle: '言えばいい<br>ここにいる誰もあなただとは分からない',
+    heroDesc: '登録不要、アカウント不要、あなたをたどる記録もない。<br>ただ書けばいい——私たちはここにいる。',
+    heroBtn: 'リボンを結ぶ',
+    statRibbons: 'つのストーリー', statEchoes: 'つの共鳴', statAnytime: 'いつでも話せる',
+    ctaTitle: '準備はいいですか？', ctaDesc: '心にしまっておいた言葉を書きましょう。アカウントも記録もありません。', ctaBtn: '樹に入る'
+  },
+  'ko': {
+    heroTitle: '말하면 돼<br>여기선 아무도 당신인 줄 모릅니다',
+    heroDesc: '가입 없이, 계정 없이, 당신을 추적할 기록도 없이.<br>그냥 적으세요——우리는 여기 있습니다.',
+    heroBtn: '리본 묶기',
+    statRibbons: '개의 이야기', statEchoes: '번의 공명', statAnytime: '언제든 털어놓을 수 있어요',
+    ctaTitle: '준비됐나요?', ctaDesc: '마음속에 담아뒀던 말을 적어보세요. 계정도 기록도 없습니다.', ctaBtn: '나무로 들어가기'
+  },
+  'fr': {
+    heroTitle: 'Dis-le.<br>Personne ici ne saura que c\'est toi.',
+    heroDesc: 'Pas d\'inscription. Pas de compte. Aucune trace menant à toi.<br>Écris simplement — nous sommes là.',
+    heroBtn: 'Nouer un ruban',
+    statRibbons: 'histoires', statEchoes: 'échos', statAnytime: 'disponible à tout moment',
+    ctaTitle: 'Prêt(e) ?', ctaDesc: 'Écris la phrase que tu gardes au fond de toi. Sans compte, sans trace.', ctaBtn: 'Entrer dans l\'arbre'
+  },
+  'ru': {
+    heroTitle: 'Просто скажи.<br>Никто здесь не узнает, что это ты.',
+    heroDesc: 'Без регистрации. Без аккаунта. Без следов, ведущих к тебе.<br>Просто напиши — мы рядом.',
+    heroBtn: 'Завязать ленту',
+    statRibbons: 'историй', statEchoes: 'откликов', statAnytime: 'можно выговориться в любой момент',
+    ctaTitle: 'Готов(а)?', ctaDesc: 'Запиши ту самую фразу, которую давно держишь внутри. Без аккаунта. Без следов.', ctaBtn: 'Войти в дерево'
+  }
+};
+
+/**
+ * 获取专题翻译
+ */
+function getTopicI18n(slug, lang) {
+  const t = TOPIC_I18N[lang] || TOPIC_I18N['zh-CN'];
+  return t[slug] || slug;
+}
+
+/**
+ * 获取 about 页面翻译
+ */
+function getAboutI18n(lang) {
+  return ABOUT_PAGE_I18N[lang] || ABOUT_PAGE_I18N['zh-CN'];
+}
+
+/**
+ * 初始化 i18n（供各页面调用）
+ */
+function i18nInit() {
+  i18nApply();
+  i18nRenderSwitcher();
+}
+
 const I18N_LANGS = {
   'zh-CN': {
     flag: '🇨🇳', label: '简体中文', dir: 'ltr',
@@ -140,6 +255,20 @@ const I18N_LANGS = {
       tie_confirm: '好，我記下了',
       crisis_text: '或者聯繫',
       crisis_link: '生命熱線',
+      share_link: '複製分享連結',
+      share_copied: '已複製',
+      author_toggle: '我是這條絲帶的作者，想追加內容',
+      crisis_title: '我們注意到一些讓你痛苦的字句',
+      crisis_body_html: '你現在的感受很重要。如果此刻非常難受，可以撥打心理援助熱線 <strong style="color:rgba(240,150,150,0.85);">400-161-9995</strong>，或者聯繫 <a class="tie-crisis-link" href="https://www.lifeline.org.cn" target="_blank">生命熱線</a>，那裡有人願意聽你說。<br><br>這條絲帶暫時無法繫上，但你不是一個人。',
+      rewrite: '重新寫',
+      wps_save: '存到 WPS 筆記，永久保管',
+      wps_archive: '前往 WPS 筆記永久保管',
+      welcome_story_html: '有一個人，今天終於把那句憋了很久的話，寫了下來。<br><br>不是給任何人看的，只是寫下來。<br><br>寫完之後，她把它掛在了這裡。輕了一些，也好了一點點。',
+      welcome_desc_html: '這裡是 <strong>TiedStory</strong>。<br>不用註冊，不用解釋，也不用擔心被認出來。<br><br>你只需要把心裡的那句話，繫成一條絲帶。<br>它會留在樹上，被風吹動，也可能被某個陌生人溫柔地看見。',
+      loading_failed: '載入失敗，請重試。',
+      witness_entered: '已輸入',
+      checking: '檢測中…',
+      submitting: '提交中…',
       resonance_count: (n) => `回響 · ${n}`,
       resonance_placeholder: '寫下你的回響（50字以內）…',
       resonance_submit: '留下回響',
@@ -242,6 +371,20 @@ const I18N_LANGS = {
       pg_demo_mode: 'Time-lapse demo (30s/period)',
       pg_auto_hint: 'Auto-switches by real season and time of day',
       pg_demo_hint: 'Demo: cycles through 4 periods every 30s, then moves to the next season',
+      share_link: 'Copy share link',
+      share_copied: 'Copied',
+      author_toggle: 'I wrote this ribbon and want to add more',
+      crisis_title: 'We noticed some painful words',
+      crisis_body_html: 'Your feelings matter. If you are in distress, call the national psychological support hotline <strong style="color:rgba(240,150,150,0.85);">400-161-9995</strong>, or contact <a class="tie-crisis-link" href="https://www.lifeline.org.cn" target="_blank">crisis line</a>. Someone there will listen.<br><br>This ribbon cannot be posted right now, but you are not alone.',
+      rewrite: 'Rewrite',
+      wps_save: 'Save to WPS Notes',
+      wps_archive: 'Open WPS Notes',
+      welcome_story_html: 'Someone finally wrote down the words they had held inside for so long.<br><br>Not for anyone to read — just to write them.<br><br>Afterwards, they hung it here. It felt a little lighter.',
+      welcome_desc_html: 'This is <strong>TiedStory</strong>.<br>No signup, no explanation, no fear of being recognized.<br><br>Turn what you carry into a ribbon.<br>It stays on the tree, moves with the wind, and may be gently seen by a stranger.',
+      loading_failed: 'Failed to load. Please try again.',
+      witness_entered: 'Entered',
+      checking: 'Checking…',
+      submitting: 'Submitting…',
     }
   },
 
@@ -312,6 +455,20 @@ const I18N_LANGS = {
       pg_demo_mode: 'タイムラプスデモ（30秒/時間帯）',
       pg_auto_hint: '実際の季節・時刻に合わせて自動切替',
       pg_demo_hint: 'デモ中：30秒ごとに時間帯が変わり、4つ終わると次の季節へ',
+      share_link: '共有リンクをコピー',
+      share_copied: 'コピーしました',
+      author_toggle: 'このリボンの作者で、追記したい',
+      crisis_title: 'つらい言葉が含まれているようです',
+      crisis_body_html: '今の気持ちは大切です。とても苦しいときは、全国心理援助ホットライン <strong style="color:rgba(240,150,150,0.85);">400-161-9995</strong>、または <a class="tie-crisis-link" href="https://www.lifeline.org.cn" target="_blank">いのちの電話</a> へ。話を聞いてくれる人がいます。<br><br>今はこのリボンを結べませんが、あなたはひとりではありません。',
+      rewrite: '書き直す',
+      wps_save: 'WPS ノートに保存',
+      wps_archive: 'WPS ノートを開く',
+      welcome_story_html: 'ある人が、ずっと胸にしまっていた言葉を、今日やっと書いた。<br><br>誰に見せるためではなく、ただ書くために。<br><br>書き終えて、ここに掛けた。少しだけ軽くなった。',
+      welcome_desc_html: 'ここは <strong>TiedStory</strong>。<br>登録も説明も、バレる心配もいらない。<br><br>心の一言を、リボンにして結ぶだけ。<br>木に残り、風に揺れ、誰かの目に優しく触れるかもしれない。',
+      loading_failed: '読み込みに失敗しました。もう一度お試しください。',
+      witness_entered: '入力済み',
+      checking: '確認中…',
+      submitting: '送信中…',
     }
   },
 
@@ -382,6 +539,20 @@ const I18N_LANGS = {
       pg_demo_mode: '타임랩스 데모 (30초/시간대)',
       pg_auto_hint: '실제 계절과 시간에 맞춰 자동 전환',
       pg_demo_hint: '데모: 30초마다 시간대 전환, 4개 완료 후 다음 계절로',
+      share_link: '공유 링크 복사',
+      share_copied: '복사됨',
+      author_toggle: '이 리본의 작성자로 더 쓰고 싶어요',
+      crisis_title: '괴로운 표현이 감지되었습니다',
+      crisis_body_html: '지금 당신의 감정은 소중합니다. 너무 힘들다면 전국 심리 지원 핫라인 <strong style="color:rgba(240,150,150,0.85);">400-161-9995</strong> 또는 <a class="tie-crisis-link" href="https://www.lifeline.org.cn" target="_blank">위기상담전화</a>로 연락하세요. 들어줄 사람이 있습니다.<br><br>지금은 리본을 묶을 수 없지만, 당신은 혼자가 아닙니다.',
+      rewrite: '다시 쓰기',
+      wps_save: 'WPS 노트에 저장',
+      wps_archive: 'WPS 노트 열기',
+      welcome_story_html: '오늘 한 사람이 오래 마음에 담아두었던 말을 드디어 적었습니다.<br><br>누구에게 보여주려는 게 아니라, 그냥 적기 위해.<br><br>적고 나서 여기에 걸었습니다. 조금은 가벼워졌습니다.',
+      welcome_desc_html: '여기는 <strong>TiedStory</strong>입니다.<br>가입도 설명도, 들킬 걱정도 없습니다.<br><br>마음 속 한마디를 리본으로 묶으세요.<br>나무에 남고 바람에 흔들리며 누군가의 눈에 은은히 닿을 수 있습니다.',
+      loading_failed: '불러오지 못했습니다. 다시 시도해 주세요.',
+      witness_entered: '입력됨',
+      checking: '확인 중…',
+      submitting: '제출 중…',
     }
   },
 
@@ -452,6 +623,20 @@ const I18N_LANGS = {
       pg_demo_mode: 'Démo time-lapse (30s/période)',
       pg_auto_hint: 'Bascule automatiquement selon la saison et l\'heure réelles',
       pg_demo_hint: 'Démo : cycles de 30s par période, puis passage à la saison suivante',
+      share_link: 'Copier le lien',
+      share_copied: 'Copié',
+      author_toggle: 'J\'ai écrit ce ruban et je veux ajouter du texte',
+      crisis_title: 'Nous avons remarqué des mots douloureux',
+      crisis_body_html: 'Ce que tu ressens compte. Si tu vas très mal, appelle la ligne d\'aide psychologique nationale <strong style="color:rgba(240,150,150,0.85);">400-161-9995</strong> ou contacte <a class="tie-crisis-link" href="https://www.lifeline.org.cn" target="_blank">la ligne de crise</a>. Quelqu\'un t\'écoutera.<br><br>Ce ruban ne peut pas être noué pour l\'instant, mais tu n\'es pas seul(e).',
+      rewrite: 'Réécrire',
+      wps_save: 'Enregistrer dans WPS Notes',
+      wps_archive: 'Ouvrir WPS Notes',
+      welcome_story_html: 'Quelqu\'un a enfin écrit les mots qu\'il retenait depuis longtemps.<br><br>Pas pour être lu — seulement pour les écrire.<br><br>Puis il les a accrochés ici. Un peu plus léger.',
+      welcome_desc_html: 'Ici, c\'est <strong>TiedStory</strong>.<br>Pas d\'inscription, pas d\'explication, pas de peur d\'être reconnu(e).<br><br>Transforme ton fardeau en ruban.<br>Elle reste sur l\'arbre, bouge au vent, et peut être vue par un inconnu.',
+      loading_failed: 'Échec du chargement. Réessaie.',
+      witness_entered: 'Saisi',
+      checking: 'Vérification…',
+      submitting: 'Envoi…',
     }
   },
 
@@ -522,6 +707,20 @@ const I18N_LANGS = {
       pg_demo_mode: 'Демо покадровой съёмки (30с/период)',
       pg_auto_hint: 'Автопереключение по реальному сезону и времени суток',
       pg_demo_hint: 'Демо: 30с на период, 4 периода — следующий сезон',
+      share_link: 'Копировать ссылку',
+      share_copied: 'Скопировано',
+      author_toggle: 'Я автор этой ленты и хочу добавить текст',
+      crisis_title: 'Мы заметили болезненные слова',
+      crisis_body_html: 'Твои чувства важны. Если очень тяжело, позвони на горячую линию психологической помощи <strong style="color:rgba(240,150,150,0.85);">400-161-9995</strong> или свяжись с <a class="tie-crisis-link" href="https://www.lifeline.org.cn" target="_blank">линией помощи</a>. Там выслушают.<br><br>Сейчас ленту нельзя завязать, но ты не один(а).',
+      rewrite: 'Переписать',
+      wps_save: 'Сохранить в WPS Notes',
+      wps_archive: 'Открыть WPS Notes',
+      welcome_story_html: 'Кто-то наконец записал слова, которые давно держал внутри.<br><br>Не для кого-то — просто чтобы выписать.<br><br>Потом повесил это здесь. Стало чуть легче.',
+      welcome_desc_html: 'Это <strong>TiedStory</strong>.<br>Без регистрации, объяснений и страха узнать тебя.<br><br>Преврати слова в ленту.<br>Она останется на дереве, качается на ветру и может быть увидена незнакомцем.',
+      loading_failed: 'Не удалось загрузить. Попробуйте снова.',
+      witness_entered: 'Введено',
+      checking: 'Проверка…',
+      submitting: 'Отправка…',
     }
   }
 };
@@ -572,6 +771,10 @@ function i18nSetLang(code) {
   if (!I18N_LANGS[code]) return;
   _currentLang = code;
   localStorage.setItem(I18N_STORAGE_KEY, code);
+  const rc = document.getElementById('ribbonTotalCount');
+  if (rc && typeof window.TS_RIBBON_TOTAL === 'number') {
+    rc.setAttribute('data-i18n-n', String(window.TS_RIBBON_TOTAL));
+  }
   i18nApply();
   i18nRenderSwitcher();
   document.dispatchEvent(new CustomEvent('tiedstory:langchange', { detail: { lang: code } }));
@@ -630,6 +833,9 @@ function i18nApply() {
 
   // 更新 html lang 属性
   document.documentElement.lang = _currentLang;
+
+  // 更新背景矩阵标签
+  i18nUpdateBgMatrixLabels();
 }
 
 // ─── 语言切换器渲染 ──────────────────────────────────────────────────────────
@@ -683,6 +889,23 @@ document.addEventListener('click', function(e) {
     i18nCloseDropdown();
   }
 });
+
+// ─── 更新背景矩阵标签（Playground 季节×时段矩阵）────────────────────────────
+function i18nUpdateBgMatrixLabels() {
+  const t = i18nT();
+  document.querySelectorAll('[data-bg-label]').forEach(el => {
+    const key = el.getAttribute('data-bg-label'); // 如 "spring_morning"
+    const parts = key.split('_');
+    if (parts.length === 2) {
+      const season = t[parts[0]] || parts[0];
+      const time = t[parts[1]] || parts[1];
+      // 不同语言的连接符不同
+      const sep = _currentLang === 'en' || _currentLang === 'ja' || _currentLang === 'ko' ? ' · ' :
+                  _currentLang === 'fr' || _currentLang === 'ru' ? ' · ' : '·';
+      el.textContent = `${season}${sep}${time}`;
+    }
+  });
+}
 
 // ─── 辅助：time_ago 多语言版本 ────────────────────────────────────────────────
 function i18nTimeAgo(ts) {

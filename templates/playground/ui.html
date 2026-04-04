@@ -2033,10 +2033,8 @@
     <div class="hero-bg-layer active" id="heroBgA"></div>
     <div class="hero-bg-layer inactive" id="heroBgB"></div>
 
-    <!-- 右上角标签组：语言切换 + 时段 + 今日访客 -->
+    <!-- 右上角标签组：访客 + 时段 + 语言切换 -->
     <div class="hero-top-right">
-        <!-- 语言切换器 -->
-        <div id="langSwitcher"></div>
         <div class="hero-time-badge" id="heroStatsBadge" style="display:none;">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.6;flex-shrink:0"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             <span id="heroStatsLabel">—</span>
@@ -2045,6 +2043,8 @@
             <span class="hero-time-badge-dot" id="heroTimeDot"></span>
             <span id="heroTimeLabel">傍晚</span>
         </div>
+        <!-- 语言切换器（最右） -->
+        <div id="langSwitcher"></div>
     </div>
 
     <!-- 左上角品牌及控制栏 -->
@@ -2390,34 +2390,34 @@
 <div class="bg-switcher-demo">
 <div class="bg-demo-title">· 背景时光流转 Demo ·</div>
 <div class="bg-mode-row">
-<button class="pg-mode-btn" id="pgModeReal" onclick="pgSetRealMode()">跟随真实时间</button>
-            <button class="pg-mode-btn" id="pgModeDemo" onclick="pgSetDemoMode()">时光流逝演示（30s/时段）</button>
-<div class="bg-mode-hint" id="bgAutoHint" style="display:none;"><span class="bg-mode-hint-dot"></span>按真实月份季节、真实时刻自动切换</div>
-<div class="bg-mode-hint" id="bgDemoHint" style="display:none;"><span class="bg-mode-hint-dot" style="background:#E0925A;"></span>演示中：每30秒流转一个时段，转完四个进入下一季节</div>
+<button class="pg-mode-btn" id="pgModeReal" onclick="pgSetRealMode()" data-i18n="pg_real_mode">跟随真实时间</button>
+            <button class="pg-mode-btn" id="pgModeDemo" onclick="pgSetDemoMode()" data-i18n="pg_demo_mode">时光流逝演示（30s/时段）</button>
+<div class="bg-mode-hint" id="bgAutoHint" style="display:none;"><span class="bg-mode-hint-dot"></span><span data-i18n="pg_auto_hint">按真实月份季节、真实时刻自动切换</span></div>
+<div class="bg-mode-hint" id="bgDemoHint" style="display:none;"><span class="bg-mode-hint-dot" style="background:#E0925A;"></span><span data-i18n="pg_demo_hint">演示中：每30秒流转一个时段，转完四个进入下一季节</span></div>
 </div>
 <div class="bg-demo-progress-wrap" id="demoProgressWrap" style="display:none;"><div class="bg-demo-progress-bar" id="demoProgressBar"></div></div>
 <div class="bg-matrix">
-<div class="bg-matrix-head"></div><div class="bg-matrix-head">清晨</div><div class="bg-matrix-head">正午</div><div class="bg-matrix-head">傍晚</div><div class="bg-matrix-head">夜晚</div>
-<div class="bg-matrix-season-label">🌸 春</div>
-            <div class="bg-matrix-cell" data-season="spring" data-time="morning" style="background-image:url('/static/images/tree_bg_morning.png')" onclick="pgSwitchTo('spring','morning')"><div class="bg-matrix-cell-label">春·清晨</div></div>
-            <div class="bg-matrix-cell" data-season="spring" data-time="noon" style="background-image:url('/static/images/tree_bg_noon.png')" onclick="pgSwitchTo('spring','noon')"><div class="bg-matrix-cell-label">春·正午</div></div>
-            <div class="bg-matrix-cell" data-season="spring" data-time="dusk" style="background-image:url('/static/images/tree_bg.png')" onclick="pgSwitchTo('spring','dusk')"><div class="bg-matrix-cell-label">春·傍晚</div></div>
-            <div class="bg-matrix-cell" data-season="spring" data-time="night" style="background-image:url('/static/images/tree_bg_night.png')" onclick="pgSwitchTo('spring','night')"><div class="bg-matrix-cell-label">春·夜晚</div></div>
-            <div class="bg-matrix-season-label">🌿 夏</div>
-            <div class="bg-matrix-cell" data-season="summer" data-time="morning" style="background-image:url('/static/images/summer_morning.png')" onclick="pgSwitchTo('summer','morning')"><div class="bg-matrix-cell-label">夏·清晨</div></div>
-            <div class="bg-matrix-cell" data-season="summer" data-time="noon" style="background-image:url('/static/images/summer_noon.png')" onclick="pgSwitchTo('summer','noon')"><div class="bg-matrix-cell-label">夏·正午</div></div>
-            <div class="bg-matrix-cell" data-season="summer" data-time="dusk" style="background-image:url('/static/images/summer_dusk.png')" onclick="pgSwitchTo('summer','dusk')"><div class="bg-matrix-cell-label">夏·傍晚</div></div>
-            <div class="bg-matrix-cell" data-season="summer" data-time="night" style="background-image:url('/static/images/summer_night.png')" onclick="pgSwitchTo('summer','night')"><div class="bg-matrix-cell-label">夏·夜晚</div></div>
-            <div class="bg-matrix-season-label">🍂 秋</div>
-            <div class="bg-matrix-cell" data-season="autumn" data-time="morning" style="background-image:url('/static/images/autumn_morning.png')" onclick="pgSwitchTo('autumn','morning')"><div class="bg-matrix-cell-label">秋·清晨</div></div>
-            <div class="bg-matrix-cell" data-season="autumn" data-time="noon" style="background-image:url('/static/images/autumn_noon.png')" onclick="pgSwitchTo('autumn','noon')"><div class="bg-matrix-cell-label">秋·正午</div></div>
-            <div class="bg-matrix-cell" data-season="autumn" data-time="dusk" style="background-image:url('/static/images/autumn_dusk.png')" onclick="pgSwitchTo('autumn','dusk')"><div class="bg-matrix-cell-label">秋·傍晚</div></div>
-            <div class="bg-matrix-cell" data-season="autumn" data-time="night" style="background-image:url('/static/images/autumn_night.png')" onclick="pgSwitchTo('autumn','night')"><div class="bg-matrix-cell-label">秋·夜晚</div></div>
-            <div class="bg-matrix-season-label">❄️ 冬</div>
-            <div class="bg-matrix-cell" data-season="winter" data-time="morning" style="background-image:url('/static/images/winter_morning.png')" onclick="pgSwitchTo('winter','morning')"><div class="bg-matrix-cell-label">冬·清晨</div></div>
-            <div class="bg-matrix-cell" data-season="winter" data-time="noon" style="background-image:url('/static/images/winter_noon.png')" onclick="pgSwitchTo('winter','noon')"><div class="bg-matrix-cell-label">冬·正午</div></div>
-            <div class="bg-matrix-cell" data-season="winter" data-time="dusk" style="background-image:url('/static/images/winter_dusk.png')" onclick="pgSwitchTo('winter','dusk')"><div class="bg-matrix-cell-label">冬·傍晚</div></div>
-            <div class="bg-matrix-cell" data-season="winter" data-time="night" style="background-image:url('/static/images/winter_night.png')" onclick="pgSwitchTo('winter','night')"><div class="bg-matrix-cell-label">冬·夜晚</div></div>
+<div class="bg-matrix-head"></div><div class="bg-matrix-head" data-i18n="morning">清晨</div><div class="bg-matrix-head" data-i18n="noon">正午</div><div class="bg-matrix-head" data-i18n="dusk">傍晚</div><div class="bg-matrix-head" data-i18n="night">夜晚</div>
+<div class="bg-matrix-season-label" id="seasonLabelSpring">🌸 <span data-i18n="spring">春</span></div>
+            <div class="bg-matrix-cell" data-season="spring" data-time="morning" style="background-image:url('/static/images/tree_bg_morning.png')" onclick="pgSwitchTo('spring','morning')"><div class="bg-matrix-cell-label" data-bg-label="spring_morning">春·清晨</div></div>
+            <div class="bg-matrix-cell" data-season="spring" data-time="noon" style="background-image:url('/static/images/tree_bg_noon.png')" onclick="pgSwitchTo('spring','noon')"><div class="bg-matrix-cell-label" data-bg-label="spring_noon">春·正午</div></div>
+            <div class="bg-matrix-cell" data-season="spring" data-time="dusk" style="background-image:url('/static/images/tree_bg.png')" onclick="pgSwitchTo('spring','dusk')"><div class="bg-matrix-cell-label" data-bg-label="spring_dusk">春·傍晚</div></div>
+            <div class="bg-matrix-cell" data-season="spring" data-time="night" style="background-image:url('/static/images/tree_bg_night.png')" onclick="pgSwitchTo('spring','night')"><div class="bg-matrix-cell-label" data-bg-label="spring_night">春·夜晚</div></div>
+            <div class="bg-matrix-season-label" id="seasonLabelSummer">🌿 <span data-i18n="summer">夏</span></div>
+            <div class="bg-matrix-cell" data-season="summer" data-time="morning" style="background-image:url('/static/images/summer_morning.png')" onclick="pgSwitchTo('summer','morning')"><div class="bg-matrix-cell-label" data-bg-label="summer_morning">夏·清晨</div></div>
+            <div class="bg-matrix-cell" data-season="summer" data-time="noon" style="background-image:url('/static/images/summer_noon.png')" onclick="pgSwitchTo('summer','noon')"><div class="bg-matrix-cell-label" data-bg-label="summer_noon">夏·正午</div></div>
+            <div class="bg-matrix-cell" data-season="summer" data-time="dusk" style="background-image:url('/static/images/summer_dusk.png')" onclick="pgSwitchTo('summer','dusk')"><div class="bg-matrix-cell-label" data-bg-label="summer_dusk">夏·傍晚</div></div>
+            <div class="bg-matrix-cell" data-season="summer" data-time="night" style="background-image:url('/static/images/summer_night.png')" onclick="pgSwitchTo('summer','night')"><div class="bg-matrix-cell-label" data-bg-label="summer_night">夏·夜晚</div></div>
+            <div class="bg-matrix-season-label" id="seasonLabelAutumn">🍂 <span data-i18n="autumn">秋</span></div>
+            <div class="bg-matrix-cell" data-season="autumn" data-time="morning" style="background-image:url('/static/images/autumn_morning.png')" onclick="pgSwitchTo('autumn','morning')"><div class="bg-matrix-cell-label" data-bg-label="autumn_morning">秋·清晨</div></div>
+            <div class="bg-matrix-cell" data-season="autumn" data-time="noon" style="background-image:url('/static/images/autumn_noon.png')" onclick="pgSwitchTo('autumn','noon')"><div class="bg-matrix-cell-label" data-bg-label="autumn_noon">秋·正午</div></div>
+            <div class="bg-matrix-cell" data-season="autumn" data-time="dusk" style="background-image:url('/static/images/autumn_dusk.png')" onclick="pgSwitchTo('autumn','dusk')"><div class="bg-matrix-cell-label" data-bg-label="autumn_dusk">秋·傍晚</div></div>
+            <div class="bg-matrix-cell" data-season="autumn" data-time="night" style="background-image:url('/static/images/autumn_night.png')" onclick="pgSwitchTo('autumn','night')"><div class="bg-matrix-cell-label" data-bg-label="autumn_night">秋·夜晚</div></div>
+            <div class="bg-matrix-season-label" id="seasonLabelWinter">❄️ <span data-i18n="winter">冬</span></div>
+            <div class="bg-matrix-cell" data-season="winter" data-time="morning" style="background-image:url('/static/images/winter_morning.png')" onclick="pgSwitchTo('winter','morning')"><div class="bg-matrix-cell-label" data-bg-label="winter_morning">冬·清晨</div></div>
+            <div class="bg-matrix-cell" data-season="winter" data-time="noon" style="background-image:url('/static/images/winter_noon.png')" onclick="pgSwitchTo('winter','noon')"><div class="bg-matrix-cell-label" data-bg-label="winter_noon">冬·正午</div></div>
+            <div class="bg-matrix-cell" data-season="winter" data-time="dusk" style="background-image:url('/static/images/winter_dusk.png')" onclick="pgSwitchTo('winter','dusk')"><div class="bg-matrix-cell-label" data-bg-label="winter_dusk">冬·傍晚</div></div>
+            <div class="bg-matrix-cell" data-season="winter" data-time="night" style="background-image:url('/static/images/winter_night.png')" onclick="pgSwitchTo('winter','night')"><div class="bg-matrix-cell-label" data-bg-label="winter_night">冬·夜晚</div></div>
 </div>
 </div>
 <div style="font-size:11px;color:#9A8070;font-family:'Noto Serif SC',serif;letter-spacing:0.5px;padding-top:8px;">· 4 季 × 4 时段，共 16 幅吉卜力风格场景 · 点击任意格子手动切换 ·</div>
@@ -2493,6 +2493,7 @@ async function loadRibbons(append = false, color = _currentFilterColor) {
         
         const newRibbons = data.ribbons || [];
         _totalRibbonsCount = data.total || 0;
+        window.TS_RIBBON_TOTAL = _totalRibbonsCount;
         
         if (newRibbons.length < 20) {
             _hasMoreRibbons = false;
@@ -2520,6 +2521,7 @@ async function loadRibbons(append = false, color = _currentFilterColor) {
             }
             _ribbonsCache = demoData.map((d, i) => ({...d, id: `DEMO${i}`}));
             _totalRibbonsCount = _ribbonsCache.length;
+            window.TS_RIBBON_TOTAL = _totalRibbonsCount;
             renderRibbonCards(_ribbonsCache, _totalRibbonsCount, false);
             _hasMoreRibbons = false;
         }
@@ -2706,7 +2708,12 @@ function renderRibbonCards(list, total, appendOnly = false) {
         if (typeof i18nT === 'function') {
             const t = i18nT();
             container.innerHTML = `<div style="padding:20px 24px;color:rgba(247,244,238,0.3);font-size:12px;">${t.no_ribbons}</div>`;
-            document.getElementById('ribbonTotalCount').textContent = t.ribbon_count(0);
+            const c0 = document.getElementById('ribbonTotalCount');
+            if (c0) {
+                c0.setAttribute('data-i18n-n', '0');
+                window.TS_RIBBON_TOTAL = 0;
+                c0.textContent = t.ribbon_count(0);
+            }
         }
     }
 
@@ -2718,6 +2725,8 @@ function renderRibbonCards(list, total, appendOnly = false) {
         if (typeof i18nT === 'function') {
             const t = i18nT();
             const n = total || _ribbonsCache.length;
+            document.getElementById('ribbonTotalCount').setAttribute('data-i18n-n', String(n));
+            window.TS_RIBBON_TOTAL = n;
             document.getElementById('ribbonTotalCount').textContent = t.ribbon_count(n);
             const panelCount = document.getElementById('panelTotalCount');
             if (panelCount) panelCount.textContent = t.ribbon_count(n);
@@ -2761,7 +2770,12 @@ function renderRibbonCards(list, total, appendOnly = false) {
     if (typeof i18nT === 'function') {
         const t = i18nT();
         const n = total || _ribbonsCache.length;
-        document.getElementById('ribbonTotalCount').textContent = t.ribbon_count(n);
+        const rc = document.getElementById('ribbonTotalCount');
+        if (rc) {
+            rc.setAttribute('data-i18n-n', String(n));
+            window.TS_RIBBON_TOTAL = n;
+            rc.textContent = t.ribbon_count(n);
+        }
         const panelCount = document.getElementById('panelTotalCount');
         if (panelCount) panelCount.textContent = t.ribbon_count(n);
     }
@@ -3189,13 +3203,13 @@ function submitResonance() {
     // AI 脱敏检测
     const btn = document.querySelector('.story-submit-btn');
     btn.classList.add('checking');
-    btn.textContent = '…';
+    btn.textContent = i18nValue('checking');
     input.classList.remove('blocked');
     dismissModerationBar('storyModerationBar');
 
     moderateText(text).then(({ blocked, reason }) => {
         btn.classList.remove('checking');
-        btn.textContent = i18nT().resonance_submit;
+        btn.textContent = i18nValue('resonance_submit');
 
         if (blocked) {
             input.classList.add('blocked');
@@ -3205,7 +3219,7 @@ function submitResonance() {
         }
 
         input.classList.remove('blocked');
-        btn.disabled = true; btn.textContent = '…';
+        btn.disabled = true; btn.textContent = i18nValue('submitting');
 
         fetch(`/api/ribbon/${currentStoryId}/echo`, {
             method: 'POST',
@@ -3231,7 +3245,7 @@ function submitResonance() {
             container.appendChild(item);
 
             const oldCount = parseInt(titleEl.textContent.match(/\d+/)?.[0] || '0');
-            titleEl.textContent = i18nT().resonance_count(oldCount + 1);
+            titleEl.textContent = i18nValue('resonance_count', oldCount + 1);
             input.value = '';
             input.style.borderColor = '';
             item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -3239,13 +3253,13 @@ function submitResonance() {
         }).catch(e => {
             console.error('[Echo] 提交失败:', e);
             input.classList.add('blocked');
-            showModerationBar('storyModerationBar', 'storyModerationText', e.message || '…');
+            showModerationBar('storyModerationBar', 'storyModerationText', e.message || i18nValue('loading_failed'));
         }).finally(() => {
-            btn.disabled = false; btn.textContent = i18nT().resonance_submit;
+            btn.disabled = false; btn.textContent = i18nValue('resonance_submit');
         });
     }).catch(err => {
         btn.classList.remove('checking');
-        btn.textContent = i18nT().resonance_submit;
+        btn.textContent = i18nValue('resonance_submit');
         console.error('[Moderation] 检测异常，放行:', err);
     });
 }
@@ -3334,7 +3348,7 @@ function submitAuthorAppend() {
             const container = document.getElementById('storyAuthorAppends');
             const item = document.createElement('div');
             item.className = 'story-author-append-item';
-            item.innerHTML = `<div class="story-author-append-label">${i18nT().author_append_label(i18nValue('just_now'))}</div>${text}`;
+            item.innerHTML = `<div class="story-author-append-label">${i18nValue('author_append_label', i18nValue('just_now'))}</div>${text}`;
             container.appendChild(item);
             item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             textarea.value = '';
@@ -3510,7 +3524,12 @@ function goTieStep(n) {
             prependRibbonCard(newRibbon);
             // 更新条数
             const countEl = document.getElementById('ribbonTotalCount');
-            if (countEl) countEl.textContent = i18nT().ribbon_count(_ribbonsCache.length);
+            if (countEl) {
+                const n = _ribbonsCache.length;
+                countEl.setAttribute('data-i18n-n', String(n));
+                window.TS_RIBBON_TOTAL = n;
+                countEl.textContent = i18nT().ribbon_count(n);
+            }
         }).catch(e => {
             console.error('[Tie] 保存失败:', e);
             // 降级：生成本地临时 id

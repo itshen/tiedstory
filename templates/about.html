@@ -17,7 +17,6 @@
     <link rel="icon" type="image/svg+xml" href="/static/icons/favicon.svg">
     <meta name="theme-color" content="#0a0603">
     <script src="/static/js/i18n.js"></script>
-    <script src="/static/js/topic-copy.js"></script>
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -247,10 +246,10 @@
         <a href="/" class="nav-logo" aria-label="TiedStory 首页">Tied<span>Story</span></a>
         <div class="nav-right">
             <div class="nav-links">
-                <a href="/" id="aboutNavBack">回到树洞</a>
-                <a href="/topics" id="aboutNavTopics">情绪专题</a>
-                <a href="/about#faq-title" id="aboutNavFaq">常见问题</a>
-                <a href="/about" aria-current="page" id="aboutNavAbout">关于我们</a>
+                <a href="/" id="aboutNavBack" data-i18n="nav_back">回到树洞</a>
+                <a href="/topics" id="aboutNavTopics" data-i18n="nav_topics">情绪专题</a>
+                <a href="/about#faq-title" id="aboutNavFaq" data-i18n="nav_faq">常见问题</a>
+                <a href="/about" aria-current="page" id="aboutNavAbout" data-i18n="nav_about">关于我们</a>
             </div>
             <div id="langSwitcher"></div>
         </div>
@@ -258,9 +257,9 @@
 
     <main>
         <article class="hero">
-            <h1 id="aboutHeroTitle">说出来就好<br>这里不会有人知道是你</h1>
-            <p id="aboutHeroDesc">不需要注册，不需要账号，没有任何记录能追溯到你。<br>只是写下来——我们都在这里。</p>
-            <a href="/" class="btn-primary" id="aboutHeroBtn">系一条丝带</a>
+            <h1 id="aboutHeroTitle" data-i18n-html="heroTitle">说出来就好<br>这里不会有人知道是你</h1>
+            <p id="aboutHeroDesc" data-i18n-html="heroDesc">不需要注册，不需要账号，没有任何记录能追溯到你。<br>只是写下来——我们都在这里。</p>
+            <a href="/" class="btn-primary" id="aboutHeroBtn" data-i18n="heroBtn">系一条丝带</a>
         </article>
 
         <section class="section" aria-labelledby="what-is">
@@ -272,15 +271,15 @@
             <div class="stats">
                 <div class="stat-item">
                     <div class="stat-num" id="stat-ribbons">10,000+</div>
-                    <div class="stat-label" id="aboutStatRibbons">条心声</div>
+                    <div class="stat-label" id="aboutStatRibbons" data-i18n="statRibbons">条心声</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-num" id="stat-echoes">50,000+</div>
-                    <div class="stat-label" id="aboutStatEchoes">次回响</div>
+                    <div class="stat-label" id="aboutStatEchoes" data-i18n="statEchoes">次回响</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-num">24/7</div>
-                    <div class="stat-label" id="aboutStatAnytime">随时倾诉</div>
+                    <div class="stat-label" id="aboutStatAnytime" data-i18n="statAnytime">随时倾诉</div>
                 </div>
             </div>
         </section>
@@ -316,18 +315,18 @@
             <h2 id="who-for">哪些人会来这里？</h2>
             <p>来 TiedStory 的人，有的是深夜睡不着，有的是刚哭完不知道找谁说，有的是有话想说但又觉得麻烦朋友……</p>
             <div class="topics-grid" role="list">
-                <a href="/topics/loss" class="topic-tag" role="listitem" data-topic-slug="loss">失恋难过</a>
-                <a href="/topics/lonely" class="topic-tag" role="listitem" data-topic-slug="lonely">孤独无助</a>
-                <a href="/topics/anxiety" class="topic-tag" role="listitem" data-topic-slug="anxiety">焦虑压力</a>
-                <a href="/topics/work" class="topic-tag" role="listitem" data-topic-slug="work">工作委屈</a>
-                <a href="/topics/family" class="topic-tag" role="listitem" data-topic-slug="family">家庭烦恼</a>
-                <a href="/topics/confused" class="topic-tag" role="listitem" data-topic-slug="confused">迷茫困惑</a>
-                <a href="/topics/tired" class="topic-tag" role="listitem" data-topic-slug="tired">身心疲惫</a>
-                <a href="/topics/miss" class="topic-tag" role="listitem" data-topic-slug="miss">思念某人</a>
-                <a href="/topics/sad" class="topic-tag" role="listitem" data-topic-slug="sad">莫名想倾诉</a>
-                <a href="/topics/angry" class="topic-tag" role="listitem" data-topic-slug="angry">委屈愤怒</a>
-                <a href="/topics/numb" class="topic-tag" role="listitem" data-topic-slug="numb">麻木空洞</a>
-                <a href="/topics/hope" class="topic-tag" role="listitem" data-topic-slug="hope">期待感恩</a>
+                <a href="/topics/loss" class="topic-tag" role="listitem" data-topic-slug="loss" data-i18n-topic="loss">失恋难过</a>
+                <a href="/topics/lonely" class="topic-tag" role="listitem" data-topic-slug="lonely" data-i18n-topic="lonely">孤独无助</a>
+                <a href="/topics/anxiety" class="topic-tag" role="listitem" data-topic-slug="anxiety" data-i18n-topic="anxiety">焦虑压力</a>
+                <a href="/topics/work" class="topic-tag" role="listitem" data-topic-slug="work" data-i18n-topic="work">工作委屈</a>
+                <a href="/topics/family" class="topic-tag" role="listitem" data-topic-slug="family" data-i18n-topic="family">家庭烦恼</a>
+                <a href="/topics/confused" class="topic-tag" role="listitem" data-topic-slug="confused" data-i18n-topic="confused">迷茫困惑</a>
+                <a href="/topics/tired" class="topic-tag" role="listitem" data-topic-slug="tired" data-i18n-topic="tired">身心疲惫</a>
+                <a href="/topics/miss" class="topic-tag" role="listitem" data-topic-slug="miss" data-i18n-topic="miss">思念某人</a>
+                <a href="/topics/sad" class="topic-tag" role="listitem" data-topic-slug="sad" data-i18n-topic="sad">莫名想倾诉</a>
+                <a href="/topics/angry" class="topic-tag" role="listitem" data-topic-slug="angry" data-i18n-topic="angry">委屈愤怒</a>
+                <a href="/topics/numb" class="topic-tag" role="listitem" data-topic-slug="numb" data-i18n-topic="numb">麻木空洞</a>
+                <a href="/topics/hope" class="topic-tag" role="listitem" data-topic-slug="hope" data-i18n-topic="hope">期待感恩</a>
             </div>
         </section>
 
@@ -368,9 +367,9 @@
         </section>
 
         <section class="section" style="text-align: center; border-top: 1px solid rgba(255,255,255,0.07);">
-            <h2 style="font-size: 24px;" id="aboutCtaTitle">准备好了吗？</h2>
-            <p style="color: rgba(232,221,208,0.6); margin-bottom: 28px;" id="aboutCtaDesc">把那句憋在心里的话，写下来吧。没有账号，没有记录。</p>
-            <a href="/" class="btn-primary" id="aboutCtaBtn">进入树洞，系一条丝带</a>
+            <h2 style="font-size: 24px;" id="aboutCtaTitle" data-i18n="ctaTitle">准备好了吗？</h2>
+            <p style="color: rgba(232,221,208,0.6); margin-bottom: 28px;" id="aboutCtaDesc" data-i18n="ctaDesc">把那句憋在心里的话，写下来吧。没有账号，没有记录。</p>
+            <a href="/" class="btn-primary" id="aboutCtaBtn" data-i18n="ctaBtn">进入树洞，系一条丝带</a>
         </section>
     </main>
 
@@ -380,121 +379,68 @@
     </footer>
 
     <script>
-        const ABOUT_PAGE_COPY = {
-            'zh-CN': {
-                navBack: '回到树洞', navTopics: '情绪专题', navFaq: '常见问题', navAbout: '关于我们',
-                heroTitle: '说出来就好<br>这里不会有人知道是你',
-                heroDesc: '不需要注册，不需要账号，没有任何记录能追溯到你。<br>只是写下来——我们都在这里。',
-                heroBtn: '系一条丝带',
-                statRibbons: '条心声', statEchoes: '次回响', statAnytime: '随时倾诉',
-                ctaTitle: '准备好了吗？',
-                ctaDesc: '把那句憋在心里的话，写下来吧。没有账号，没有记录。',
-                ctaBtn: '进入树洞，系一条丝带',
-                footerLinks: '© 2025 TiedStory · <a href="/about">关于</a> · <a href="/topics">情绪专题</a> · <a href="/">进入树洞</a>',
-                hotline: '心理援助热线：400-161-9995 · 本平台不提供专业心理治疗'
-            },
-            'zh-TW': {
-                navBack: '回到樹洞', navTopics: '情緒專題', navFaq: '常見問題', navAbout: '關於我們',
-                heroTitle: '說出來就好<br>這裡不會有人知道是你',
-                heroDesc: '不需要註冊，不需要帳號，沒有任何記錄能追溯到你。<br>只是寫下來——我們都在這裡。',
-                heroBtn: '繫一條絲帶',
-                statRibbons: '條心聲', statEchoes: '次回響', statAnytime: '隨時傾訴',
-                ctaTitle: '準備好了嗎？',
-                ctaDesc: '把那句憋在心裡的話，寫下來吧。沒有帳號，沒有記錄。',
-                ctaBtn: '進入樹洞，繫一條絲帶',
-                footerLinks: '© 2025 TiedStory · <a href="/about">關於</a> · <a href="/topics">情緒專題</a> · <a href="/">進入樹洞</a>',
-                hotline: '心理援助熱線：400-161-9995 · 本平台不提供專業心理治療'
-            },
-            'en': {
-                navBack: 'Back to Tree', navTopics: 'Topics', navFaq: 'FAQ', navAbout: 'About',
-                heroTitle: 'Say it out loud<br>no one here will know it was you',
-                heroDesc: 'No sign-up, no account, and nothing that traces back to you.<br>Just write it down — we are here.',
-                heroBtn: 'Tie a ribbon',
-                statRibbons: 'stories', statEchoes: 'echoes', statAnytime: 'always open',
-                ctaTitle: 'Ready?',
-                ctaDesc: 'Write down the sentence you have been holding inside. No account. No record.',
-                ctaBtn: 'Enter the Tree',
-                footerLinks: '© 2025 TiedStory · <a href="/about">About</a> · <a href="/topics">Topics</a> · <a href="/">Enter the Tree</a>',
-                hotline: 'Support hotline: 400-161-9995 · This platform is not a substitute for professional care'
-            },
-            'ja': {
-                navBack: 'ツリーに戻る', navTopics: 'トピック', navFaq: 'よくある質問', navAbout: '私たちについて',
-                heroTitle: '話してしまっていい<br>ここでは誰にも知られない',
-                heroDesc: '登録不要、アカウント不要、あなたにたどり着く記録もありません。<br>ただ書き残せばいいのです。',
-                heroBtn: 'リボンを結ぶ',
-                statRibbons: '心の声', statEchoes: '共鳴', statAnytime: 'いつでも話せる',
-                ctaTitle: '準備はできましたか？',
-                ctaDesc: '胸の奥にある言葉を書いてみてください。アカウントも記録も要りません。',
-                ctaBtn: 'ツリーへ入る',
-                footerLinks: '© 2025 TiedStory · <a href="/about">概要</a> · <a href="/topics">トピック</a> · <a href="/">ツリーへ</a>',
-                hotline: '支援ホットライン：400-161-9995 · 専門的治療の代替ではありません'
-            },
-            'ko': {
-                navBack: '트리로 돌아가기', navTopics: '주제', navFaq: '자주 묻는 질문', navAbout: '소개',
-                heroTitle: '말해도 괜찮아요<br>여기서는 아무도 당신을 모를 거예요',
-                heroDesc: '가입도 계정도 필요 없고, 당신을 추적할 기록도 남지 않아요.<br>그저 적어 내려놓으면 돼요.',
-                heroBtn: '리본 묶기',
-                statRibbons: '마음의 말', statEchoes: '공명', statAnytime: '언제든 털어놓기',
-                ctaTitle: '준비됐나요?',
-                ctaDesc: '마음속에 쌓인 말을 적어보세요. 계정도 기록도 필요 없어요.',
-                ctaBtn: '트리로 가기',
-                footerLinks: '© 2025 TiedStory · <a href="/about">소개</a> · <a href="/topics">주제</a> · <a href="/">트리로 가기</a>',
-                hotline: '지원 핫라인: 400-161-9995 · 전문 치료를 대신하지 않습니다'
-            },
-            'fr': {
-                navBack: 'Retour à l’arbre', navTopics: 'Thèmes', navFaq: 'FAQ', navAbout: 'À propos',
-                heroTitle: 'Tu peux le dire<br>personne ici ne saura que c’était toi',
-                heroDesc: 'Pas d’inscription, pas de compte, aucune trace qui remonte jusqu’à toi.<br>Écris simplement — nous sommes là.',
-                heroBtn: 'Nouer un ruban',
-                statRibbons: 'voix', statEchoes: 'échos', statAnytime: 'toujours ouvert',
-                ctaTitle: 'Prêt ?',
-                ctaDesc: 'Écris la phrase que tu gardes au fond de toi. Sans compte, sans trace.',
-                ctaBtn: 'Entrer dans l’arbre',
-                footerLinks: '© 2025 TiedStory · <a href="/about">À propos</a> · <a href="/topics">Thèmes</a> · <a href="/">Entrer dans l’arbre</a>',
-                hotline: 'Ligne de soutien : 400-161-9995 · Cette plateforme ne remplace pas une aide professionnelle'
-            },
-            'ru': {
-                navBack: 'Назад к дереву', navTopics: 'Темы', navFaq: 'FAQ', navAbout: 'О нас',
-                heroTitle: 'Ты можешь это сказать<br>и никто здесь не узнает, что это ты',
-                heroDesc: 'Без регистрации, без аккаунта и без следов, ведущих к тебе.<br>Просто напиши — мы рядом.',
-                heroBtn: 'Завязать ленту',
-                statRibbons: 'историй', statEchoes: 'откликов', statAnytime: 'можно выговориться в любой момент',
-                ctaTitle: 'Готов(а)?',
-                ctaDesc: 'Запиши ту самую фразу, которую давно держишь внутри. Без аккаунта. Без следов.',
-                ctaBtn: 'Войти в дерево',
-                footerLinks: '© 2025 TiedStory · <a href="/about">О нас</a> · <a href="/topics">Темы</a> · <a href="/">Войти в дерево</a>',
-                hotline: 'Горячая линия поддержки: 400-161-9995 · Платформа не заменяет профессиональную помощь'
-            }
-        };
-
-        function applyAboutPageI18n() {
+        // about 页面专用多语言初始化
+        function initAboutPageI18n() {
             const lang = typeof i18nGetLang === 'function' ? i18nGetLang() : 'zh-CN';
-            const copy = ABOUT_PAGE_COPY[lang] || ABOUT_PAGE_COPY['zh-CN'];
+            const copy = getAboutI18n(lang);
+            const topicT = TOPIC_I18N[lang] || TOPIC_I18N['zh-CN'];
+            
             document.documentElement.lang = lang;
-            document.getElementById('aboutNavBack').textContent = copy.navBack;
-            document.getElementById('aboutNavTopics').textContent = copy.navTopics;
-            document.getElementById('aboutNavFaq').textContent = copy.navFaq;
-            document.getElementById('aboutNavAbout').textContent = copy.navAbout;
-            document.getElementById('aboutHeroTitle').innerHTML = copy.heroTitle;
-            document.getElementById('aboutHeroDesc').innerHTML = copy.heroDesc;
-            document.getElementById('aboutHeroBtn').textContent = copy.heroBtn;
-            document.getElementById('aboutStatRibbons').textContent = copy.statRibbons;
-            document.getElementById('aboutStatEchoes').textContent = copy.statEchoes;
-            document.getElementById('aboutStatAnytime').textContent = copy.statAnytime;
-            document.getElementById('aboutCtaTitle').textContent = copy.ctaTitle;
-            document.getElementById('aboutCtaDesc').textContent = copy.ctaDesc;
-            document.getElementById('aboutCtaBtn').textContent = copy.ctaBtn;
-            document.getElementById('aboutFooterLinks').innerHTML = copy.footerLinks;
-            document.getElementById('aboutFooterHotline').textContent = copy.hotline;
+            
+            // 更新导航
+            const navT = {
+                'zh-CN': { back: '回到树洞', topics: '情绪专题', faq: '常见问题', about: '关于我们' },
+                'zh-TW': { back: '回到樹洞', topics: '情緒專題', faq: '常見問題', about: '關於我們' },
+                'en': { back: 'Back to Tree', topics: 'Topics', faq: 'FAQ', about: 'About' },
+                'ja': { back: 'ツリーに戻る', topics: 'トピック', faq: 'よくある質問', about: '私たちについて' },
+                'ko': { back: '나무로 돌아가기', topics: '주제', faq: 'FAQ', about: '소개' },
+                'fr': { back: "Retour à l'arbre", topics: 'Thèmes', faq: 'FAQ', about: 'À propos' },
+                'ru': { back: 'Назад к дереву', topics: 'Темы', faq: 'FAQ', about: 'О нас' }
+            };
+            const n = navT[lang] || navT['zh-CN'];
+            
+            const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+            const setHtml = (id, val) => { const el = document.getElementById(id); if (el) el.innerHTML = val; };
+            
+            setText('aboutNavBack', n.back);
+            setText('aboutNavTopics', n.topics);
+            setText('aboutNavFaq', n.faq);
+            setText('aboutNavAbout', n.about);
+            setHtml('aboutHeroTitle', copy.heroTitle);
+            setHtml('aboutHeroDesc', copy.heroDesc);
+            setText('aboutHeroBtn', copy.heroBtn);
+            setText('aboutStatRibbons', copy.statRibbons);
+            setText('aboutStatEchoes', copy.statEchoes);
+            setText('aboutStatAnytime', copy.statAnytime);
+            setText('aboutCtaTitle', copy.ctaTitle);
+            setText('aboutCtaDesc', copy.ctaDesc);
+            setText('aboutCtaBtn', copy.ctaBtn);
+            
+            // 更新专题标签
             document.querySelectorAll('.topic-tag[data-topic-slug]').forEach(el => {
-                const topic = getTopicI18n(el.getAttribute('data-topic-slug'), lang);
-                if (topic) el.textContent = topic.title;
+                const slug = el.getAttribute('data-topic-slug');
+                if (topicT[slug]) el.textContent = topicT[slug];
             });
+            
+            // 更新页脚
+            const footerT = {
+                'zh-CN': { links: '© 2025 TiedStory · <a href="/about">关于</a> · <a href="/topics">情绪专题</a> · <a href="/">进入树洞</a>', hotline: '心理援助热线：400-161-9995 · 本平台不提供专业心理治疗' },
+                'zh-TW': { links: '© 2025 TiedStory · <a href="/about">關於</a> · <a href="/topics">情緒專題</a> · <a href="/">進入樹洞</a>', hotline: '心理援助熱線：400-161-9995 · 本平台不提供專業心理治療' },
+                'en': { links: '© 2025 TiedStory · <a href="/about">About</a> · <a href="/topics">Topics</a> · <a href="/">Enter the Tree</a>', hotline: 'Support hotline: 400-161-9995 · This platform is not a substitute for professional care' },
+                'ja': { links: '© 2025 TiedStory · <a href="/about">概要</a> · <a href="/topics">トピック</a> · <a href="/">ツリーへ</a>', hotline: '支援ホットライン：400-161-9995 · 専門的治療の代替ではありません' },
+                'ko': { links: '© 2025 TiedStory · <a href="/about">소개</a> · <a href="/topics">주제</a> · <a href="/">나무로 가기</a>', hotline: '지원 핫라인: 400-161-9995 · 전문 치료를 대신하지 않습니다' },
+                'fr': { links: '© 2025 TiedStory · <a href="/about">À propos</a> · <a href="/topics">Thèmes</a> · <a href="/">Entrer dans l’arbre</a>', hotline: "Ligne de soutien : 400-161-9995 · Cette plateforme ne remplace pas une aide professionnelle" },
+                'ru': { links: '© 2025 TiedStory · <a href="/about">О нас</a> · <a href="/topics">Темы</a> · <a href="/">Войти в дерево</a>', hotline: 'Горячая линия поддержки: 400-161-9995 · Платформа не заменяет профессиональную помощь' }
+            };
+            const f = footerT[lang] || footerT['zh-CN'];
+            setHtml('aboutFooterLinks', f.links);
+            setText('aboutFooterHotline', f.hotline);
         }
 
+        // 初始化
         i18nInit();
-        applyAboutPageI18n();
-        document.addEventListener('tiedstory:langchange', applyAboutPageI18n);
+        initAboutPageI18n();
+        document.addEventListener('tiedstory:langchange', initAboutPageI18n);
 
         // 动态加载真实统计数字
         fetch('/api/site_stats').then(r => r.json()).then(data => {
