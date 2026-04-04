@@ -1587,6 +1587,165 @@ async def admin_toggle_echo_hidden(echo_id: int, request: Request):
     return {"ok": True, "hidden": result}
 
 
+# ── 爬虫统计 ──
+
+_NGINX_LOG = "/var/log/nginx/access.log"
+
+# 已知爬虫 UA 关键词 → 名称映射
+_BOT_SIGNATURES = [
+    ("Googlebot",     "Google"),
+    ("GPTBot",        "OpenAI GPT"),
+    ("OAI-SearchBot", "OpenAI Search"),
+    ("bingbot",       "Bing"),
+    ("Baiduspider",   "百度"),
+    ("Sogou",         "搜狗"),
+    ("YandexBot",     "Yandex"),
+    ("DuckDuckBot",   "DuckDuckGo"),
+    ("GenomeCrawlerd","Nokia Genome"),
+    ("MJ12bot",       "Majestic"),
+    ("Barkrowler",    "Babbar"),
+    ("AhrefsBot",     "Ahrefs"),
+    ("SemrushBot",    "Semrush"),
+    ("DataForSeoBot", "DataForSeo"),
+    ("PetalBot",      "华为 Petal"),
+    ("360Spider",     "360搜索"),
+    ("Bytespider",    "字节跳动"),
+    ("ClaudeBot",     "Anthropic Claude"),
+    ("CCBot",         "Common Crawl"),
+    ("DotBot",        "Moz"),
+    ("Scrapy",        "Scrapy"),
+    ("Go-http-client","Go HTTP"),
+    ("python-requests","Python requests"),
+    ("curl/",         "curl"),
+    ("wget/",         "wget"),
+]
+
+
+def _parse_nginx_log_for_crawlers(log_path: str, limit_lines: int = 50000) -> dict:
+    """解析 nginx access.log，提取爬虫统计信息"""
+    import re
+    from collections import defaultdict
+
+    # nginx combined log 正则
+    pattern = re.compile(
+        r'(?P<ip>\S+) \S+ \S+ \[(?P<time>[^\]]+)\] '
+        r'"(?P<method>\S+) (?P<path>\S+) [^"]*" '
+        r'(?P<status>\d+) (?P<size>\d+) '
+        r'"[^"]*" "(?P<ua>[^"]*)"'
+    )
+
+    bots: dict[str, dict] = {}  # name -> {count, ips, paths, statuses, last_seen}
+    hourly: dict[str, int] = defaultdict(int)  # "HH" -> count
+    total_lines = 0
+    bot_lines = 0
+
+    try:
+        with open(log_path, "r", errors="replace") as f:
+            lines = f.readlines()[-limit_lines:]
+    except PermissionError:
+        return {"error": "no_permission", "bots": [], "hourly": [], "total": 0, "bot_total": 0}
+
+    for line in lines:
+        total_lines += 1
+        m = pattern.match(line)
+        if not m:
+            continue
+        ua = m.group("ua")
+        ip = m.group("ip")
+        path = m.group("path")
+        status = m.group("status")
+        ts_str = m.group("time")  # e.g. 04/Apr/2026:01:23:45 +0800
+
+        # 识别是哪个爬虫
+        bot_name = None
+        for sig, name in _BOT_SIGNATURES:
+            if sig.lower() in ua.lower():
+                bot_name = name
+                break
+        if not bot_name:
+            continue
+
+        bot_lines += 1
+
+        if bot_name not in bots:
+            bots[bot_name] = {"count": 0, "ips": set(), "paths": defaultdict(int), "statuses": defaultdict(int), "ua_sample": ua, "last_seen": ts_str}
+        b = bots[bot_name]
+        b["count"] += 1
+        b["ips"].add(ip)
+        b["paths"][path] += 1
+        b["statuses"][status] += 1
+        b["last_seen"] = ts_str
+
+        # 按小时统计
+        try:
+            hour = ts_str.split(":")[1]  # HH
+            hourly[hour] += 1
+        except Exception:
+            pass
+
+    # 整理输出
+    result_bots = []
+    for name, data in sorted(bots.items(), key=lambda x: -x[1]["count"]):
+        top_paths = sorted(data["paths"].items(), key=lambda x: -x[1])[:8]
+        top_statuses = dict(sorted(data["statuses"].items(), key=lambda x: -x[1]))
+        result_bots.append({
+            "name": name,
+            "count": data["count"],
+            "ips": sorted(data["ips"]),
+            "top_paths": [{"path": p, "count": c} for p, c in top_paths],
+            "statuses": top_statuses,
+            "ua_sample": data["ua_sample"][:120],
+            "last_seen": data["last_seen"],
+        })
+
+    hourly_list = [{"hour": f"{h:02d}:00", "count": hourly.get(f"{h:02d}", 0)} for h in range(24)]
+
+    return {
+        "bots": result_bots,
+        "hourly": hourly_list,
+        "total": total_lines,
+        "bot_total": bot_lines,
+        "log_path": log_path,
+    }
+
+
+@app.get("/admin/crawlers", response_class=HTMLResponse)
+async def admin_crawlers(request: Request):
+    if not _check_session(request):
+        from fastapi.responses import RedirectResponse
+        return RedirectResponse("/admin/login", status_code=302)
+
+    data = _parse_nginx_log_for_crawlers(_NGINX_LOG)
+    goaccess_available = os.path.exists("static/goaccess_report.html")
+    logger.info(f"[Crawlers] bots={len(data.get('bots', []))} total_lines={data.get('total', 0)}")
+    return templates.TemplateResponse("admin/crawlers.html", {
+        "request": request,
+        "data": data,
+        "goaccess_available": goaccess_available,
+    })
+
+
+@app.get("/admin/api/crawlers/refresh")
+async def admin_crawlers_refresh(request: Request):
+    """手动触发 GoAccess 报告刷新"""
+    if not _check_session(request):
+        raise HTTPException(status_code=401)
+    import subprocess
+    try:
+        result = subprocess.run(
+            ["sudo", "goaccess", _NGINX_LOG,
+             "--log-format=COMBINED",
+             "-o", "static/goaccess_report.html"],
+            capture_output=True, text=True, timeout=30,
+            cwd="/var/www/tiedstory"
+        )
+        logger.info(f"[GoAccess Refresh] returncode={result.returncode}")
+        return {"ok": True, "msg": "报告已刷新"}
+    except Exception as e:
+        logger.error(f"[GoAccess Refresh] error: {e}")
+        return {"ok": False, "msg": str(e)}
+
+
 # ── 封禁列表 ──
 
 @app.get("/admin/banned", response_class=HTMLResponse)
