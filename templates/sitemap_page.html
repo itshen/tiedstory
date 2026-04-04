@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网站地图 — TiedStory 树洞</title>
+    <meta name="description" content="TiedStory 树洞网站地图：首页、关于我们、情绪专题（失恋、孤独、焦虑、委屈、迷茫…）以及所有倾诉内容页的完整索引。">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://tiedstory.com/sitemap">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
+    <link rel="icon" type="image/svg+xml" href="/static/icons/favicon.svg">
+    <meta name="theme-color" content="#0a0603">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: -apple-system, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: #0a0603;
+            color: #e8ddd0;
+            line-height: 1.8;
+        }
+        a { color: #c9a97a; text-decoration: none; }
+        a:hover { text-decoration: underline; color: #e0c090; }
+
+        .nav {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(10,6,3,0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding: 16px 24px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .nav-logo { font-size: 18px; font-weight: 700; color: #e8ddd0; }
+        .nav-logo span { color: #c9a97a; }
+        .nav-links { display: flex; gap: 24px; font-size: 14px; }
+        .nav-links a { color: rgba(232,221,208,0.7); }
+        .nav-links a:hover { color: #e8ddd0; text-decoration: none; }
+
+        .page-wrap {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 48px 24px 80px;
+        }
+        h1 {
+            font-size: clamp(22px, 3vw, 32px);
+            font-weight: 300;
+            color: #f0e8dc;
+            margin: 0 0 8px;
+            letter-spacing: 0.03em;
+        }
+        .subtitle {
+            font-size: 14px;
+            color: rgba(232,221,208,0.4);
+            margin: 0 0 48px;
+        }
+        .subtitle a { color: rgba(201,169,122,0.6); font-size: 13px; }
+
+        .section { margin-bottom: 48px; }
+        .section-title {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: rgba(232,221,208,0.35);
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            margin-bottom: 20px;
+        }
+
+        .sitemap-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 8px;
+        }
+        .sitemap-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.025);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: background 0.15s;
+        }
+        .sitemap-item:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        .sitemap-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: #c9a97a;
+            flex-shrink: 0;
+            margin-top: 8px;
+        }
+        .sitemap-info {}
+        .sitemap-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #f0e8dc;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .sitemap-desc {
+            font-size: 12px;
+            color: rgba(232,221,208,0.45);
+            line-height: 1.5;
+        }
+        .sitemap-url {
+            font-size: 11px;
+            color: rgba(201,169,122,0.5);
+            margin-top: 4px;
+            font-family: monospace;
+            letter-spacing: 0.02em;
+        }
+
+        /* 丝带列表 */
+        .ribbons-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .ribbons-table th {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            color: rgba(232,221,208,0.3);
+            text-align: left;
+            padding: 0 12px 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .ribbons-table td {
+            padding: 10px 12px;
+            font-size: 13px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            vertical-align: middle;
+        }
+        .ribbons-table tr:hover td {
+            background: rgba(255,255,255,0.025);
+        }
+        .color-dot {
+            display: inline-block;
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+        .c-blue   { background: #5b8fd4; }
+        .c-orange { background: #e0884a; }
+        .c-pink   { background: #d98fa0; }
+        .c-green  { background: #6aab7c; }
+        .c-purple { background: #9b7ec8; }
+        .c-gray, .c-grey { background: #8a8a8a; }
+        .c-gold   { background: #d4aa45; }
+
+        .ribbon-text-cell {
+            color: rgba(232,221,208,0.75);
+            max-width: 380px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .ribbon-echo {
+            color: rgba(232,221,208,0.35);
+            white-space: nowrap;
+        }
+        .ribbon-time {
+            color: rgba(232,221,208,0.3);
+            white-space: nowrap;
+            font-size: 12px;
+        }
+
+        .xml-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: rgba(201,169,122,0.55);
+            border: 1px solid rgba(201,169,122,0.2);
+            border-radius: 6px;
+            padding: 5px 12px;
+        }
+        .xml-link:hover { color: #c9a97a; border-color: rgba(201,169,122,0.4); text-decoration: none; }
+
+        footer {
+            text-align: center; padding: 32px 24px;
+            font-size: 12px; color: rgba(232,221,208,0.3);
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        footer a { color: rgba(201,169,122,0.5); }
+    </style>
+</head>
+<body>
+    <nav class="nav" aria-label="主导航">
+        <a href="/" class="nav-logo">Tied<span>Story</span></a>
+        <div class="nav-links">
+            <a href="/">树洞</a>
+            <a href="/topics">专题</a>
+            <a href="/about">关于</a>
+        </div>
+    </nav>
+
+    <main class="page-wrap">
+        <h1>网站地图</h1>
+        <p class="subtitle">
+            共 {{ total_urls }} 个页面 &nbsp;·&nbsp;
+            <a href="/sitemap.xml" target="_blank">查看 XML 版本 (sitemap.xml)</a>
+        </p>
+
+        <!-- 主要页面 -->
+        <section class="section" aria-labelledby="main-pages">
+            <div class="section-title" id="main-pages">主要页面</div>
+            <div class="sitemap-grid">
+                <a href="/" class="sitemap-item">
+                    <div class="sitemap-dot"></div>
+                    <div class="sitemap-info">
+                        <span class="sitemap-name">树洞首页</span>
+                        <span class="sitemap-desc">写下你的心声，系一条丝带</span>
+                        <span class="sitemap-url">tiedstory.com/</span>
+                    </div>
+                </a>
+                <a href="/about" class="sitemap-item">
+                    <div class="sitemap-dot"></div>
+                    <div class="sitemap-info">
+                        <span class="sitemap-name">关于 TiedStory</span>
+                        <span class="sitemap-desc">了解这个树洞，常见问题解答</span>
+                        <span class="sitemap-url">tiedstory.com/about</span>
+                    </div>
+                </a>
+                <a href="/topics" class="sitemap-item">
+                    <div class="sitemap-dot"></div>
+                    <div class="sitemap-info">
+                        <span class="sitemap-name">情绪专题</span>
+                        <span class="sitemap-desc">按情绪分类，找到和你一样的人</span>
+                        <span class="sitemap-url">tiedstory.com/topics</span>
+                    </div>
+                </a>
+                <a href="/sitemap" class="sitemap-item">
+                    <div class="sitemap-dot"></div>
+                    <div class="sitemap-info">
+                        <span class="sitemap-name">网站地图</span>
+                        <span class="sitemap-desc">所有页面的完整索引</span>
+                        <span class="sitemap-url">tiedstory.com/sitemap</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- 情绪专题 -->
+        <section class="section" aria-labelledby="topic-pages">
+            <div class="section-title" id="topic-pages">情绪专题页（12 个）</div>
+            <div class="sitemap-grid">
+                {% for topic in topics %}
+                <a href="/topics/{{ topic.slug }}" class="sitemap-item">
+                    <div class="sitemap-dot" style="background: {{ topic.color_hex }};"></div>
+                    <div class="sitemap-info">
+                        <span class="sitemap-name">{{ topic.title }}</span>
+                        <span class="sitemap-desc">{{ topic.lead_short }}</span>
+                        <span class="sitemap-url">tiedstory.com/topics/{{ topic.slug }}</span>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- 丝带详情页 -->
+        <section class="section" aria-labelledby="ribbon-pages">
+            <div class="section-title" id="ribbon-pages">
+                心声详情页（{{ ribbons | length }} 条，共 {{ total_ribbons }} 条）
+            </div>
+            <table class="ribbons-table" aria-label="丝带列表">
+                <thead>
+                    <tr>
+                        <th>内容摘要</th>
+                        <th>回响</th>
+                        <th>时间</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in ribbons %}
+                    <tr>
+                        <td class="ribbon-text-cell">
+                            <span class="color-dot c-{{ r.color }}"></span>
+                            <a href="/ribbon/{{ r.id }}" style="color: rgba(232,221,208,0.75);">{{ r.text }}</a>
+                        </td>
+                        <td class="ribbon-echo">{{ r.echo }} 人</td>
+                        <td class="ribbon-time">{{ r.time }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <div style="text-align: center; padding: 20px 0 10px;">
+            <a href="/sitemap.xml" class="xml-link" target="_blank">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                下载 XML Sitemap（供搜索引擎使用）
+            </a>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2025 TiedStory · <a href="/about">关于</a> · <a href="/topics">情绪专题</a> · <a href="/">进入树洞</a></p>
+    </footer>
+</body>
+</html>

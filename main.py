@@ -286,42 +286,64 @@ _RELATED_MAP = {
 
 
 @app.get("/robots.txt")
-async def robots_txt():
+async def robots_txt(request: Request):
     from fastapi.responses import PlainTextResponse
+    # 动态域名：优先用环境变量，其次从 Host header 推断
+    host = request.headers.get("host", "")
+    if host and ":" not in host:
+        base = f"https://{host}"
+    elif host:
+        base = f"http://{host}"
+    else:
+        base = SITE_DOMAIN
     content = f"""User-agent: *
 Allow: /
 Allow: /about
 Allow: /topics
 Allow: /topics/
 Allow: /ribbon/
+Allow: /sitemap
 
 Disallow: /admin
 Disallow: /admin/
 Disallow: /playground/
 Disallow: /api/
 
-Sitemap: {SITE_DOMAIN}/sitemap.xml
+Sitemap: {base}/sitemap.xml
 """
     return PlainTextResponse(content, headers={"Cache-Control": "public, max-age=86400"})
 
 
+def _get_base_url(request: Request) -> str:
+    """动态获取当前请求的 base URL，兼容 IP 直访和域名访问"""
+    if SITE_DOMAIN != "https://tiedstory.com":
+        return SITE_DOMAIN
+    host = request.headers.get("host", "")
+    forwarded_proto = request.headers.get("x-forwarded-proto", "https")
+    if host:
+        return f"{forwarded_proto}://{host}"
+    return SITE_DOMAIN
+
+
 @app.get("/sitemap.xml")
-async def sitemap_xml():
+async def sitemap_xml(request: Request):
     from fastapi.responses import Response
     import datetime
 
+    base = _get_base_url(request)
     now = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
 
-    # 静态页面
+    # 静态页面（含 /sitemap 网页地图）
     static_urls = [
         ("", "1.0", "daily"),
         ("about", "0.8", "monthly"),
         ("topics", "0.9", "weekly"),
+        ("sitemap", "0.5", "weekly"),
     ] + [(f"topics/{slug}", "0.8", "weekly") for slug in _TOPICS.keys()]
 
     url_entries = ""
     for path, priority, changefreq in static_urls:
-        loc = f"{SITE_DOMAIN}/{path}" if path else SITE_DOMAIN
+        loc = f"{base}/{path}" if path else base
         url_entries += f"""  <url>
     <loc>{loc}</loc>
     <lastmod>{now}</lastmod>
@@ -337,7 +359,7 @@ async def sitemap_xml():
             import datetime as _dtt
             dt = _dtt.datetime.utcfromtimestamp(r["created_at"]).strftime("%Y-%m-%dT%H:%M:%SZ")
             url_entries += f"""  <url>
-    <loc>{SITE_DOMAIN}/ribbon/{r['id']}</loc>
+    <loc>{base}/ribbon/{r['id']}</loc>
     <lastmod>{dt}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -355,6 +377,64 @@ async def sitemap_xml():
         media_type="application/xml",
         headers={"Cache-Control": "public, max-age=3600"}
     )
+
+
+# 情绪专题色值映射（用于网站地图页）
+_TOPIC_COLOR_HEX = {
+    "blue": "#5b8fd4", "orange": "#e0884a", "pink": "#d98fa0",
+    "green": "#6aab7c", "purple": "#9b7ec8", "gray": "#8a8a8a",
+    "grey": "#8a8a8a", "gold": "#d4aa45",
+}
+_TOPIC_LEAD_SHORT = {
+    "loss": "那个人走了，心里空了一块",
+    "lonely": "身边有人，却依然孤单",
+    "anxiety": "睡不着，脑子停不下来",
+    "work": "职场里憋着一口气",
+    "family": "和家人之间说不清的距离",
+    "confused": "不知道该往哪走",
+    "tired": "太累了，只想休息一下",
+    "miss": "想一个联系不到的人",
+    "sad": "说不清原因，就是想说说",
+    "angry": "被误解、被辜负，憋着一口气",
+    "numb": "感觉不到自己，什么都无所谓",
+    "hope": "有好事想和某个人分享",
+}
+
+
+@app.get("/sitemap", response_class=HTMLResponse)
+async def sitemap_html_page(request: Request):
+    """可视化网站地图（HTML 版，用户和搜索引擎都能看）"""
+    try:
+        ribbons_raw = database.list_ribbons(limit=100, offset=0)
+        total_ribbons = database.total_ribbons()
+    except Exception:
+        ribbons_raw = []
+        total_ribbons = 0
+
+    ribbons = [{
+        "id": r["id"],
+        "color": r["color"],
+        "text": r["story"][:60] + "…" if len(r["story"]) > 60 else r["story"],
+        "echo": r["echo_count"],
+        "time": time_ago(r["created_at"]),
+    } for r in ribbons_raw]
+
+    topics_list = [{
+        "slug": slug,
+        "title": t["title"],
+        "color_hex": _TOPIC_COLOR_HEX.get(t["color"], "#8a8a8a"),
+        "lead_short": _TOPIC_LEAD_SHORT.get(slug, t["lead"][:20]),
+    } for slug, t in _TOPICS.items()]
+
+    total_urls = 4 + len(_TOPICS) + total_ribbons  # 主页+about+topics+sitemap + 专题 + 丝带
+
+    return templates.TemplateResponse("sitemap_page.html", {
+        "request": request,
+        "ribbons": ribbons,
+        "total_ribbons": total_ribbons,
+        "topics": topics_list,
+        "total_urls": total_urls,
+    })
 
 
 @app.get("/about", response_class=HTMLResponse)
