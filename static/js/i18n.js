@@ -1,0 +1,664 @@
+/**
+ * TiedStory 多语言国际化
+ * 支持：zh-CN（简中）、zh-TW（繁中）、en、ja、ko、fr、ru
+ */
+
+const I18N_LANGS = {
+  'zh-CN': {
+    flag: '🇨🇳', label: '简体中文', dir: 'ltr',
+    t: {
+      // 时段
+      morning: '清晨', noon: '正午', dusk: '傍晚', night: '夜晚',
+      // 季节
+      spring: '春', summer: '夏', autumn: '秋', winter: '冬',
+      // 品牌
+      slogan: '每一条丝带，都是你认真生活的证明',
+      // 操作栏
+      ribbon_count: (n) => `共 ${n} 条丝带`,
+      shuffle: '随机遇见',
+      view_all: '查看全部',
+      collapse: '收起',
+      // 颜色筛选
+      filter_all: '全部',
+      color_orange: '愤怒 · 委屈',
+      color_blue: '悲伤 · 失落',
+      color_pink: '温柔 · 思念',
+      color_green: '疲惫 · 倦怠',
+      color_purple: '迷茫 · 困惑',
+      color_gray: '麻木 · 空洞',
+      color_gold: '喜悦 · 感恩',
+      // 浮动按钮
+      my_ribbons: '我的丝带',
+      witness_placeholder: '输入见证码…',
+      tie_btn: '系上一条',
+      witness_btn: '凭码查看',
+      // 发布弹窗
+      tie_title: '此刻，你想说什么？',
+      tie_subtitle: '写下来就好，不需要理由，也不用完整',
+      tie_placeholder: '今天，我……',
+      tie_ready: '我准备好了',
+      tie_sensing: '正在感知你的情绪',
+      tie_btn_submit: '系上这条丝带',
+      tie_done_title: '丝带已系上树了',
+      tie_done_subtitle: '保存这串见证码，随时凭它查看别人的回应',
+      tie_witness_hint: '它是你与这条故事之间唯一的连接',
+      tie_saved_hint: '已自动保存到<strong>本机浏览器</strong>。换浏览器或清除记录后会消失。如需长期保管，推荐存到 WPS 笔记。',
+      tie_confirm: '好，我记下了',
+      // 危机提示
+      crisis_text: '或者联系',
+      crisis_link: '生命热线',
+      // 丝带详情
+      resonance_count: (n) => `回响 · ${n}`,
+      resonance_placeholder: '写下你的回响（50字以内）…',
+      resonance_submit: '留下回响',
+      author_append_label: (t) => `作者追加 · ${t}`,
+      witness_input_placeholder: '输入你的见证码',
+      witness_verify: '验证',
+      witness_hint: '见证码是发布时生成的6位私密码，只有你知道',
+      witness_error: '见证码不正确，请重试',
+      append_placeholder: '追加你想说的……（后续感受、新进展都可以）',
+      append_submit: '追加到丝带上',
+      moderation_blocked: '内容包含敏感信息，已阻止发送。',
+      // 我的丝带
+      my_ribbons_title: '我的丝带',
+      my_ribbons_hint: '以下记录保存在<strong style="color:rgba(200,155,80,0.6);">本机浏览器</strong>。换浏览器或清除记录后会消失。',
+      my_ribbons_empty: '还没有系上过任何丝带',
+      // 欢迎语
+      welcome_eyebrow: '有一条金色的丝带，就挂在这棵树上',
+      // 空状态
+      no_ribbons: '还没有人系上丝带，成为第一个吧。',
+      // 时间
+      just_now: '刚刚',
+      minutes_ago: (n) => `${n} 分钟前`,
+      hours_ago: (n) => `${n} 小时前`,
+      days_ago: (n) => `${n} 天前`,
+      months_ago: (n) => `${n} 个月前`,
+      years_ago: (n) => `${n} 年前`,
+      // AI 标签
+      ai_label: '树语',
+      // 今日访客
+      visitors_today: (n) => `${n} 人在线`,
+      // 导航（about 页）
+      nav_back: '回到树洞',
+      nav_topics: '情绪专题',
+      nav_faq: '常见问题',
+      nav_about: '关于我们',
+      // Playground 背景模式
+      pg_real_mode: '跟随真实时间',
+      pg_demo_mode: '时光流逝演示（30s/时段）',
+      pg_auto_hint: '按真实月份季节、真实时刻自动切换',
+      pg_demo_hint: '演示中：每30秒流转一个时段，转完四个进入下一季节',
+    }
+  },
+
+  'zh-TW': {
+    flag: '🇨🇳', label: '繁體中文', dir: 'ltr',
+    t: {
+      morning: '清晨', noon: '正午', dusk: '傍晚', night: '夜晚',
+      spring: '春', summer: '夏', autumn: '秋', winter: '冬',
+      slogan: '每一條絲帶，都是你認真生活的證明',
+      ribbon_count: (n) => `共 ${n} 條絲帶`,
+      shuffle: '隨機遇見',
+      view_all: '查看全部',
+      collapse: '收起',
+      filter_all: '全部',
+      color_orange: '憤怒 · 委屈',
+      color_blue: '悲傷 · 失落',
+      color_pink: '溫柔 · 思念',
+      color_green: '疲憊 · 倦怠',
+      color_purple: '迷茫 · 困惑',
+      color_gray: '麻木 · 空洞',
+      color_gold: '喜悅 · 感恩',
+      my_ribbons: '我的絲帶',
+      witness_placeholder: '輸入見證碼…',
+      tie_btn: '繫上一條',
+      witness_btn: '憑碼查看',
+      tie_title: '此刻，你想說什麼？',
+      tie_subtitle: '寫下來就好，不需要理由，也不用完整',
+      tie_placeholder: '今天，我……',
+      tie_ready: '我準備好了',
+      tie_sensing: '正在感知你的情緒',
+      tie_btn_submit: '繫上這條絲帶',
+      tie_done_title: '絲帶已繫上樹了',
+      tie_done_subtitle: '保存這串見證碼，隨時憑它查看別人的回應',
+      tie_witness_hint: '它是你與這條故事之間唯一的連接',
+      tie_saved_hint: '已自動儲存到<strong>本機瀏覽器</strong>。換瀏覽器或清除記錄後會消失。如需長期保管，推薦存到 WPS 筆記。',
+      tie_confirm: '好，我記下了',
+      crisis_text: '或者聯繫',
+      crisis_link: '生命熱線',
+      resonance_count: (n) => `回響 · ${n}`,
+      resonance_placeholder: '寫下你的回響（50字以內）…',
+      resonance_submit: '留下回響',
+      author_append_label: (t) => `作者追加 · ${t}`,
+      witness_input_placeholder: '輸入你的見證碼',
+      witness_verify: '驗證',
+      witness_hint: '見證碼是發布時生成的6位私密碼，只有你知道',
+      witness_error: '見證碼不正確，請重試',
+      append_placeholder: '追加你想說的……（後續感受、新進展都可以）',
+      append_submit: '追加到絲帶上',
+      moderation_blocked: '內容包含敏感資訊，已阻止發送。',
+      my_ribbons_title: '我的絲帶',
+      my_ribbons_hint: '以下記錄儲存在<strong style="color:rgba(200,155,80,0.6);">本機瀏覽器</strong>。換瀏覽器或清除記錄後會消失。',
+      my_ribbons_empty: '還沒有繫上過任何絲帶',
+      welcome_eyebrow: '有一條金色的絲帶，就掛在這棵樹上',
+      no_ribbons: '還沒有人繫上絲帶，成為第一個吧。',
+      just_now: '剛剛',
+      minutes_ago: (n) => `${n} 分鐘前`,
+      hours_ago: (n) => `${n} 小時前`,
+      days_ago: (n) => `${n} 天前`,
+      months_ago: (n) => `${n} 個月前`,
+      years_ago: (n) => `${n} 年前`,
+      ai_label: '樹語',
+      visitors_today: (n) => `${n} 人在線`,
+      nav_back: '回到樹洞',
+      nav_topics: '情緒專題',
+      nav_faq: '常見問題',
+      nav_about: '關於我們',
+      pg_real_mode: '跟隨真實時間',
+      pg_demo_mode: '時光流逝演示（30s/時段）',
+      pg_auto_hint: '按真實月份季節、真實時刻自動切換',
+      pg_demo_hint: '演示中：每30秒流轉一個時段，轉完四個進入下一季節',
+    }
+  },
+
+  'en': {
+    flag: '🇬🇧', label: 'English', dir: 'ltr',
+    t: {
+      morning: 'Morning', noon: 'Noon', dusk: 'Dusk', night: 'Night',
+      spring: 'Spring', summer: 'Summer', autumn: 'Autumn', winter: 'Winter',
+      slogan: 'Every ribbon is proof that you are living earnestly.',
+      ribbon_count: (n) => `${n} ribbons`,
+      shuffle: 'Discover',
+      view_all: 'View all',
+      collapse: 'Collapse',
+      filter_all: 'All',
+      color_orange: 'Anger · Grievance',
+      color_blue: 'Sadness · Loss',
+      color_pink: 'Longing · Tenderness',
+      color_green: 'Exhaustion · Fatigue',
+      color_purple: 'Confusion · Uncertainty',
+      color_gray: 'Numbness · Emptiness',
+      color_gold: 'Joy · Gratitude',
+      my_ribbons: 'My ribbons',
+      witness_placeholder: 'Enter witness code…',
+      tie_btn: 'Tie a ribbon',
+      witness_btn: 'Find by code',
+      tie_title: 'What do you want to say?',
+      tie_subtitle: 'Just write it down. No reason needed, no need to be complete.',
+      tie_placeholder: 'Today, I…',
+      tie_ready: "I'm ready",
+      tie_sensing: 'Sensing your emotions…',
+      tie_btn_submit: 'Tie this ribbon',
+      tie_done_title: 'Your ribbon is on the tree',
+      tie_done_subtitle: 'Save this witness code to check responses anytime.',
+      tie_witness_hint: 'This is the only link between you and your story.',
+      tie_saved_hint: 'Auto-saved to <strong>this browser</strong>. Will be lost if you switch browsers or clear data.',
+      tie_confirm: 'Got it',
+      crisis_text: 'or contact',
+      crisis_link: 'crisis line',
+      resonance_count: (n) => `Echoes · ${n}`,
+      resonance_placeholder: 'Leave your echo (under 50 words)…',
+      resonance_submit: 'Leave an echo',
+      author_append_label: (t) => `Author added · ${t}`,
+      witness_input_placeholder: 'Enter your witness code',
+      witness_verify: 'Verify',
+      witness_hint: 'The 6-digit code generated when you posted — only you know it.',
+      witness_error: 'Incorrect witness code. Please try again.',
+      append_placeholder: 'Add a follow-up… (how you feel now, any new updates)',
+      append_submit: 'Append to ribbon',
+      moderation_blocked: 'Content flagged. Message not sent.',
+      my_ribbons_title: 'My Ribbons',
+      my_ribbons_hint: 'Records are saved in <strong style="color:rgba(200,155,80,0.6);">this browser</strong>. They will be lost if you switch browsers or clear data.',
+      my_ribbons_empty: "You haven't tied any ribbons yet.",
+      welcome_eyebrow: 'A golden ribbon hangs on this tree',
+      no_ribbons: "No ribbons yet — be the first.",
+      just_now: 'just now',
+      minutes_ago: (n) => `${n}m ago`,
+      hours_ago: (n) => `${n}h ago`,
+      days_ago: (n) => `${n}d ago`,
+      months_ago: (n) => `${n}mo ago`,
+      years_ago: (n) => `${n}y ago`,
+      ai_label: 'TreeWhisper',
+      visitors_today: (n) => `${n} online`,
+      nav_back: 'Back to Tree',
+      nav_topics: 'Topics',
+      nav_faq: 'FAQ',
+      nav_about: 'About',
+      pg_real_mode: 'Follow real time',
+      pg_demo_mode: 'Time-lapse demo (30s/period)',
+      pg_auto_hint: 'Auto-switches by real season and time of day',
+      pg_demo_hint: 'Demo: cycles through 4 periods every 30s, then moves to the next season',
+    }
+  },
+
+  'ja': {
+    flag: '🇯🇵', label: '日本語', dir: 'ltr',
+    t: {
+      morning: '朝', noon: '昼', dusk: '夕暮れ', night: '夜',
+      spring: '春', summer: '夏', autumn: '秋', winter: '冬',
+      slogan: 'すべてのリボンは、あなたが真剣に生きている証。',
+      ribbon_count: (n) => `${n} 本のリボン`,
+      shuffle: 'ランダムに出会う',
+      view_all: 'すべて見る',
+      collapse: '閉じる',
+      filter_all: 'すべて',
+      color_orange: '怒り · 悔しさ',
+      color_blue: '悲しみ · 失望',
+      color_pink: '思い · 優しさ',
+      color_green: '疲れ · 倦怠',
+      color_purple: '迷い · 戸惑い',
+      color_gray: '虚無 · 感覚麻痺',
+      color_gold: '喜び · 感謝',
+      my_ribbons: 'マイリボン',
+      witness_placeholder: '証言コードを入力…',
+      tie_btn: 'リボンを結ぶ',
+      witness_btn: 'コードで探す',
+      tie_title: '今、何を言いたいですか？',
+      tie_subtitle: '書くだけでいい。理由も、まとまりも要らない。',
+      tie_placeholder: '今日、私は……',
+      tie_ready: '準備できました',
+      tie_sensing: 'あなたの気持ちを感じ取っています…',
+      tie_btn_submit: 'このリボンを結ぶ',
+      tie_done_title: 'リボンが木に結ばれました',
+      tie_done_subtitle: '証言コードを保存して、いつでも返答を確認できます。',
+      tie_witness_hint: 'これはあなたとこのストーリーを結ぶ唯一のつながりです。',
+      tie_saved_hint: '<strong>このブラウザ</strong>に自動保存されました。ブラウザを変えるかデータを削除すると消えます。',
+      tie_confirm: 'わかりました',
+      crisis_text: 'または相談窓口へ',
+      crisis_link: 'いのちの電話',
+      resonance_count: (n) => `共鳴 · ${n}`,
+      resonance_placeholder: '共鳴を残す（50文字以内）…',
+      resonance_submit: '共鳴を残す',
+      author_append_label: (t) => `著者が追記 · ${t}`,
+      witness_input_placeholder: '証言コードを入力',
+      witness_verify: '確認',
+      witness_hint: '投稿時に生成された6桁の秘密コード。あなただけが知っています。',
+      witness_error: '証言コードが正しくありません。再試行してください。',
+      append_placeholder: '追記する……（その後の気持ちや新しい出来事など）',
+      append_submit: 'リボンに追記する',
+      moderation_blocked: '不適切なコンテンツが含まれています。送信がブロックされました。',
+      my_ribbons_title: 'マイリボン',
+      my_ribbons_hint: '記録は<strong style="color:rgba(200,155,80,0.6);">このブラウザ</strong>に保存されています。ブラウザを変えるかデータを削除すると消えます。',
+      my_ribbons_empty: 'まだリボンを結んでいません。',
+      welcome_eyebrow: '金色のリボンが、この木に結ばれています',
+      no_ribbons: 'まだリボンがありません。最初の一本を結んでみましょう。',
+      just_now: 'たった今',
+      minutes_ago: (n) => `${n}分前`,
+      hours_ago: (n) => `${n}時間前`,
+      days_ago: (n) => `${n}日前`,
+      months_ago: (n) => `${n}ヶ月前`,
+      years_ago: (n) => `${n}年前`,
+      ai_label: 'ツリーウィスパー',
+      visitors_today: (n) => `${n}人がオンライン`,
+      nav_back: 'ツリーに戻る',
+      nav_topics: 'トピック',
+      nav_faq: 'よくある質問',
+      nav_about: '私たちについて',
+      pg_real_mode: '実時間に合わせる',
+      pg_demo_mode: 'タイムラプスデモ（30秒/時間帯）',
+      pg_auto_hint: '実際の季節・時刻に合わせて自動切替',
+      pg_demo_hint: 'デモ中：30秒ごとに時間帯が変わり、4つ終わると次の季節へ',
+    }
+  },
+
+  'ko': {
+    flag: '🇰🇷', label: '한국어', dir: 'ltr',
+    t: {
+      morning: '아침', noon: '정오', dusk: '황혼', night: '밤',
+      spring: '봄', summer: '여름', autumn: '가을', winter: '겨울',
+      slogan: '모든 리본은 당신이 진지하게 살아가는 증거입니다.',
+      ribbon_count: (n) => `리본 ${n}개`,
+      shuffle: '무작위 만남',
+      view_all: '전체 보기',
+      collapse: '접기',
+      filter_all: '전체',
+      color_orange: '분노 · 억울함',
+      color_blue: '슬픔 · 상실',
+      color_pink: '그리움 · 부드러움',
+      color_green: '피로 · 권태',
+      color_purple: '방황 · 혼란',
+      color_gray: '무감각 · 공허',
+      color_gold: '기쁨 · 감사',
+      my_ribbons: '내 리본',
+      witness_placeholder: '증인 코드 입력…',
+      tie_btn: '리본 묶기',
+      witness_btn: '코드로 찾기',
+      tie_title: '지금, 무슨 말을 하고 싶나요?',
+      tie_subtitle: '그냥 써도 돼요. 이유도, 완성도 필요 없어요.',
+      tie_placeholder: '오늘, 나는…',
+      tie_ready: '준비됐어요',
+      tie_sensing: '당신의 감정을 느끼는 중…',
+      tie_btn_submit: '이 리본 묶기',
+      tie_done_title: '리본이 나무에 묶였어요',
+      tie_done_subtitle: '증인 코드를 저장하면 언제든지 답변을 확인할 수 있어요.',
+      tie_witness_hint: '이것은 당신과 이 이야기를 잇는 유일한 연결고리예요.',
+      tie_saved_hint: '<strong>이 브라우저</strong>에 자동 저장됩니다. 브라우저를 바꾸거나 데이터를 지우면 사라져요.',
+      tie_confirm: '알겠어요',
+      crisis_text: '또는 연락하세요',
+      crisis_link: '위기상담전화',
+      resonance_count: (n) => `공명 · ${n}`,
+      resonance_placeholder: '공명을 남겨주세요 (50자 이내)…',
+      resonance_submit: '공명 남기기',
+      author_append_label: (t) => `작성자 추가 · ${t}`,
+      witness_input_placeholder: '증인 코드 입력',
+      witness_verify: '확인',
+      witness_hint: '게시 시 생성된 6자리 비밀 코드예요. 본인만 알고 있어요.',
+      witness_error: '증인 코드가 올바르지 않아요. 다시 시도해주세요.',
+      append_placeholder: '추가하고 싶은 말…（이후 감정이나 새로운 소식）',
+      append_submit: '리본에 추가',
+      moderation_blocked: '부적절한 내용이 포함되어 전송이 차단되었어요.',
+      my_ribbons_title: '내 리본',
+      my_ribbons_hint: '기록은 <strong style="color:rgba(200,155,80,0.6);">이 브라우저</strong>에 저장됩니다. 브라우저를 바꾸거나 데이터를 지우면 사라져요.',
+      my_ribbons_empty: '아직 묶은 리본이 없어요.',
+      welcome_eyebrow: '황금색 리본 하나가 이 나무에 걸려 있어요',
+      no_ribbons: '아직 리본이 없어요. 첫 번째가 되어보세요.',
+      just_now: '방금',
+      minutes_ago: (n) => `${n}분 전`,
+      hours_ago: (n) => `${n}시간 전`,
+      days_ago: (n) => `${n}일 전`,
+      months_ago: (n) => `${n}개월 전`,
+      years_ago: (n) => `${n}년 전`,
+      ai_label: '나무속삭임',
+      visitors_today: (n) => `${n}명 온라인`,
+      nav_back: '나무로 돌아가기',
+      nav_topics: '주제',
+      nav_faq: 'FAQ',
+      nav_about: '소개',
+      pg_real_mode: '실시간 따라가기',
+      pg_demo_mode: '타임랩스 데모 (30초/시간대)',
+      pg_auto_hint: '실제 계절과 시간에 맞춰 자동 전환',
+      pg_demo_hint: '데모: 30초마다 시간대 전환, 4개 완료 후 다음 계절로',
+    }
+  },
+
+  'fr': {
+    flag: '🇫🇷', label: 'Français', dir: 'ltr',
+    t: {
+      morning: 'Matin', noon: 'Midi', dusk: 'Crépuscule', night: 'Nuit',
+      spring: 'Printemps', summer: 'Été', autumn: 'Automne', winter: 'Hiver',
+      slogan: 'Chaque ruban est la preuve que tu vis avec sincérité.',
+      ribbon_count: (n) => `${n} rubans`,
+      shuffle: 'Découvrir',
+      view_all: 'Voir tout',
+      collapse: 'Réduire',
+      filter_all: 'Tout',
+      color_orange: 'Colère · Rancœur',
+      color_blue: 'Tristesse · Perte',
+      color_pink: 'Tendresse · Nostalgie',
+      color_green: 'Épuisement · Fatigue',
+      color_purple: 'Confusion · Doute',
+      color_gray: 'Engourdissement · Vide',
+      color_gold: 'Joie · Gratitude',
+      my_ribbons: 'Mes rubans',
+      witness_placeholder: 'Code témoin…',
+      tie_btn: 'Nouer un ruban',
+      witness_btn: 'Trouver par code',
+      tie_title: 'Que veux-tu dire maintenant ?',
+      tie_subtitle: 'Écris simplement. Pas besoin de raison, ni d'être complet.',
+      tie_placeholder: 'Aujourd'hui, je…',
+      tie_ready: 'Je suis prêt(e)',
+      tie_sensing: 'Perception de tes émotions…',
+      tie_btn_submit: 'Nouer ce ruban',
+      tie_done_title: 'Ton ruban est noué à l'arbre',
+      tie_done_subtitle: 'Sauvegarde ce code témoin pour consulter les réponses.',
+      tie_witness_hint: 'C'est le seul lien entre toi et ton histoire.',
+      tie_saved_hint: 'Sauvegardé automatiquement dans <strong>ce navigateur</strong>. Sera perdu si tu changes de navigateur ou effaces les données.',
+      tie_confirm: 'Compris',
+      crisis_text: 'ou contacte',
+      crisis_link: 'la ligne de crise',
+      resonance_count: (n) => `Échos · ${n}`,
+      resonance_placeholder: 'Laisse un écho (50 mots max)…',
+      resonance_submit: 'Laisser un écho',
+      author_append_label: (t) => `Ajout de l'auteur · ${t}`,
+      witness_input_placeholder: 'Entre ton code témoin',
+      witness_verify: 'Vérifier',
+      witness_hint: 'Le code à 6 chiffres généré lors de la publication — tu es le seul à le connaître.',
+      witness_error: 'Code témoin incorrect. Réessaie.',
+      append_placeholder: 'Ajouter une suite… (tes ressentis, de nouveaux développements)',
+      append_submit: 'Ajouter au ruban',
+      moderation_blocked: 'Contenu signalé. Message non envoyé.',
+      my_ribbons_title: 'Mes Rubans',
+      my_ribbons_hint: 'Les données sont sauvegardées dans <strong style="color:rgba(200,155,80,0.6);">ce navigateur</strong>. Elles seront perdues si tu changes de navigateur ou effaces les données.',
+      my_ribbons_empty: "Tu n'as pas encore noué de ruban.",
+      welcome_eyebrow: 'Un ruban doré est noué à cet arbre',
+      no_ribbons: 'Aucun ruban pour l'instant — sois le premier.',
+      just_now: 'à l'instant',
+      minutes_ago: (n) => `il y a ${n} min`,
+      hours_ago: (n) => `il y a ${n} h`,
+      days_ago: (n) => `il y a ${n} j`,
+      months_ago: (n) => `il y a ${n} mois`,
+      years_ago: (n) => `il y a ${n} an${n > 1 ? 's' : ''}`,
+      ai_label: 'SouffleArbre',
+      visitors_today: (n) => `${n} en ligne`,
+      nav_back: 'Retour à l'arbre',
+      nav_topics: 'Thèmes',
+      nav_faq: 'FAQ',
+      nav_about: 'À propos',
+      pg_real_mode: 'Suivre l'heure réelle',
+      pg_demo_mode: 'Démo time-lapse (30s/période)',
+      pg_auto_hint: 'Bascule automatiquement selon la saison et l'heure réelles',
+      pg_demo_hint: 'Démo : cycles de 30s par période, puis passage à la saison suivante',
+    }
+  },
+
+  'ru': {
+    flag: '🇷🇺', label: 'Русский', dir: 'ltr',
+    t: {
+      morning: 'Утро', noon: 'Полдень', dusk: 'Сумерки', night: 'Ночь',
+      spring: 'Весна', summer: 'Лето', autumn: 'Осень', winter: 'Зима',
+      slogan: 'Каждая лента — доказательство того, что ты живёшь по-настоящему.',
+      ribbon_count: (n) => `${n} лент`,
+      shuffle: 'Случайное',
+      view_all: 'Все',
+      collapse: 'Свернуть',
+      filter_all: 'Все',
+      color_orange: 'Гнев · Обида',
+      color_blue: 'Грусть · Потеря',
+      color_pink: 'Нежность · Тоска',
+      color_green: 'Усталость · Апатия',
+      color_purple: 'Растерянность · Сомнение',
+      color_gray: 'Оцепенение · Пустота',
+      color_gold: 'Радость · Благодарность',
+      my_ribbons: 'Мои ленты',
+      witness_placeholder: 'Код свидетеля…',
+      tie_btn: 'Завязать ленту',
+      witness_btn: 'Найти по коду',
+      tie_title: 'Что ты хочешь сказать сейчас?',
+      tie_subtitle: 'Просто напиши. Не нужно причин, не нужно законченности.',
+      tie_placeholder: 'Сегодня я…',
+      tie_ready: 'Я готов(а)',
+      tie_sensing: 'Чувствую твои эмоции…',
+      tie_btn_submit: 'Завязать эту ленту',
+      tie_done_title: 'Лента привязана к дереву',
+      tie_done_subtitle: 'Сохрани код свидетеля, чтобы видеть ответы в любое время.',
+      tie_witness_hint: 'Это единственная связь между тобой и твоей историей.',
+      tie_saved_hint: 'Автоматически сохранено в <strong>этом браузере</strong>. Исчезнет при смене браузера или очистке данных.',
+      tie_confirm: 'Понятно',
+      crisis_text: 'или свяжись с',
+      crisis_link: 'линией помощи',
+      resonance_count: (n) => `Отклики · ${n}`,
+      resonance_placeholder: 'Оставь отклик (до 50 слов)…',
+      resonance_submit: 'Оставить отклик',
+      author_append_label: (t) => `Добавлено автором · ${t}`,
+      witness_input_placeholder: 'Введи код свидетеля',
+      witness_verify: 'Проверить',
+      witness_hint: '6-значный код, созданный при публикации — знаешь только ты.',
+      witness_error: 'Неверный код. Попробуй снова.',
+      append_placeholder: 'Добавить продолжение… (как ты сейчас, что изменилось)',
+      append_submit: 'Добавить к ленте',
+      moderation_blocked: 'Содержание нарушает правила. Сообщение не отправлено.',
+      my_ribbons_title: 'Мои ленты',
+      my_ribbons_hint: 'Данные сохранены в <strong style="color:rgba(200,155,80,0.6);">этом браузере</strong>. Исчезнут при смене браузера или очистке данных.',
+      my_ribbons_empty: 'Ты ещё не завязал(а) ни одной ленты.',
+      welcome_eyebrow: 'На этом дереве висит золотая лента',
+      no_ribbons: 'Лент пока нет — будь первым.',
+      just_now: 'только что',
+      minutes_ago: (n) => `${n} мин назад`,
+      hours_ago: (n) => `${n} ч назад`,
+      days_ago: (n) => `${n} д назад`,
+      months_ago: (n) => `${n} мес назад`,
+      years_ago: (n) => `${n} г назад`,
+      ai_label: 'ГолосДерева',
+      visitors_today: (n) => `${n} онлайн`,
+      nav_back: 'Вернуться к дереву',
+      nav_topics: 'Темы',
+      nav_faq: 'FAQ',
+      nav_about: 'О нас',
+      pg_real_mode: 'Следовать реальному времени',
+      pg_demo_mode: 'Демо покадровой съёмки (30с/период)',
+      pg_auto_hint: 'Автопереключение по реальному сезону и времени суток',
+      pg_demo_hint: 'Демо: 30с на период, 4 периода — следующий сезон',
+    }
+  }
+};
+
+// ─── 语言检测与切换核心 ─────────────────────────────────────────────────────
+
+const I18N_STORAGE_KEY = 'ts_lang';
+
+/**
+ * 根据浏览器语言自动匹配，返回语言代码
+ */
+function i18nDetectLang() {
+  const saved = localStorage.getItem(I18N_STORAGE_KEY);
+  if (saved && I18N_LANGS[saved]) return saved;
+
+  const nav = (navigator.language || navigator.userLanguage || 'zh-CN').toLowerCase();
+  if (nav.startsWith('zh-tw') || nav.startsWith('zh-hk') || nav.startsWith('zh-mo')) return 'zh-TW';
+  if (nav.startsWith('zh')) return 'zh-CN';
+  if (nav.startsWith('ja')) return 'ja';
+  if (nav.startsWith('ko')) return 'ko';
+  if (nav.startsWith('fr')) return 'fr';
+  if (nav.startsWith('ru')) return 'ru';
+  if (nav.startsWith('en')) return 'en';
+  return 'zh-CN'; // 默认简中
+}
+
+let _currentLang = i18nDetectLang();
+
+/**
+ * 获取当前翻译对象
+ */
+function i18nT() {
+  return I18N_LANGS[_currentLang].t;
+}
+
+/**
+ * 切换语言并刷新页面文本
+ */
+function i18nSetLang(code) {
+  if (!I18N_LANGS[code]) return;
+  _currentLang = code;
+  localStorage.setItem(I18N_STORAGE_KEY, code);
+  i18nApply();
+  i18nRenderSwitcher();
+}
+
+/**
+ * 获取当前语言代码
+ */
+function i18nGetLang() {
+  return _currentLang;
+}
+
+/**
+ * 将翻译应用到 DOM（有 data-i18n 属性的元素）
+ * data-i18n="key"             → 设置 textContent
+ * data-i18n-html="key"        → 设置 innerHTML
+ * data-i18n-placeholder="key" → 设置 placeholder
+ * data-i18n-title="key"       → 设置 title
+ */
+function i18nApply() {
+  const t = i18nT();
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (typeof t[key] === 'function') {
+      el.textContent = t[key](el.getAttribute('data-i18n-n') || 0);
+    } else if (t[key] !== undefined) {
+      el.textContent = t[key];
+    }
+  });
+
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const key = el.getAttribute('data-i18n-html');
+    if (t[key] !== undefined) el.innerHTML = t[key];
+  });
+
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (t[key] !== undefined) el.placeholder = t[key];
+  });
+
+  document.querySelectorAll('[data-i18n-title]').forEach(el => {
+    const key = el.getAttribute('data-i18n-title');
+    if (t[key] !== undefined) el.title = t[key];
+  });
+
+  // 更新 html lang 属性
+  document.documentElement.lang = _currentLang;
+}
+
+// ─── 语言切换器渲染 ──────────────────────────────────────────────────────────
+
+/**
+ * 渲染右上角语言切换器到 #langSwitcher 容器
+ */
+function i18nRenderSwitcher() {
+  const container = document.getElementById('langSwitcher');
+  if (!container) return;
+
+  // 下拉菜单开关
+  const current = I18N_LANGS[_currentLang];
+  container.innerHTML = `
+    <div class="lang-switcher-wrap">
+      <button class="lang-switcher-btn" id="langSwitcherBtn" onclick="i18nToggleDropdown()" aria-haspopup="true" aria-expanded="false">
+        <span class="lang-flag">${current.flag}</span>
+        <svg class="lang-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="lang-dropdown" id="langDropdown" style="display:none;">
+        ${Object.entries(I18N_LANGS).map(([code, cfg]) => `
+          <button class="lang-option ${code === _currentLang ? 'active' : ''}" onclick="i18nSetLang('${code}'); i18nCloseDropdown()">
+            <span class="lang-flag">${cfg.flag}</span>
+            <span class="lang-name">${cfg.label}</span>
+          </button>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function i18nToggleDropdown() {
+  const dropdown = document.getElementById('langDropdown');
+  const btn = document.getElementById('langSwitcherBtn');
+  if (!dropdown) return;
+  const isOpen = dropdown.style.display !== 'none';
+  dropdown.style.display = isOpen ? 'none' : 'block';
+  if (btn) btn.setAttribute('aria-expanded', String(!isOpen));
+}
+
+function i18nCloseDropdown() {
+  const dropdown = document.getElementById('langDropdown');
+  const btn = document.getElementById('langSwitcherBtn');
+  if (dropdown) dropdown.style.display = 'none';
+  if (btn) btn.setAttribute('aria-expanded', 'false');
+}
+
+// 点击外部关闭下拉
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('#langSwitcher')) {
+    i18nCloseDropdown();
+  }
+});
+
+// ─── 辅助：time_ago 多语言版本 ────────────────────────────────────────────────
+function i18nTimeAgo(ts) {
+  const t = i18nT();
+  const diff = Math.floor(Date.now() / 1000) - ts;
+  if (diff < 60) return t.just_now;
+  if (diff < 3600) return t.minutes_ago(Math.floor(diff / 60));
+  if (diff < 86400) return t.hours_ago(Math.floor(diff / 3600));
+  if (diff < 86400 * 30) return t.days_ago(Math.floor(diff / 86400));
+  if (diff < 86400 * 365) return t.months_ago(Math.floor(diff / (86400 * 30)));
+  return t.years_ago(Math.floor(diff / (86400 * 365)));
+}

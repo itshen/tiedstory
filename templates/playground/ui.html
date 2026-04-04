@@ -53,6 +53,84 @@
     align-items: center;
     gap: 8px;
 }
+
+/* ====== 语言切换器 ====== */
+.lang-switcher-wrap {
+    position: relative;
+}
+.lang-switcher-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(10,6,3,0.35);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 5px 9px;
+    color: rgba(255,255,255,0.85);
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    line-height: 1;
+}
+.lang-switcher-btn:hover {
+    background: rgba(10,6,3,0.55);
+    border-color: rgba(255,255,255,0.22);
+}
+.lang-chevron {
+    opacity: 0.6;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+}
+.lang-switcher-btn[aria-expanded="true"] .lang-chevron {
+    transform: rotate(180deg);
+}
+.lang-flag {
+    font-size: 16px;
+    line-height: 1;
+}
+.lang-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    background: rgba(18, 12, 6, 0.96);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 12px;
+    padding: 6px;
+    min-width: 148px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    z-index: 100;
+}
+.lang-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 10px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    color: rgba(232,221,208,0.8);
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    text-align: left;
+    white-space: nowrap;
+}
+.lang-option:hover {
+    background: rgba(255,255,255,0.08);
+    color: #f0e8dc;
+}
+.lang-option.active {
+    background: rgba(201,169,122,0.18);
+    color: #c9a97a;
+}
+.lang-name {
+    font-size: 13px;
+}
 .hero-time-badge {
     display: flex;
     align-items: center;
@@ -1955,8 +2033,10 @@
     <div class="hero-bg-layer active" id="heroBgA"></div>
     <div class="hero-bg-layer inactive" id="heroBgB"></div>
 
-    <!-- 右上角标签组：时段 + 今日访客 -->
+    <!-- 右上角标签组：语言切换 + 时段 + 今日访客 -->
     <div class="hero-top-right">
+        <!-- 语言切换器 -->
+        <div id="langSwitcher"></div>
         <div class="hero-time-badge" id="heroStatsBadge" style="display:none;">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.6;flex-shrink:0"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             <span id="heroStatsLabel">—</span>
@@ -1971,22 +2051,22 @@
     <div class="hero-brand">
         <div class="hero-brand-inner">
             <div class="hero-logo">TiedStory</div>
-            <div class="hero-slogan">每一条丝带，都是你认真生活的证明</div>
+            <div class="hero-slogan" data-i18n="slogan">每一条丝带，都是你认真生活的证明</div>
         </div>
         
         <!-- 操作栏：条数 + 随机 + 查看全部 -->
         <div class="ribbon-browse-bar">
-            <span class="ribbon-browse-count" id="ribbonTotalCount">共 0 条丝带</span>
+            <span class="ribbon-browse-count" id="ribbonTotalCount" data-i18n-n="0">共 0 条丝带</span>
             <div class="ribbon-browse-actions">
                 <button class="ribbon-browse-btn shuffle-btn" onclick="shuffleRibbon()">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
-                    随机遇见
+                    <span data-i18n="shuffle">随机遇见</span>
                 </button>
                 <button class="ribbon-browse-btn expand-toggle" onclick="toggleAllPanel()">
                     <svg class="icon-expand" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                     <svg class="icon-collapse" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
-                    <span class="toggle-label-expand">查看全部</span>
-                    <span class="toggle-label-collapse">收起</span>
+                    <span class="toggle-label-expand" data-i18n="view_all">查看全部</span>
+                    <span class="toggle-label-collapse" data-i18n="collapse">收起</span>
                 </button>
             </div>
         </div>
@@ -1998,18 +2078,18 @@
     <!-- 右下角浮动操作按钮（在背景图区内，不受底部卡片区影响） -->
     <div class="hero-float-actions">
         <!-- 我的丝带（辅助操作，最弱） -->
-        <button class="btn-float btn-my-ribbons-float" id="myRibbonsBtn" onclick="openMyRibbons()" title="我的丝带">
+        <button class="btn-float btn-my-ribbons-float" id="myRibbonsBtn" onclick="openMyRibbons()" data-i18n-title="my_ribbons" title="我的丝带">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
-            我的丝带
+            <span data-i18n="my_ribbons">我的丝带</span>
             <span class="my-ribbons-badge" id="myRibbonsBadge" style="display:none;">0</span>
         </button>
 
         <!-- 凭码查看（次操作） -->
         <div class="witness-input-wrap">
-            <input class="witness-input" id="witnessInput" type="text" placeholder="输入见证码…" maxlength="16">
+            <input class="witness-input" id="witnessInput" type="text" data-i18n-placeholder="witness_placeholder" placeholder="输入见证码…" maxlength="16">
             <button class="btn-float btn-witness-float" onclick="toggleWitnessInput()">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg>
-                凭码查看
+                <span data-i18n="witness_btn">凭码查看</span>
             </button>
         </div>
 
@@ -2017,7 +2097,7 @@
         <div class="hero-float-divider"></div>
         <button class="btn-float btn-tie-float" onclick="openTieModal()">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
-            系上一条
+            <span data-i18n="tie_btn">系上一条</span>
         </button>
     </div>
 
@@ -2026,14 +2106,14 @@
 
         <!-- 颜色筛选（展开态显示） -->
         <div class="ribbon-filter-bar" id="ribbonFilterBar">
-            <button class="ribbon-filter-tag active" data-color="all" onclick="filterRibbons('all', this)">全部</button>
-            <button class="ribbon-filter-tag" data-color="orange" onclick="filterRibbons('orange', this)" title="愤怒 · 委屈"><span class="ribbon-filter-dot" style="background:#D4763B;"></span></button>
-            <button class="ribbon-filter-tag" data-color="blue"   onclick="filterRibbons('blue', this)"   title="悲伤 · 失落"><span class="ribbon-filter-dot" style="background:#5B8DD9;"></span></button>
-            <button class="ribbon-filter-tag" data-color="pink"   onclick="filterRibbons('pink', this)"   title="温柔 · 思念"><span class="ribbon-filter-dot" style="background:#D4849A;"></span></button>
-            <button class="ribbon-filter-tag" data-color="green"  onclick="filterRibbons('green', this)"  title="疲惫 · 倦怠"><span class="ribbon-filter-dot" style="background:#7BAF7B;"></span></button>
-            <button class="ribbon-filter-tag" data-color="purple" onclick="filterRibbons('purple', this)" title="迷茫 · 困惑"><span class="ribbon-filter-dot" style="background:#9A7EC8;"></span></button>
-            <button class="ribbon-filter-tag" data-color="gray"   onclick="filterRibbons('gray', this)"   title="麻木 · 空洞"><span class="ribbon-filter-dot" style="background:#9A9490;"></span></button>
-            <button class="ribbon-filter-tag" data-color="gold"   onclick="filterRibbons('gold', this)"   title="喜悦 · 感恩"><span class="ribbon-filter-dot" style="background:#C9962A;"></span></button>
+            <button class="ribbon-filter-tag active" data-color="all" onclick="filterRibbons('all', this)" data-i18n="filter_all">全部</button>
+            <button class="ribbon-filter-tag" data-color="orange" onclick="filterRibbons('orange', this)" data-i18n-title="color_orange" title="愤怒 · 委屈"><span class="ribbon-filter-dot" style="background:#D4763B;"></span></button>
+            <button class="ribbon-filter-tag" data-color="blue"   onclick="filterRibbons('blue', this)"   data-i18n-title="color_blue"   title="悲伤 · 失落"><span class="ribbon-filter-dot" style="background:#5B8DD9;"></span></button>
+            <button class="ribbon-filter-tag" data-color="pink"   onclick="filterRibbons('pink', this)"   data-i18n-title="color_pink"   title="温柔 · 思念"><span class="ribbon-filter-dot" style="background:#D4849A;"></span></button>
+            <button class="ribbon-filter-tag" data-color="green"  onclick="filterRibbons('green', this)"  data-i18n-title="color_green"  title="疲惫 · 倦怠"><span class="ribbon-filter-dot" style="background:#7BAF7B;"></span></button>
+            <button class="ribbon-filter-tag" data-color="purple" onclick="filterRibbons('purple', this)" data-i18n-title="color_purple" title="迷茫 · 困惑"><span class="ribbon-filter-dot" style="background:#9A7EC8;"></span></button>
+            <button class="ribbon-filter-tag" data-color="gray"   onclick="filterRibbons('gray', this)"   data-i18n-title="color_gray"   title="麻木 · 空洞"><span class="ribbon-filter-dot" style="background:#9A9490;"></span></button>
+            <button class="ribbon-filter-tag" data-color="gold"   onclick="filterRibbons('gold', this)"   data-i18n-title="color_gold"   title="喜悦 · 感恩"><span class="ribbon-filter-dot" style="background:#C9962A;"></span></button>
         </div>
 
         <div class="ribbon-cards-scroll" id="ribbonScroll">
@@ -2050,7 +2130,7 @@
         <!-- AI 拦截提示条（sticky 顶部） -->
         <div class="moderation-bar" id="storyModerationBar">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            <div class="moderation-bar-text" id="storyModerationText">内容包含敏感信息，已阻止发送。</div>
+            <div class="moderation-bar-text" id="storyModerationText" data-i18n="moderation_blocked">内容包含敏感信息，已阻止发送。</div>
             <button class="moderation-bar-dismiss" onclick="dismissModerationBar('storyModerationBar')">×</button>
         </div>
         <div class="story-ribbon-bar" id="storyRibbonBar"></div>
@@ -2106,8 +2186,8 @@
 
             <!-- 留下回响（所有人可见） -->
             <div class="story-input-row" style="margin-bottom: 16px;">
-                <input class="story-input" id="storyResonanceInput" type="text" placeholder="写下你的回响（50字以内）…">
-                <button class="story-submit-btn" onclick="submitResonance()">留下回响</button>
+                <input class="story-input" id="storyResonanceInput" type="text" data-i18n-placeholder="resonance_placeholder" placeholder="写下你的回响（50字以内）…">
+                <button class="story-submit-btn" onclick="submitResonance()" data-i18n="resonance_submit">留下回响</button>
             </div>
 
             <!-- 见证码验证区 → 作者追加 -->
@@ -2119,16 +2199,16 @@
                 <div class="story-witness-panel" id="storyWitnessPanel">
                     <div class="story-witness-row">
                         <input class="story-witness-input" id="storyWitnessCode" type="text"
-                            placeholder="输入你的见证码" maxlength="8">
-                        <button class="story-witness-verify-btn" onclick="verifyWitness()">验证</button>
+                            data-i18n-placeholder="witness_input_placeholder" placeholder="输入你的见证码" maxlength="8">
+                        <button class="story-witness-verify-btn" onclick="verifyWitness()" data-i18n="witness_verify">验证</button>
                     </div>
-                    <div class="story-witness-hint">见证码是发布时生成的6位私密码，只有你知道</div>
-                    <div class="story-witness-error" id="storyWitnessError">见证码不正确，请重试</div>
+                    <div class="story-witness-hint" data-i18n="witness_hint">见证码是发布时生成的6位私密码，只有你知道</div>
+                    <div class="story-witness-error" id="storyWitnessError" data-i18n="witness_error">见证码不正确，请重试</div>
                     <!-- 验证通过后出现的追加输入 -->
                     <div class="story-author-input-area" id="storyAuthorInputArea">
                         <textarea class="story-author-textarea" id="storyAuthorText" rows="3"
-                            placeholder="追加你想说的……（后续感受、新进展都可以）"></textarea>
-                        <button class="story-author-submit-btn" onclick="submitAuthorAppend()">追加到丝带上</button>
+                            data-i18n-placeholder="append_placeholder" placeholder="追加你想说的……（后续感受、新进展都可以）"></textarea>
+                        <button class="story-author-submit-btn" onclick="submitAuthorAppend()" data-i18n="append_submit">追加到丝带上</button>
                     </div>
                 </div>
             </div>
@@ -2144,7 +2224,7 @@
         <!-- AI 拦截提示条 -->
         <div class="moderation-bar" id="tieModerationBar" style="border-radius:10px 10px 0 0;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            <div class="moderation-bar-text" id="tieModerationText">内容包含敏感信息，已阻止发送。</div>
+            <div class="moderation-bar-text" id="tieModerationText" data-i18n="moderation_blocked">内容包含敏感信息，已阻止发送。</div>
             <button class="moderation-bar-dismiss" onclick="dismissModerationBar('tieModerationBar')">×</button>
         </div>
         <!-- 顶部丝带色条 -->
@@ -2162,13 +2242,13 @@
 
             <!-- 第0步：写下心事 -->
             <div class="tie-step active" id="step0">
-                <div class="tie-label">此刻，你想说什么？</div>
-                <div class="tie-sublabel">写下来就好，不需要理由，也不用完整</div>
+                <div class="tie-label" data-i18n="tie_title">此刻，你想说什么？</div>
+                <div class="tie-sublabel" data-i18n="tie_subtitle">写下来就好，不需要理由，也不用完整</div>
                 <textarea class="tie-textarea" id="tieText" rows="6"
-                    placeholder="今天，我……"></textarea>
+                    data-i18n-placeholder="tie_placeholder" placeholder="今天，我……"></textarea>
                 <div class="tie-actions">
                     <span></span>
-                    <button class="tie-btn-next" id="btnReady" onclick="onReady()">我准备好了</button>
+                    <button class="tie-btn-next" id="btnReady" onclick="onReady()" data-i18n="tie_ready">我准备好了</button>
                 </div>
             </div>
 
@@ -2176,7 +2256,7 @@
             <div class="tie-step" id="step1">
                 <!-- 分析中状态 -->
                 <div class="tie-analyzing" id="tieAnalyzing">
-                    <span>正在感知你的情绪</span>
+                    <span data-i18n="tie_sensing">正在感知你的情绪</span>
                     <div class="tie-analyzing-dots">
                         <span></span><span></span><span></span>
                     </div>
@@ -2206,22 +2286,22 @@
                 </div>
                 <div class="tie-actions">
                     <button class="tie-btn-back" onclick="goTieStep(0)">← 重新写</button>
-                    <button class="tie-btn-next" id="btnTie" onclick="goTieStep(2)" disabled>系上这条丝带</button>
+                    <button class="tie-btn-next" id="btnTie" onclick="goTieStep(2)" disabled data-i18n="tie_btn_submit">系上这条丝带</button>
                 </div>
             </div>
 
             <!-- 第2步：见证码 -->
             <div class="tie-step" id="step2">
-                <div class="tie-label">丝带已系上树了</div>
-                <div class="tie-sublabel">保存这串见证码，随时凭它查看别人的回应</div>
+                <div class="tie-label" data-i18n="tie_done_title">丝带已系上树了</div>
+                <div class="tie-sublabel" data-i18n="tie_done_subtitle">保存这串见证码，随时凭它查看别人的回应</div>
                 <div class="tie-witness-display">
                     <div class="tie-witness-code" id="tieWitnessCode"></div>
-                    <div class="tie-witness-hint">它是你与这条故事之间唯一的连接</div>
+                    <div class="tie-witness-hint" data-i18n="tie_witness_hint">它是你与这条故事之间唯一的连接</div>
                 </div>
                 <!-- 本地缓存提示 -->
                 <div class="tie-local-notice">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                    <span>已自动保存到<strong>本机浏览器</strong>。换浏览器或清除记录后会消失。如需长期保管，推荐存到 WPS 笔记。</span>
+                    <span data-i18n-html="tie_saved_hint">已自动保存到<strong>本机浏览器</strong>。换浏览器或清除记录后会消失。如需长期保管，推荐存到 WPS 笔记。</span>
                 </div>
                 <!-- WPS 笔记推荐 -->
                 <a class="tie-wps-btn" href="https://ainote.wps.cn" target="_blank" rel="noopener">
@@ -2231,7 +2311,7 @@
                 </a>
                 <div class="tie-actions">
                     <span></span>
-                    <button class="tie-btn-next" onclick="closeTie()">好，我记下了</button>
+                    <button class="tie-btn-next" onclick="closeTie()" data-i18n="tie_confirm">好，我记下了</button>
                 </div>
             </div>
         </div>
@@ -2243,14 +2323,14 @@
 <div class="my-ribbons-overlay" id="myRibbonsOverlay" onclick="closeMyRibbons(event)">
     <div class="my-ribbons-modal" id="myRibbonsModal">
         <button class="my-ribbons-close" onclick="closeMyRibbonsDirect()">×</button>
-        <div class="my-ribbons-title">我的丝带</div>
-        <div class="my-ribbons-subtitle">
+        <div class="my-ribbons-title" data-i18n="my_ribbons_title">我的丝带</div>
+        <div class="my-ribbons-subtitle" data-i18n-html="my_ribbons_hint">
             以下记录保存在<strong style="color:rgba(200,155,80,0.6);">本机浏览器</strong>。换浏览器或清除记录后会消失。<br>
             如需长期保管，推荐存到 WPS 笔记。
         </div>
 
         <div class="my-ribbons-list" id="myRibbonsList">
-            <div class="my-ribbons-empty">还没有系上过任何丝带</div>
+            <div class="my-ribbons-empty" data-i18n="my_ribbons_empty">还没有系上过任何丝带</div>
         </div>
 
         <a class="tie-wps-btn" href="https://ainote.wps.cn" target="_blank" rel="noopener" style="text-decoration:none;">
@@ -2272,7 +2352,7 @@
 
         <div class="welcome-inner">
             <!-- 上：引言 -->
-            <div class="welcome-eyebrow">有一条金色的丝带，就挂在这棵树上</div>
+            <div class="welcome-eyebrow" data-i18n="welcome_eyebrow">有一条金色的丝带，就挂在这棵树上</div>
 
             <!-- 故事正文 -->
             <p class="welcome-story">
@@ -2624,8 +2704,9 @@ function renderRibbonCards(list, total, appendOnly = false) {
     const container = document.getElementById('ribbonScroll');
     if (!list || list.length === 0) {
         if (!appendOnly) {
-            container.innerHTML = '<div style="padding:20px 24px;color:rgba(247,244,238,0.3);font-size:12px;">还没有人系上丝带，成为第一个吧。</div>';
-            document.getElementById('ribbonTotalCount').textContent = '共 0 条丝带';
+            const t = i18nT();
+            container.innerHTML = `<div style="padding:20px 24px;color:rgba(247,244,238,0.3);font-size:12px;">${t.no_ribbons}</div>`;
+            document.getElementById('ribbonTotalCount').textContent = t.ribbon_count(0);
         }
         return;
     }
@@ -2635,9 +2716,11 @@ function renderRibbonCards(list, total, appendOnly = false) {
 
     // 只有展开时才实际渲染卡片到DOM
     if (!isExpanded) {
-        document.getElementById('ribbonTotalCount').textContent = `共 ${total || _ribbonsCache.length} 条丝带`;
+        const t = i18nT();
+        const n = total || _ribbonsCache.length;
+        document.getElementById('ribbonTotalCount').textContent = t.ribbon_count(n);
         const panelCount = document.getElementById('panelTotalCount');
-        if (panelCount) panelCount.textContent = `共 ${total || _ribbonsCache.length} 条丝带`;
+        if (panelCount) panelCount.textContent = t.ribbon_count(n);
         return;
     }
 
@@ -2674,9 +2757,11 @@ function renderRibbonCards(list, total, appendOnly = false) {
         }).join('');
     }
 
-    document.getElementById('ribbonTotalCount').textContent = `共 ${total || _ribbonsCache.length} 条丝带`;
+    const t = i18nT();
+    const n = total || _ribbonsCache.length;
+    document.getElementById('ribbonTotalCount').textContent = t.ribbon_count(n);
     const panelCount = document.getElementById('panelTotalCount');
-    if (panelCount) panelCount.textContent = `共 ${total || _ribbonsCache.length} 条丝带`;
+    if (panelCount) panelCount.textContent = t.ribbon_count(n);
 }
 
 /**
@@ -2876,9 +2961,9 @@ async function openStory(ribbonId) {
 
     // 重置弹窗内容
     document.getElementById('storyIdLabel').textContent = `# ${ribbonId}`;
-    document.getElementById('storyModalText').textContent = '加载中…';
+    document.getElementById('storyModalText').textContent = '…';
     document.getElementById('storyAuthorAppends').innerHTML = '';
-    document.getElementById('storyResonances').innerHTML = '<div class="story-resonances-title" id="storyResonancesTitle">回响 · 0</div>';
+    document.getElementById('storyResonances').innerHTML = `<div class="story-resonances-title" id="storyResonancesTitle">${i18nT().resonance_count(0)}</div>`;
     document.getElementById('storyWitnessPanel').classList.remove('open');
     document.getElementById('storyWitnessCode').value = '';
     document.getElementById('storyWitnessError').classList.remove('show');
@@ -2910,19 +2995,19 @@ async function openStory(ribbonId) {
         if (data.appends && data.appends.length > 0) {
             appendsEl.innerHTML = data.appends.map(a => `
                 <div class="story-author-append-item">
-                    <div class="story-author-append-label">作者追加 · ${a.time}</div>
+                    <div class="story-author-append-label">${i18nT().author_append_label(a.time)}</div>
                     ${a.content}
                 </div>`).join('');
         }
 
         // 回响列表
         const resonancesEl = document.getElementById('storyResonances');
-        resonancesEl.innerHTML = `<div class="story-resonances-title" id="storyResonancesTitle">回响 · ${data.echo_count || 0}</div>`;
+        resonancesEl.innerHTML = `<div class="story-resonances-title" id="storyResonancesTitle">${i18nT().resonance_count(data.echo_count || 0)}</div>`;
         if (data.echoes && data.echoes.length > 0) {
             data.echoes.forEach(e => {
                 const item = document.createElement('div');
                 item.className = 'story-resonance-item' + (e.is_ai ? ' ai-echo' : '');
-                const labelHtml = e.is_ai ? '<span class="ai-echo-label">树语</span>' : '';
+                const labelHtml = e.is_ai ? `<span class="ai-echo-label">${i18nT().ai_label}</span>` : '';
                 item.innerHTML = `
                     <span class="story-resonance-text">${labelHtml}${e.content}</span>
                     <button class="story-resonance-like" data-echo-id="${e.id}" onclick="likeResonance(this)">
@@ -3094,13 +3179,13 @@ function submitResonance() {
     // AI 脱敏检测
     const btn = document.querySelector('.story-submit-btn');
     btn.classList.add('checking');
-    btn.textContent = '检测中…';
+    btn.textContent = '…';
     input.classList.remove('blocked');
     dismissModerationBar('storyModerationBar');
 
     moderateText(text).then(({ blocked, reason }) => {
         btn.classList.remove('checking');
-        btn.textContent = '留下回响';
+        btn.textContent = i18nT().resonance_submit;
 
         if (blocked) {
             input.classList.add('blocked');
@@ -3110,7 +3195,7 @@ function submitResonance() {
         }
 
         input.classList.remove('blocked');
-        btn.disabled = true; btn.textContent = '提交中…';
+        btn.disabled = true; btn.textContent = '…';
 
         fetch(`/api/ribbon/${currentStoryId}/echo`, {
             method: 'POST',
@@ -3119,7 +3204,7 @@ function submitResonance() {
         }).then(async res => {
             if (!res.ok) {
                 const err = await res.json().catch(() => ({}));
-                throw new Error(err.detail || `服务器错误 ${res.status}`);
+                throw new Error(err.detail || `Error ${res.status}`);
             }
             const data = await res.json();
             const container = document.getElementById('storyResonances');
@@ -3136,7 +3221,7 @@ function submitResonance() {
             container.appendChild(item);
 
             const oldCount = parseInt(titleEl.textContent.match(/\d+/)?.[0] || '0');
-            titleEl.textContent = `回响 · ${oldCount + 1}`;
+            titleEl.textContent = i18nT().resonance_count(oldCount + 1);
             input.value = '';
             input.style.borderColor = '';
             item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -3144,13 +3229,13 @@ function submitResonance() {
         }).catch(e => {
             console.error('[Echo] 提交失败:', e);
             input.classList.add('blocked');
-            showModerationBar('storyModerationBar', 'storyModerationText', e.message || '提交失败，请稍后重试');
+            showModerationBar('storyModerationBar', 'storyModerationText', e.message || '…');
         }).finally(() => {
-            btn.disabled = false; btn.textContent = '留下回响';
+            btn.disabled = false; btn.textContent = i18nT().resonance_submit;
         });
     }).catch(err => {
         btn.classList.remove('checking');
-        btn.textContent = '留下回响';
+        btn.textContent = i18nT().resonance_submit;
         console.error('[Moderation] 检测异常，放行:', err);
     });
 }
@@ -3239,7 +3324,7 @@ function submitAuthorAppend() {
             const container = document.getElementById('storyAuthorAppends');
             const item = document.createElement('div');
             item.className = 'story-author-append-item';
-            item.innerHTML = `<div class="story-author-append-label">作者追加 · 刚刚</div>${text}`;
+            item.innerHTML = `<div class="story-author-append-label">${i18nT().author_append_label(i18nT().just_now)}</div>${text}`;
             container.appendChild(item);
             item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             textarea.value = '';
@@ -3247,10 +3332,10 @@ function submitAuthorAppend() {
         }).catch(e => {
             console.error('[Append] 提交失败:', e);
         }).finally(() => {
-            if (btn) { btn.disabled = false; btn.textContent = '追加到丝带上'; }
+            if (btn) { btn.disabled = false; btn.textContent = i18nT().append_submit; }
         });
     }).catch(err => {
-        if (btn) { btn.disabled = false; btn.textContent = '追加到丝带上'; }
+        if (btn) { btn.disabled = false; btn.textContent = i18nT().append_submit; }
         console.error('[Moderation] 检测异常，放行:', err);
     });
 }
@@ -3410,12 +3495,12 @@ function goTieStep(n) {
             console.log(`[Tie] 已保存: id=${ribbonId}, witness=${witness}`);
 
             // 将新丝带以动画形式插入列表头部（不全量重渲染）
-            const newRibbon = { id: ribbonId, color: tieCurrentColor, text: previewText, echo: 0, time: '刚刚' };
+            const newRibbon = { id: ribbonId, color: tieCurrentColor, text: previewText, echo: 0, time: i18nT().just_now };
             _ribbonsCache.unshift(newRibbon);
             prependRibbonCard(newRibbon);
             // 更新条数
             const countEl = document.getElementById('ribbonTotalCount');
-            if (countEl) countEl.textContent = `共 ${_ribbonsCache.length} 条丝带`;
+            if (countEl) countEl.textContent = i18nT().ribbon_count(_ribbonsCache.length);
         }).catch(e => {
             console.error('[Tie] 保存失败:', e);
             // 降级：生成本地临时 id
@@ -3719,11 +3804,7 @@ function updateMyRibbonsBtn() {
 }
 
 function formatRelTime(ts) {
-    const diff = (Date.now() - ts) / 1000;
-    if (diff < 60) return '刚刚';
-    if (diff < 3600) return `${Math.floor(diff/60)} 分钟前`;
-    if (diff < 86400) return `${Math.floor(diff/3600)} 小时前`;
-    return `${Math.floor(diff/86400)} 天前`;
+    return i18nTimeAgo(Math.floor(ts / 1000));
 }
 
 function openMyRibbons() {
@@ -3731,7 +3812,7 @@ function openMyRibbons() {
     const listEl = document.getElementById('myRibbonsList');
 
     if (list.length === 0) {
-        listEl.innerHTML = '<div class="my-ribbons-empty">还没有系上过任何丝带</div>';
+        listEl.innerHTML = `<div class="my-ribbons-empty">${i18nT().my_ribbons_empty}</div>`;
     } else {
         listEl.innerHTML = list.map(entry => `
             <div class="my-ribbon-item">
@@ -3742,7 +3823,7 @@ function openMyRibbons() {
                 </div>
                 <div class="my-ribbon-time">${formatRelTime(entry.time)}</div>
                 <button class="my-ribbon-open-btn" onclick="openStoryByWitness('${entry.code}','${entry.id || ''}')">
-                    凭码查看
+                    ${i18nT().witness_btn}
                 </button>
             </div>`).join('');
     }
@@ -3909,8 +3990,9 @@ function applyBg(season, time, instant) {
     if (dot && label) {
         const sm = SEASON_META[season];
         const tm = TIME_META[time];
+        const t  = i18nT();
         dot.style.color = tm.color;
-        label.textContent = `${sm.emoji} ${sm.label} · ${tm.label}`;
+        label.textContent = `${sm.emoji} ${t[season]} · ${t[time]}`;
     }
 
     // 更新 playground 矩阵高亮
@@ -4076,8 +4158,9 @@ async function preloadBgImages() {
     const dot = document.getElementById('heroTimeDot');
     const lbl = document.getElementById('heroTimeLabel');
     if (dot && lbl) {
+        const t = i18nT();
         dot.style.color = TIME_META[time].color;
-        lbl.textContent = `${SEASON_META[season].emoji} ${SEASON_META[season].label} · ${TIME_META[time].label}`;
+        lbl.textContent = `${SEASON_META[season].emoji} ${t[season]} · ${t[time]}`;
     }
 
     // 矩阵高亮
@@ -4099,7 +4182,7 @@ async function preloadBgImages() {
         const badge = document.getElementById('heroStatsBadge');
         const label = document.getElementById('heroStatsLabel');
         if (!badge || !label) return;
-        label.textContent = `今日 ${today.uv} 人 · 累计 ${total.uv} 人`;
+        label.textContent = i18nT().visitors_today(today.uv);
         badge.style.display = 'flex';
         console.log('[SiteStats] today=', today, 'total=', total);
     } catch(e) {
