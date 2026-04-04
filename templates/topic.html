@@ -16,6 +16,8 @@
     <meta property="og:image" content="https://tiedstory.com/static/images/tree_bg.jpg">
     <link rel="icon" type="image/svg+xml" href="/static/icons/favicon.svg">
     <meta name="theme-color" content="#0a0603">
+    <script src="/static/js/i18n.js"></script>
+    <script src="/static/js/topic-copy.js"></script>
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -52,9 +54,32 @@
         }
         .nav-logo { font-size: 18px; font-weight: 700; color: #e8ddd0; }
         .nav-logo span { color: #c9a97a; }
+        .nav-right { display: flex; align-items: center; gap: 14px; }
         .nav-links { display: flex; gap: 24px; font-size: 14px; }
         .nav-links a { color: rgba(232,221,208,0.7); }
         .nav-links a:hover { color: #e8ddd0; text-decoration: none; }
+        .lang-switcher-wrap { position: relative; }
+        .lang-switcher-btn {
+            display: flex; align-items: center; gap: 4px;
+            background: rgba(10,6,3,0.35);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 20px; padding: 5px 9px;
+            color: rgba(255,255,255,0.85); cursor: pointer;
+        }
+        .lang-dropdown {
+            position: absolute; top: calc(100% + 6px); right: 0;
+            background: rgba(18, 12, 6, 0.96);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 12px; padding: 6px; min-width: 148px; z-index: 100;
+        }
+        .lang-option {
+            display: flex; align-items: center; gap: 8px; width: 100%;
+            padding: 8px 10px; border: none; background: transparent;
+            border-radius: 8px; color: rgba(232,221,208,0.8);
+            font-size: 13px; cursor: pointer; text-align: left;
+        }
+        .lang-option.active { background: rgba(201,169,122,0.18); color: #c9a97a; }
+        .lang-option:hover { background: rgba(255,255,255,0.08); color: #f0e8dc; }
 
         .hero {
             text-align: center;
@@ -183,19 +208,22 @@
 <body>
     <nav class="nav" aria-label="主导航">
         <a href="/" class="nav-logo">Tied<span>Story</span></a>
-        <div class="nav-links">
-            <a href="/">树洞</a>
-            <a href="/topics">专题</a>
-            <a href="/about">关于</a>
+        <div class="nav-right">
+            <div class="nav-links">
+                <a href="/" id="topicNavTreehole">树洞</a>
+                <a href="/topics" id="topicNavTopics">专题</a>
+                <a href="/about" id="topicNavAbout">关于</a>
+            </div>
+            <div id="langSwitcher"></div>
         </div>
     </nav>
 
     <main>
         <div class="hero">
-            <span class="topic-badge">情绪专题</span>
-            <h1>{{ topic.title }}</h1>
-            <p>{{ topic.lead }}</p>
-            <a href="/" class="btn-primary">说出你的感受</a>
+            <span class="topic-badge" id="topicBadge">情绪专题</span>
+            <h1 id="topicTitle" data-topic-slug="{{ topic.slug }}">{{ topic.title }}</h1>
+            <p id="topicLead">{{ topic.lead }}</p>
+            <a href="/" class="btn-primary" id="topicHeroCta">说出你的感受</a>
         </div>
 
         {% if ribbons %}
@@ -209,9 +237,7 @@
                         <span style="font-size:12px; color:rgba(232,221,208,0.4);">{{ r.time }}</span>
                     </div>
                     <p class="ribbon-text" itemprop="text">{{ r.text }}</p>
-                    <div class="ribbon-meta">
-                        {{ r.echo }} 人回响
-                    </div>
+                    <div class="ribbon-meta ribbon-echo-count" data-echo-count="{{ r.echo }}">{{ r.echo }} 人回响</div>
                 </article>
                 {% endfor %}
             </div>
@@ -229,21 +255,144 @@
             <h2 id="related-topics">相关情绪</h2>
             <div class="related-grid" role="list">
                 {% for t in related_topics %}
-                <a href="/topics/{{ t.slug }}" class="related-tag" role="listitem">{{ t.title }}</a>
+                <a href="/topics/{{ t.slug }}" class="related-tag" role="listitem" data-topic-slug="{{ t.slug }}">{{ t.title }}</a>
                 {% endfor %}
             </div>
         </section>
 
         <section class="section" style="text-align:center;">
-            <h2>把心里的话写出来</h2>
-            <p style="color:rgba(232,221,208,0.55); margin-bottom:24px;">TiedStory 最火匿名树洞 · 不需要注册 · 没有账号没有记录</p>
-            <a href="/" class="btn-primary">进入树洞，随时倾诉</a>
+            <h2 id="topicCtaTitle">把心里的话写出来</h2>
+            <p style="color:rgba(232,221,208,0.55); margin-bottom:24px;" id="topicCtaDesc">TiedStory 最火匿名树洞 · 不需要注册 · 没有账号没有记录</p>
+            <a href="/" class="btn-primary" id="topicCtaBtn">进入树洞，随时倾诉</a>
         </section>
     </main>
 
     <footer>
-        <p>© 2025 TiedStory · <a href="/about">关于</a> · <a href="/topics">情绪专题</a> · <a href="/">进入树洞</a></p>
-        <p style="margin-top:6px; font-size:11px; opacity:0.6;">心理援助热线：400-161-9995</p>
+        <p id="topicFooterLinks">© 2025 TiedStory · <a href="/about">关于</a> · <a href="/topics">情绪专题</a> · <a href="/">进入树洞</a></p>
+        <p style="margin-top:6px; font-size:11px; opacity:0.6;" id="topicFooterHotline">心理援助热线：400-161-9995</p>
     </footer>
+    <script>
+        const TOPIC_DETAIL_COPY = {
+            'zh-CN': {
+                navTreehole: '树洞', navTopics: '专题', navAbout: '关于',
+                badge: '情绪专题', heroCta: '说出你的感受',
+                recent: '最近有人在说……', related: '相关情绪',
+                ctaTitle: '把心里的话写出来',
+                ctaDesc: 'TiedStory 最火匿名树洞 · 不需要注册 · 没有账号没有记录',
+                ctaBtn: '进入树洞，随时倾诉',
+                footerLinks: '© 2025 TiedStory · <a href="/about">关于</a> · <a href="/topics">情绪专题</a> · <a href="/">进入树洞</a>',
+                hotline: '心理援助热线：400-161-9995',
+                echoes: n => `${n} 人回响`,
+                articleTitle: title => `关于「${title}」`
+            },
+            'zh-TW': {
+                navTreehole: '樹洞', navTopics: '專題', navAbout: '關於',
+                badge: '情緒專題', heroCta: '說出你的感受',
+                recent: '最近有人在說……', related: '相關情緒',
+                ctaTitle: '把心裡的話寫出來',
+                ctaDesc: 'TiedStory 最火匿名樹洞 · 不需要註冊 · 沒有帳號沒有記錄',
+                ctaBtn: '進入樹洞，隨時傾訴',
+                footerLinks: '© 2025 TiedStory · <a href="/about">關於</a> · <a href="/topics">情緒專題</a> · <a href="/">進入樹洞</a>',
+                hotline: '心理援助熱線：400-161-9995',
+                echoes: n => `${n} 人回響`,
+                articleTitle: title => `關於「${title}」`
+            },
+            'en': {
+                navTreehole: 'Tree', navTopics: 'Topics', navAbout: 'About',
+                badge: 'Emotion Topic', heroCta: 'Share how you feel',
+                recent: 'What people are saying lately', related: 'Related feelings',
+                ctaTitle: 'Write out what is on your mind',
+                ctaDesc: 'TiedStory anonymous treehole · no sign-up · no account · no history',
+                ctaBtn: 'Enter the Tree',
+                footerLinks: '© 2025 TiedStory · <a href="/about">About</a> · <a href="/topics">Topics</a> · <a href="/">Enter the Tree</a>',
+                hotline: 'Support hotline: 400-161-9995',
+                echoes: n => `${n} echoes`,
+                articleTitle: title => `About "${title}"`
+            },
+            'ja': {
+                navTreehole: 'ツリー', navTopics: 'トピック', navAbout: '概要',
+                badge: '感情トピック', heroCta: '気持ちを話してみる',
+                recent: '最近こんな声があります', related: '関連する気持ち',
+                ctaTitle: '心の中の言葉を書いてみよう',
+                ctaDesc: 'TiedStory 匿名ツリーホール · 登録不要 · アカウント不要',
+                ctaBtn: 'ツリーへ入る',
+                footerLinks: '© 2025 TiedStory · <a href="/about">概要</a> · <a href="/topics">トピック</a> · <a href="/">ツリーへ</a>',
+                hotline: '支援ホットライン：400-161-9995',
+                echoes: n => `${n} 件の共鳴`,
+                articleTitle: title => `「${title}」について`
+            },
+            'ko': {
+                navTreehole: '트리', navTopics: '주제', navAbout: '소개',
+                badge: '감정 주제', heroCta: '지금 마음을 말해보세요',
+                recent: '최근 이런 이야기들이 있어요', related: '관련 감정',
+                ctaTitle: '마음속 말을 써보세요',
+                ctaDesc: 'TiedStory 익명 트리홀 · 가입 없음 · 계정 없음 · 기록 없음',
+                ctaBtn: '트리로 가기',
+                footerLinks: '© 2025 TiedStory · <a href="/about">소개</a> · <a href="/topics">주제</a> · <a href="/">트리로 가기</a>',
+                hotline: '지원 핫라인: 400-161-9995',
+                echoes: n => `${n}명의 공명`,
+                articleTitle: title => `"${title}"에 대하여`
+            },
+            'fr': {
+                navTreehole: 'Arbre', navTopics: 'Thèmes', navAbout: 'À propos',
+                badge: 'Thème émotionnel', heroCta: 'Dire ce que tu ressens',
+                recent: 'Ce que les autres disent en ce moment', related: 'Émotions liées',
+                ctaTitle: 'Écris ce que tu portes en toi',
+                ctaDesc: 'TiedStory arbre anonyme · pas d’inscription · pas de compte · pas d’historique',
+                ctaBtn: 'Entrer dans l’arbre',
+                footerLinks: '© 2025 TiedStory · <a href="/about">À propos</a> · <a href="/topics">Thèmes</a> · <a href="/">Entrer dans l’arbre</a>',
+                hotline: 'Ligne de soutien : 400-161-9995',
+                echoes: n => `${n} échos`,
+                articleTitle: title => `À propos de « ${title} »`
+            },
+            'ru': {
+                navTreehole: 'Дерево', navTopics: 'Темы', navAbout: 'О нас',
+                badge: 'Эмоциональная тема', heroCta: 'Рассказать о своих чувствах',
+                recent: 'Вот о чём сейчас говорят', related: 'Похожие чувства',
+                ctaTitle: 'Напиши то, что у тебя на сердце',
+                ctaDesc: 'TiedStory анонимное дерево · без регистрации · без аккаунта · без истории',
+                ctaBtn: 'Войти в дерево',
+                footerLinks: '© 2025 TiedStory · <a href="/about">О нас</a> · <a href="/topics">Темы</a> · <a href="/">Войти в дерево</a>',
+                hotline: 'Горячая линия поддержки: 400-161-9995',
+                echoes: n => `${n} откликов`,
+                articleTitle: title => `О «${title}»`
+            }
+        };
+
+        function applyTopicDetailI18n() {
+            const lang = typeof i18nGetLang === 'function' ? i18nGetLang() : 'zh-CN';
+            const copy = TOPIC_DETAIL_COPY[lang] || TOPIC_DETAIL_COPY['zh-CN'];
+            const topic = getTopicI18n('{{ topic.slug }}', lang);
+            document.documentElement.lang = lang;
+            document.getElementById('topicNavTreehole').textContent = copy.navTreehole;
+            document.getElementById('topicNavTopics').textContent = copy.navTopics;
+            document.getElementById('topicNavAbout').textContent = copy.navAbout;
+            document.getElementById('topicBadge').textContent = copy.badge;
+            document.getElementById('topicHeroCta').textContent = copy.heroCta;
+            document.getElementById('recent-ribbons').textContent = copy.recent;
+            document.getElementById('related-topics').textContent = copy.related;
+            document.getElementById('topicCtaTitle').textContent = copy.ctaTitle;
+            document.getElementById('topicCtaDesc').textContent = copy.ctaDesc;
+            document.getElementById('topicCtaBtn').textContent = copy.ctaBtn;
+            document.getElementById('topicFooterLinks').innerHTML = copy.footerLinks;
+            document.getElementById('topicFooterHotline').textContent = copy.hotline;
+            if (topic) {
+                document.getElementById('topicTitle').textContent = topic.title;
+                document.getElementById('topicLead').textContent = topic.lead;
+                document.getElementById('topic-article').textContent = copy.articleTitle(topic.title);
+            }
+            document.querySelectorAll('.related-tag[data-topic-slug]').forEach(el => {
+                const related = getTopicI18n(el.getAttribute('data-topic-slug'), lang);
+                if (related) el.textContent = related.title;
+            });
+            document.querySelectorAll('.ribbon-echo-count').forEach(el => {
+                el.textContent = copy.echoes(Number(el.getAttribute('data-echo-count') || 0));
+            });
+        }
+
+        i18nInit();
+        applyTopicDetailI18n();
+        document.addEventListener('tiedstory:langchange', applyTopicDetailI18n);
+    </script>
 </body>
 </html>

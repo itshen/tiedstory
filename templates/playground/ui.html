@@ -2056,7 +2056,7 @@
         
         <!-- 操作栏：条数 + 随机 + 查看全部 -->
         <div class="ribbon-browse-bar">
-            <span class="ribbon-browse-count" id="ribbonTotalCount" data-i18n-n="0">共 0 条丝带</span>
+            <span class="ribbon-browse-count" id="ribbonTotalCount" data-i18n-key="ribbon_count" data-i18n-n="0">共 0 条丝带</span>
             <div class="ribbon-browse-actions">
                 <button class="ribbon-browse-btn shuffle-btn" onclick="shuffleRibbon()">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
@@ -2142,7 +2142,7 @@
                 <span class="story-id" id="storyIdLabel"># TS-0001</span>
                 <button class="story-share-btn" id="storyShareBtn" onclick="shareStory()">
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-                    复制分享链接
+                    <span data-i18n="share_link">复制分享链接</span>
                 </button>
             </div>
 
@@ -2194,7 +2194,7 @@
             <div class="story-witness-area" id="storyWitnessArea">
                 <button class="story-witness-toggle" onclick="toggleWitnessPanel()">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                    我是这条丝带的作者，想追加内容
+                    <span data-i18n="author_toggle">我是这条丝带的作者，想追加内容</span>
                 </button>
                 <div class="story-witness-panel" id="storyWitnessPanel">
                     <div class="story-witness-row">
@@ -2270,9 +2270,9 @@
                 <div class="tie-crisis-box" id="tieCrisisBox">
                     <div class="tie-crisis-title">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                        我们注意到一些让你痛苦的字句
+                        <span data-i18n="crisis_title">我们注意到一些让你痛苦的字句</span>
                     </div>
-                    <div class="tie-crisis-body">
+                    <div class="tie-crisis-body" data-i18n-html="crisis_body_html">
                         你现在的感受很重要。如果此刻非常难受，可以拨打心理援助热线
                         <strong style="color:rgba(240,150,150,0.85);">400-161-9995</strong>，
                         或者联系 <a class="tie-crisis-link" href="https://www.lifeline.org.cn" target="_blank">生命热线</a>，
@@ -2285,7 +2285,7 @@
                     <p class="tie-preview-text" id="tiePreviewText"></p>
                 </div>
                 <div class="tie-actions">
-                    <button class="tie-btn-back" onclick="goTieStep(0)">← 重新写</button>
+                    <button class="tie-btn-back" onclick="goTieStep(0)"><span data-i18n="rewrite">重新写</span></button>
                     <button class="tie-btn-next" id="btnTie" onclick="goTieStep(2)" disabled data-i18n="tie_btn_submit">系上这条丝带</button>
                 </div>
             </div>
@@ -2306,7 +2306,7 @@
                 <!-- WPS 笔记推荐 -->
                 <a class="tie-wps-btn" href="https://ainote.wps.cn" target="_blank" rel="noopener">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                    存到 WPS 笔记，永久保管
+                    <span data-i18n="wps_save">存到 WPS 笔记，永久保管</span>
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                 </a>
                 <div class="tie-actions">
@@ -2335,7 +2335,7 @@
 
         <a class="tie-wps-btn" href="https://ainote.wps.cn" target="_blank" rel="noopener" style="text-decoration:none;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-            前往 WPS 笔记永久保管
+            <span data-i18n="wps_archive">前往 WPS 笔记永久保管</span>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
         </a>
     </div>
@@ -2355,7 +2355,7 @@
             <div class="welcome-eyebrow" data-i18n="welcome_eyebrow">有一条金色的丝带，就挂在这棵树上</div>
 
             <!-- 故事正文 -->
-            <p class="welcome-story">
+            <p class="welcome-story" data-i18n-html="welcome_story_html">
                 有一个人，今天终于把那句憋了很久的话，写了下来。<br><br>
                 不是给任何人看的，只是写下来。<br><br>
                 写完之后，她把它挂在了这里。轻了一些，也好了一点点。
@@ -2365,7 +2365,7 @@
             <div class="welcome-divider"></div>
 
             <!-- 说明文字 -->
-            <p class="welcome-desc">
+            <p class="welcome-desc" data-i18n-html="welcome_desc_html">
                 这里是 <strong>TiedStory</strong>。<br>
                 每个人都可以把心里的话，匿名系成一条丝带，挂在这棵树上。<br>
                 没有评判，没有回复，只有见证。
@@ -2702,13 +2702,12 @@ function spawnBreathingCard(specificData = null) {
 
 function renderRibbonCards(list, total, appendOnly = false) {
     const container = document.getElementById('ribbonScroll');
-    if (!list || list.length === 0) {
-        if (!appendOnly) {
+    if (list.length === 0) {
+        if (typeof i18nT === 'function') {
             const t = i18nT();
             container.innerHTML = `<div style="padding:20px 24px;color:rgba(247,244,238,0.3);font-size:12px;">${t.no_ribbons}</div>`;
             document.getElementById('ribbonTotalCount').textContent = t.ribbon_count(0);
         }
-        return;
     }
 
     // 判断是否展开态（网格模式）
@@ -2716,11 +2715,13 @@ function renderRibbonCards(list, total, appendOnly = false) {
 
     // 只有展开时才实际渲染卡片到DOM
     if (!isExpanded) {
-        const t = i18nT();
-        const n = total || _ribbonsCache.length;
-        document.getElementById('ribbonTotalCount').textContent = t.ribbon_count(n);
-        const panelCount = document.getElementById('panelTotalCount');
-        if (panelCount) panelCount.textContent = t.ribbon_count(n);
+        if (typeof i18nT === 'function') {
+            const t = i18nT();
+            const n = total || _ribbonsCache.length;
+            document.getElementById('ribbonTotalCount').textContent = t.ribbon_count(n);
+            const panelCount = document.getElementById('panelTotalCount');
+            if (panelCount) panelCount.textContent = t.ribbon_count(n);
+        }
         return;
     }
 
@@ -2757,11 +2758,13 @@ function renderRibbonCards(list, total, appendOnly = false) {
         }).join('');
     }
 
-    const t = i18nT();
-    const n = total || _ribbonsCache.length;
-    document.getElementById('ribbonTotalCount').textContent = t.ribbon_count(n);
-    const panelCount = document.getElementById('panelTotalCount');
-    if (panelCount) panelCount.textContent = t.ribbon_count(n);
+    if (typeof i18nT === 'function') {
+        const t = i18nT();
+        const n = total || _ribbonsCache.length;
+        document.getElementById('ribbonTotalCount').textContent = t.ribbon_count(n);
+        const panelCount = document.getElementById('panelTotalCount');
+        if (panelCount) panelCount.textContent = t.ribbon_count(n);
+    }
 }
 
 /**
@@ -2960,10 +2963,13 @@ async function openStory(ribbonId) {
     const modal   = document.getElementById('storyModal');
 
     // 重置弹窗内容
+    const t = typeof i18nT === 'function' ? i18nT() : null;
     document.getElementById('storyIdLabel').textContent = `# ${ribbonId}`;
     document.getElementById('storyModalText').textContent = '…';
     document.getElementById('storyAuthorAppends').innerHTML = '';
-    document.getElementById('storyResonances').innerHTML = `<div class="story-resonances-title" id="storyResonancesTitle">${i18nT().resonance_count(0)}</div>`;
+    if (t) {
+        document.getElementById('storyResonances').innerHTML = `<div class="story-resonances-title" id="storyResonancesTitle">${t.resonance_count(0)}</div>`;
+    }
     document.getElementById('storyWitnessPanel').classList.remove('open');
     document.getElementById('storyWitnessCode').value = '';
     document.getElementById('storyWitnessError').classList.remove('show');
@@ -2992,35 +2998,39 @@ async function openStory(ribbonId) {
 
         // 作者追加
         const appendsEl = document.getElementById('storyAuthorAppends');
-        if (data.appends && data.appends.length > 0) {
+        if (data.appends && data.appends.length > 0 && typeof i18nT === 'function') {
+            const t = i18nT();
             appendsEl.innerHTML = data.appends.map(a => `
                 <div class="story-author-append-item">
-                    <div class="story-author-append-label">${i18nT().author_append_label(a.time)}</div>
+                    <div class="story-author-append-label">${t.author_append_label(a.time)}</div>
                     ${a.content}
                 </div>`).join('');
         }
 
         // 回响列表
         const resonancesEl = document.getElementById('storyResonances');
-        resonancesEl.innerHTML = `<div class="story-resonances-title" id="storyResonancesTitle">${i18nT().resonance_count(data.echo_count || 0)}</div>`;
-        if (data.echoes && data.echoes.length > 0) {
-            data.echoes.forEach(e => {
-                const item = document.createElement('div');
-                item.className = 'story-resonance-item' + (e.is_ai ? ' ai-echo' : '');
-                const labelHtml = e.is_ai ? `<span class="ai-echo-label">${i18nT().ai_label}</span>` : '';
-                item.innerHTML = `
-                    <span class="story-resonance-text">${labelHtml}${e.content}</span>
-                    <button class="story-resonance-like" data-echo-id="${e.id}" onclick="likeResonance(this)">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                        <span class="like-count">${e.likes || 0}</span>
-                    </button>`;
-                resonancesEl.appendChild(item);
-            });
+        if (typeof i18nT === 'function') {
+            const t = i18nT();
+            resonancesEl.innerHTML = `<div class="story-resonances-title" id="storyResonancesTitle">${t.resonance_count(data.echo_count || 0)}</div>`;
+            if (data.echoes && data.echoes.length > 0) {
+                data.echoes.forEach(e => {
+                    const item = document.createElement('div');
+                    item.className = 'story-resonance-item' + (e.is_ai ? ' ai-echo' : '');
+                    const labelHtml = e.is_ai ? `<span class="ai-echo-label">${t.ai_label}</span>` : '';
+                    item.innerHTML = `
+                        <span class="story-resonance-text">${labelHtml}${e.content}</span>
+                        <button class="story-resonance-like" data-echo-id="${e.id}" onclick="likeResonance(this)">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                            <span class="like-count">${e.likes || 0}</span>
+                        </button>`;
+                    resonancesEl.appendChild(item);
+                });
+            }
         }
 
         console.log(`[Story] 打开 ${ribbonId}, 颜色=${color}, 回响=${data.echo_count}`);
     } catch(e) {
-        document.getElementById('storyModalText').textContent = '加载失败，请重试。';
+        document.getElementById('storyModalText').textContent = i18nValue('loading_failed');
         console.error('[Story] 加载失败:', e);
     }
 }
@@ -3070,10 +3080,10 @@ function shareStory() {
     if (currentStoryId) url.searchParams.set('story', currentStoryId);
     navigator.clipboard.writeText(url.toString()).then(() => {
         const btn = document.getElementById('storyShareBtn');
-        btn.textContent = '✓ 已复制';
+        btn.textContent = `✓ ${i18nValue('share_copied')}`;
         btn.classList.add('copied');
         setTimeout(() => {
-            btn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> 复制分享链接`;
+            btn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> ${i18nValue('share_link')}`;
             btn.classList.remove('copied');
         }, 2000);
     });
@@ -3262,12 +3272,12 @@ function verifyWitness() {
     // 调用服务端 verify（通过尝试追加空内容来验证，用一个轻量接口）
     // 实际上我们只在 submitAuthorAppend 时才真正验证，这里先做本地格式检查后显示输入区
     // 服务端会在追加时做最终校验
-    if (code.length >= 8) {
+    if (code.length >= 12) {
         // 暂时放行，追加时服务端会验证
         errorEl.classList.remove('show');
         appendArea.classList.add('open');
         input.disabled = true;
-        document.querySelector('.story-witness-verify-btn').textContent = '✓ 已输入';
+        document.querySelector('.story-witness-verify-btn').textContent = `✓ ${i18nValue('witness_entered')}`;
         document.querySelector('.story-witness-verify-btn').disabled = true;
         setTimeout(() => document.getElementById('storyAuthorText').focus(), 100);
         console.log(`[Witness] 已录入见证码，追加时服务端验证`);
@@ -3289,13 +3299,13 @@ function submitAuthorAppend() {
     const witness = witnessInput.value.trim();
     if (!text) { textarea.focus(); return; }
 
-    const btn = document.querySelector('.story-author-submit');
-    if (btn) { btn.disabled = true; btn.textContent = '检测中…'; }
+    const btn = document.querySelector('.story-author-submit-btn');
+    if (btn) { btn.disabled = true; btn.textContent = i18nValue('checking'); }
     dismissModerationBar('storyModerationBar');
 
     moderateText(text).then(({ blocked, reason }) => {
         if (blocked) {
-            if (btn) { btn.disabled = false; btn.textContent = '追加到丝带上'; }
+            if (btn) { btn.disabled = false; btn.textContent = i18nValue('append_submit'); }
             textarea.classList.add('blocked');
             showModerationBar('storyModerationBar', 'storyModerationText', reason);
             console.warn('[Moderation] 追加内容被拦截:', reason);
@@ -3303,7 +3313,7 @@ function submitAuthorAppend() {
         }
 
         textarea.classList.remove('blocked');
-        if (btn) { btn.textContent = '追加中…'; }
+        if (btn) { btn.textContent = i18nValue('submitting'); }
 
         fetch(`/api/ribbon/${currentStoryId}/append`, {
             method: 'POST',
@@ -3315,7 +3325,7 @@ function submitAuthorAppend() {
                 errorEl.classList.add('show');
                 document.getElementById('storyAuthorInputArea').classList.remove('open');
                 witnessInput.disabled = false;
-                document.querySelector('.story-witness-verify-btn').textContent = '验证';
+                document.querySelector('.story-witness-verify-btn').textContent = i18nValue('witness_verify');
                 document.querySelector('.story-witness-verify-btn').disabled = false;
                 console.warn('[Append] 见证码错误，服务端拒绝');
                 return;
@@ -3324,7 +3334,7 @@ function submitAuthorAppend() {
             const container = document.getElementById('storyAuthorAppends');
             const item = document.createElement('div');
             item.className = 'story-author-append-item';
-            item.innerHTML = `<div class="story-author-append-label">${i18nT().author_append_label(i18nT().just_now)}</div>${text}`;
+            item.innerHTML = `<div class="story-author-append-label">${i18nT().author_append_label(i18nValue('just_now'))}</div>${text}`;
             container.appendChild(item);
             item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             textarea.value = '';
@@ -3332,10 +3342,10 @@ function submitAuthorAppend() {
         }).catch(e => {
             console.error('[Append] 提交失败:', e);
         }).finally(() => {
-            if (btn) { btn.disabled = false; btn.textContent = i18nT().append_submit; }
+            if (btn) { btn.disabled = false; btn.textContent = i18nValue('append_submit'); }
         });
     }).catch(err => {
-        if (btn) { btn.disabled = false; btn.textContent = i18nT().append_submit; }
+        if (btn) { btn.disabled = false; btn.textContent = i18nValue('append_submit'); }
         console.error('[Moderation] 检测异常，放行:', err);
     });
 }
@@ -3363,7 +3373,7 @@ function toggleWitnessInput() {
                 inp.placeholder = '未找到，请检查';
                 setTimeout(() => {
                     inp.style.borderColor = '';
-                    inp.placeholder = '输入见证码';
+                    inp.placeholder = i18nValue('witness_placeholder');
                 }, 2000);
             }
         } else {
@@ -3804,28 +3814,33 @@ function updateMyRibbonsBtn() {
 }
 
 function formatRelTime(ts) {
+    if (typeof i18nTimeAgo === 'undefined') return '';
     return i18nTimeAgo(Math.floor(ts / 1000));
 }
 
 function openMyRibbons() {
     const list = loadWitnessCodes();
     const listEl = document.getElementById('myRibbonsList');
+    const t = typeof i18nT === 'function' ? i18nT() : null;
 
     if (list.length === 0) {
-        listEl.innerHTML = `<div class="my-ribbons-empty">${i18nT().my_ribbons_empty}</div>`;
+        if (t) listEl.innerHTML = `<div class="my-ribbons-empty">${t.my_ribbons_empty}</div>`;
     } else {
-        listEl.innerHTML = list.map(entry => `
+        listEl.innerHTML = list.map(entry => {
+            const timeStr = typeof formatRelTime === 'function' ? formatRelTime(entry.time) : '';
+            return `
             <div class="my-ribbon-item">
                 <div class="my-ribbon-dot" style="background:${COLOR_HEX[entry.color] || '#9A9490'};"></div>
                 <div class="my-ribbon-info">
                     <div class="my-ribbon-code">${entry.code}</div>
                     <div class="my-ribbon-id">${entry.id || ''}</div>
                 </div>
-                <div class="my-ribbon-time">${formatRelTime(entry.time)}</div>
+                <div class="my-ribbon-time">${timeStr}</div>
                 <button class="my-ribbon-open-btn" onclick="openStoryByWitness('${entry.code}','${entry.id || ''}')">
-                    ${i18nT().witness_btn}
+                    ${t ? t.witness_btn : 'Find'}
                 </button>
-            </div>`).join('');
+            </div>`;
+        }).join('');
     }
 
     document.getElementById('myRibbonsOverlay').classList.add('active');
@@ -3852,6 +3867,10 @@ function openStoryByWitness(code, storyId) {
         document.getElementById('storyWitnessCode').value = code;
         verifyWitness();
     }, 600);
+}
+
+if (typeof i18nInit === 'function') {
+    i18nInit();
 }
 
 // 页面加载时更新按钮状态
@@ -3990,9 +4009,8 @@ function applyBg(season, time, instant) {
     if (dot && label) {
         const sm = SEASON_META[season];
         const tm = TIME_META[time];
-        const t  = i18nT();
         dot.style.color = tm.color;
-        label.textContent = `${sm.emoji} ${t[season]} · ${t[time]}`;
+        label.textContent = `${sm.emoji} ${i18nValue(season)} · ${i18nValue(time)}`;
     }
 
     // 更新 playground 矩阵高亮
@@ -4142,6 +4160,11 @@ async function preloadBgImages() {
 
 // ── 初始化 ────────────────────────────────────────────────
 (function initBg() {
+    // 启动背景系统
+    if (typeof i18nApply === 'function') {
+        i18nApply();
+        i18nRenderSwitcher();
+    }
     preloadBgImages();
     const now    = new Date();
     const season = getSeasonByMonth(now.getMonth() + 1);
@@ -4158,9 +4181,8 @@ async function preloadBgImages() {
     const dot = document.getElementById('heroTimeDot');
     const lbl = document.getElementById('heroTimeLabel');
     if (dot && lbl) {
-        const t = i18nT();
         dot.style.color = TIME_META[time].color;
-        lbl.textContent = `${SEASON_META[season].emoji} ${t[season]} · ${t[time]}`;
+        lbl.textContent = `${SEASON_META[season].emoji} ${i18nValue(season)} · ${i18nValue(time)}`;
     }
 
     // 矩阵高亮
@@ -4182,12 +4204,33 @@ async function preloadBgImages() {
         const badge = document.getElementById('heroStatsBadge');
         const label = document.getElementById('heroStatsLabel');
         if (!badge || !label) return;
-        label.textContent = i18nT().visitors_today(today.uv);
+        label.dataset.uv = String(today.uv || 0);
+        label.textContent = i18nValue('visitors_today', today.uv);
         badge.style.display = 'flex';
-        console.log('[SiteStats] today=', today, 'total=', total);
     } catch(e) {
         console.warn('[SiteStats] load failed', e);
     }
 })();
+
+document.addEventListener('tiedstory:langchange', () => {
+    if (_bgCurrentKey) {
+        const [season, time] = _bgCurrentKey.split('_');
+        applyBg(season, time, true);
+    }
+
+    const countEl = document.getElementById('ribbonTotalCount');
+    if (countEl) {
+        countEl.setAttribute('data-i18n-n', String(_totalRibbonsCount || 0));
+    }
+
+    const statsLabel = document.getElementById('heroStatsLabel');
+    if (statsLabel?.dataset?.uv) {
+        statsLabel.textContent = i18nValue('visitors_today', Number(statsLabel.dataset.uv));
+    }
+
+    if (document.getElementById('myRibbonsOverlay')?.classList.contains('active')) {
+        openMyRibbons();
+    }
+});
 </script>
 {% endblock %}

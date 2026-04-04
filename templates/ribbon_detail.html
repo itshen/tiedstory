@@ -15,6 +15,7 @@
     <meta property="og:image" content="https://tiedstory.com/static/images/tree_bg.jpg">
     <link rel="icon" type="image/svg+xml" href="/static/icons/favicon.svg">
     <meta name="theme-color" content="#0a0603">
+    <script src="/static/js/i18n.js"></script>
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -57,8 +58,31 @@
         }
         .nav-logo { font-size: 18px; font-weight: 700; color: #e8ddd0; }
         .nav-logo span { color: #c9a97a; }
+        .nav-right { display: flex; align-items: center; gap: 14px; }
         .nav-back { font-size: 14px; color: rgba(232,221,208,0.5); }
         .nav-back:hover { color: #e8ddd0; text-decoration: none; }
+        .lang-switcher-wrap { position: relative; }
+        .lang-switcher-btn {
+            display: flex; align-items: center; gap: 4px;
+            background: rgba(10,6,3,0.35);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 20px; padding: 5px 9px;
+            color: rgba(255,255,255,0.85); cursor: pointer;
+        }
+        .lang-dropdown {
+            position: absolute; top: calc(100% + 6px); right: 0;
+            background: rgba(18, 12, 6, 0.96);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 12px; padding: 6px; min-width: 148px; z-index: 100;
+        }
+        .lang-option {
+            display: flex; align-items: center; gap: 8px; width: 100%;
+            padding: 8px 10px; border: none; background: transparent;
+            border-radius: 8px; color: rgba(232,221,208,0.8);
+            font-size: 13px; cursor: pointer; text-align: left;
+        }
+        .lang-option.active { background: rgba(201,169,122,0.18); color: #c9a97a; }
+        .lang-option:hover { background: rgba(255,255,255,0.08); color: #f0e8dc; }
 
         .ribbon-page {
             max-width: 680px;
@@ -152,7 +176,10 @@
 <body>
     <nav class="nav" aria-label="主导航">
         <a href="/" class="nav-logo">Tied<span>Story</span></a>
-        <a href="/" class="nav-back">← 回到树洞</a>
+        <div class="nav-right">
+            <a href="/" class="nav-back" id="ribbonBack">← 回到树洞</a>
+            <div id="langSwitcher"></div>
+        </div>
     </nav>
 
     <main class="ribbon-page">
@@ -165,13 +192,13 @@
                 <p class="ribbon-story" itemprop="text">{{ ribbon.story }}</p>
                 <div class="ribbon-meta">
                     <span>{{ ribbon.time }}</span>
-                    <span>{{ ribbon.echo_count }} 人回响</span>
+                        <span id="ribbonEchoMeta" data-echo-count="{{ ribbon.echo_count }}">{{ ribbon.echo_count }} 人回响</span>
                 </div>
             </div>
 
             {% if echoes %}
             <section class="echoes-section" aria-label="回响列表">
-                <h2>{{ echoes | length }} 条回响</h2>
+                <h2 id="echoSectionTitle" data-echo-count="{{ echoes | length }}">{{ echoes | length }} 条回响</h2>
                 {% for echo in echoes %}
                 <div class="echo-item" itemscope itemtype="https://schema.org/Comment">
                     <span itemprop="text">{{ echo.content }}</span>
@@ -182,15 +209,15 @@
             {% endif %}
 
             <div class="cta-box">
-                <p>你也有话想说吗？<br>TiedStory 树洞，随时为你开着</p>
-                <a href="/" class="btn-primary">说出你的心声</a>
+                <p id="ribbonCtaText">你也有话想说吗？<br>TiedStory 树洞，随时为你开着</p>
+                <a href="/" class="btn-primary" id="ribbonCtaBtn">说出你的心声</a>
             </div>
         </article>
     </main>
 
     <footer>
-        <p>© 2025 TiedStory · <a href="/about">关于</a> · <a href="/topics">情绪专题</a> · <a href="/">进入树洞</a></p>
-        <p style="margin-top:6px;">心理援助热线：400-161-9995</p>
+        <p id="ribbonFooterLinks">© 2025 TiedStory · <a href="/about">关于</a> · <a href="/topics">情绪专题</a> · <a href="/">进入树洞</a></p>
+        <p style="margin-top:6px;" id="ribbonFooterHotline">心理援助热线：400-161-9995</p>
     </footer>
     <style>
         :root {
@@ -200,5 +227,95 @@
             --color-grey: #8a8a8a; --color-gold: #d4aa45;
         }
     </style>
+    <script>
+        const RIBBON_PAGE_COPY = {
+            'zh-CN': {
+                back: '← 回到树洞',
+                echoMeta: n => `${n} 人回响`,
+                echoTitle: n => `${n} 条回响`,
+                ctaText: '你也有话想说吗？<br>TiedStory 树洞，随时为你开着',
+                ctaBtn: '说出你的心声',
+                footerLinks: '© 2025 TiedStory · <a href="/about">关于</a> · <a href="/topics">情绪专题</a> · <a href="/">进入树洞</a>',
+                hotline: '心理援助热线：400-161-9995'
+            },
+            'zh-TW': {
+                back: '← 回到樹洞',
+                echoMeta: n => `${n} 人回響`,
+                echoTitle: n => `${n} 條回響`,
+                ctaText: '你也有話想說嗎？<br>TiedStory 樹洞，隨時為你開著',
+                ctaBtn: '說出你的心聲',
+                footerLinks: '© 2025 TiedStory · <a href="/about">關於</a> · <a href="/topics">情緒專題</a> · <a href="/">進入樹洞</a>',
+                hotline: '心理援助熱線：400-161-9995'
+            },
+            'en': {
+                back: '← Back to Tree',
+                echoMeta: n => `${n} echoes`,
+                echoTitle: n => `${n} echoes`,
+                ctaText: 'Do you also have something to say?<br>The TiedStory tree is always open for you.',
+                ctaBtn: 'Share your voice',
+                footerLinks: '© 2025 TiedStory · <a href="/about">About</a> · <a href="/topics">Topics</a> · <a href="/">Enter the Tree</a>',
+                hotline: 'Support hotline: 400-161-9995'
+            },
+            'ja': {
+                back: '← ツリーに戻る',
+                echoMeta: n => `${n} 件の共鳴`,
+                echoTitle: n => `${n} 件の回響`,
+                ctaText: 'あなたにも話したいことがありますか？<br>TiedStory のツリーは、いつでも開いています。',
+                ctaBtn: '心の声を話す',
+                footerLinks: '© 2025 TiedStory · <a href="/about">概要</a> · <a href="/topics">トピック</a> · <a href="/">ツリーへ</a>',
+                hotline: '支援ホットライン：400-161-9995'
+            },
+            'ko': {
+                back: '← 트리로 돌아가기',
+                echoMeta: n => `${n}개의 공명`,
+                echoTitle: n => `${n}개의 반향`,
+                ctaText: '당신도 하고 싶은 말이 있나요?<br>TiedStory 트리는 언제나 열려 있어요.',
+                ctaBtn: '마음속 말을 꺼내기',
+                footerLinks: '© 2025 TiedStory · <a href="/about">소개</a> · <a href="/topics">주제</a> · <a href="/">트리로 가기</a>',
+                hotline: '지원 핫라인: 400-161-9995'
+            },
+            'fr': {
+                back: '← Retour à l’arbre',
+                echoMeta: n => `${n} échos`,
+                echoTitle: n => `${n} échos`,
+                ctaText: 'Toi aussi, tu as quelque chose à dire ?<br>L’arbre TiedStory reste ouvert pour toi.',
+                ctaBtn: 'Dire ce que tu ressens',
+                footerLinks: '© 2025 TiedStory · <a href="/about">À propos</a> · <a href="/topics">Thèmes</a> · <a href="/">Entrer dans l’arbre</a>',
+                hotline: 'Ligne de soutien : 400-161-9995'
+            },
+            'ru': {
+                back: '← Назад к дереву',
+                echoMeta: n => `${n} откликов`,
+                echoTitle: n => `${n} откликов`,
+                ctaText: 'Тебе тоже есть что сказать?<br>Дерево TiedStory всегда открыто для тебя.',
+                ctaBtn: 'Сказать от сердца',
+                footerLinks: '© 2025 TiedStory · <a href="/about">О нас</a> · <a href="/topics">Темы</a> · <a href="/">Войти в дерево</a>',
+                hotline: 'Горячая линия поддержки: 400-161-9995'
+            }
+        };
+
+        function applyRibbonPageI18n() {
+            const lang = typeof i18nGetLang === 'function' ? i18nGetLang() : 'zh-CN';
+            const copy = RIBBON_PAGE_COPY[lang] || RIBBON_PAGE_COPY['zh-CN'];
+            document.documentElement.lang = lang;
+            document.getElementById('ribbonBack').textContent = copy.back;
+            document.getElementById('ribbonCtaText').innerHTML = copy.ctaText;
+            document.getElementById('ribbonCtaBtn').textContent = copy.ctaBtn;
+            document.getElementById('ribbonFooterLinks').innerHTML = copy.footerLinks;
+            document.getElementById('ribbonFooterHotline').textContent = copy.hotline;
+            const echoMeta = document.getElementById('ribbonEchoMeta');
+            if (echoMeta) {
+                echoMeta.textContent = copy.echoMeta(Number(echoMeta.getAttribute('data-echo-count') || 0));
+            }
+            const echoTitle = document.getElementById('echoSectionTitle');
+            if (echoTitle) {
+                echoTitle.textContent = copy.echoTitle(Number(echoTitle.getAttribute('data-echo-count') || 0));
+            }
+        }
+
+        i18nInit();
+        applyRibbonPageI18n();
+        document.addEventListener('tiedstory:langchange', applyRibbonPageI18n);
+    </script>
 </body>
 </html>

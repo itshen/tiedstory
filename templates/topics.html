@@ -16,6 +16,8 @@
     <meta property="og:image" content="https://tiedstory.com/static/images/tree_bg.jpg">
     <link rel="icon" type="image/svg+xml" href="/static/icons/favicon.svg">
     <meta name="theme-color" content="#0a0603">
+    <script src="/static/js/i18n.js"></script>
+    <script src="/static/js/topic-copy.js"></script>
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -51,9 +53,32 @@
         }
         .nav-logo { font-size: 18px; font-weight: 700; color: #e8ddd0; }
         .nav-logo span { color: #c9a97a; }
+        .nav-right { display: flex; align-items: center; gap: 14px; }
         .nav-links { display: flex; gap: 24px; font-size: 14px; }
         .nav-links a { color: rgba(232,221,208,0.7); }
         .nav-links a:hover { color: #e8ddd0; text-decoration: none; }
+        .lang-switcher-wrap { position: relative; }
+        .lang-switcher-btn {
+            display: flex; align-items: center; gap: 4px;
+            background: rgba(10,6,3,0.35);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 20px; padding: 5px 9px;
+            color: rgba(255,255,255,0.85); cursor: pointer;
+        }
+        .lang-dropdown {
+            position: absolute; top: calc(100% + 6px); right: 0;
+            background: rgba(18, 12, 6, 0.96);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 12px; padding: 6px; min-width: 148px; z-index: 100;
+        }
+        .lang-option {
+            display: flex; align-items: center; gap: 8px; width: 100%;
+            padding: 8px 10px; border: none; background: transparent;
+            border-radius: 8px; color: rgba(232,221,208,0.8);
+            font-size: 13px; cursor: pointer; text-align: left;
+        }
+        .lang-option.active { background: rgba(201,169,122,0.18); color: #c9a97a; }
+        .lang-option:hover { background: rgba(255,255,255,0.08); color: #f0e8dc; }
 
         .hero {
             text-align: center;
@@ -137,94 +162,97 @@
 <body>
     <nav class="nav" aria-label="主导航">
         <a href="/" class="nav-logo">Tied<span>Story</span></a>
-        <div class="nav-links">
-            <a href="/">树洞</a>
-            <a href="/topics" aria-current="page">专题</a>
-            <a href="/about">关于</a>
+        <div class="nav-right">
+            <div class="nav-links">
+                <a href="/" id="navTreehole">树洞</a>
+                <a href="/topics" aria-current="page" id="navTopics">专题</a>
+                <a href="/about" id="navAbout">关于</a>
+            </div>
+            <div id="langSwitcher"></div>
         </div>
     </nav>
 
     <main>
         <div class="hero">
-            <h1>你现在的感受<br>这里都有人懂</h1>
-            <p>选一个最接近你此刻心情的话题，看看有多少人和你一样</p>
+            <h1 id="topicsHeroTitle">你现在的感受<br>这里都有人懂</h1>
+            <p id="topicsHeroDesc">选一个最接近你此刻心情的话题，看看有多少人和你一样</p>
         </div>
 
         <div class="topics-container">
             <div class="topics-group">
-                <h2>关系与情感</h2>
+                <h2 id="groupRelationship">关系与情感</h2>
                 <div class="topics-grid" role="list">
-                    <a href="/topics/loss" class="topic-card" role="listitem">
+                    <a href="/topics/loss" class="topic-card" role="listitem" data-topic-slug="loss">
                         <div class="topic-card-color" style="background:#d98fa0;"></div>
-                        <h3>失恋难过</h3>
-                        <p>那个人走了，心里空了一块</p>
+                        <h3 data-topic-field="title">失恋难过</h3>
+                        <p data-topic-field="short">那个人走了，心里空了一块</p>
                     </a>
-                    <a href="/topics/miss" class="topic-card" role="listitem">
+                    <a href="/topics/miss" class="topic-card" role="listitem" data-topic-slug="miss">
                         <div class="topic-card-color" style="background:#d98fa0;"></div>
-                        <h3>思念某人</h3>
-                        <p>想一个联系不到的人</p>
+                        <h3 data-topic-field="title">思念某人</h3>
+                        <p data-topic-field="short">想一个联系不到的人</p>
                     </a>
-                    <a href="/topics/lonely" class="topic-card" role="listitem">
+                    <a href="/topics/lonely" class="topic-card" role="listitem" data-topic-slug="lonely">
                         <div class="topic-card-color" style="background:#5b8fd4;"></div>
-                        <h3>孤独无助</h3>
-                        <p>身边有人却依然觉得孤单</p>
+                        <h3 data-topic-field="title">孤独无助</h3>
+                        <p data-topic-field="short">身边有人却依然觉得孤单</p>
                     </a>
-                    <a href="/topics/family" class="topic-card" role="listitem">
+                    <a href="/topics/family" class="topic-card" role="listitem" data-topic-slug="family">
                         <div class="topic-card-color" style="background:#e0884a;"></div>
-                        <h3>家庭烦恼</h3>
-                        <p>和家人之间说不清楚的距离</p>
+                        <h3 data-topic-field="title">家庭烦恼</h3>
+                        <p data-topic-field="short">和家人之间说不清楚的距离</p>
                     </a>
                 </div>
             </div>
 
             <div class="topics-group">
-                <h2>心情与情绪</h2>
+                <h2 id="groupEmotion">心情与情绪</h2>
                 <div class="topics-grid" role="list">
-                    <a href="/topics/sad" class="topic-card" role="listitem">
+                    <a href="/topics/sad" class="topic-card" role="listitem" data-topic-slug="sad">
                         <div class="topic-card-color" style="background:#5b8fd4;"></div>
-                        <h3>莫名想倾诉</h3>
-                        <p>说不清原因，就是想说点什么</p>
+                        <h3 data-topic-field="title">莫名想倾诉</h3>
+                        <p data-topic-field="short">说不清原因，就是想说点什么</p>
                     </a>
-                    <a href="/topics/angry" class="topic-card" role="listitem">
+                    <a href="/topics/angry" class="topic-card" role="listitem" data-topic-slug="angry">
                         <div class="topic-card-color" style="background:#e0884a;"></div>
-                        <h3>委屈愤怒</h3>
-                        <p>被误解、被辜负、压着火</p>
+                        <h3 data-topic-field="title">委屈愤怒</h3>
+                        <p data-topic-field="short">被误解、被辜负、压着火</p>
                     </a>
-                    <a href="/topics/numb" class="topic-card" role="listitem">
+                    <a href="/topics/numb" class="topic-card" role="listitem" data-topic-slug="numb">
                         <div class="topic-card-color" style="background:#8a8a8a;"></div>
-                        <h3>麻木空洞</h3>
-                        <p>感觉不到自己，什么都无所谓</p>
+                        <h3 data-topic-field="title">麻木空洞</h3>
+                        <p data-topic-field="short">感觉不到自己，什么都无所谓</p>
                     </a>
-                    <a href="/topics/hope" class="topic-card" role="listitem">
+                    <a href="/topics/hope" class="topic-card" role="listitem" data-topic-slug="hope">
                         <div class="topic-card-color" style="background:#d4aa45;"></div>
-                        <h3>期待感恩</h3>
-                        <p>有好事想和某个人分享</p>
+                        <h3 data-topic-field="title">期待感恩</h3>
+                        <p data-topic-field="short">有好事想和某个人分享</p>
                     </a>
                 </div>
             </div>
 
             <div class="topics-group">
-                <h2>压力与状态</h2>
+                <h2 id="groupPressure">压力与状态</h2>
                 <div class="topics-grid" role="list">
-                    <a href="/topics/anxiety" class="topic-card" role="listitem">
+                    <a href="/topics/anxiety" class="topic-card" role="listitem" data-topic-slug="anxiety">
                         <div class="topic-card-color" style="background:#9b7ec8;"></div>
-                        <h3>焦虑压力</h3>
-                        <p>睡不着，脑子停不下来</p>
+                        <h3 data-topic-field="title">焦虑压力</h3>
+                        <p data-topic-field="short">睡不着，脑子停不下来</p>
                     </a>
-                    <a href="/topics/work" class="topic-card" role="listitem">
+                    <a href="/topics/work" class="topic-card" role="listitem" data-topic-slug="work">
                         <div class="topic-card-color" style="background:#e0884a;"></div>
-                        <h3>工作委屈</h3>
-                        <p>职场里憋着一口气</p>
+                        <h3 data-topic-field="title">工作委屈</h3>
+                        <p data-topic-field="short">职场里憋着一口气</p>
                     </a>
-                    <a href="/topics/tired" class="topic-card" role="listitem">
+                    <a href="/topics/tired" class="topic-card" role="listitem" data-topic-slug="tired">
                         <div class="topic-card-color" style="background:#6aab7c;"></div>
-                        <h3>身心疲惫</h3>
-                        <p>太累了，只想休息一下</p>
+                        <h3 data-topic-field="title">身心疲惫</h3>
+                        <p data-topic-field="short">太累了，只想休息一下</p>
                     </a>
-                    <a href="/topics/confused" class="topic-card" role="listitem">
+                    <a href="/topics/confused" class="topic-card" role="listitem" data-topic-slug="confused">
                         <div class="topic-card-color" style="background:#9b7ec8;"></div>
-                        <h3>迷茫困惑</h3>
-                        <p>不知道该往哪走</p>
+                        <h3 data-topic-field="title">迷茫困惑</h3>
+                        <p data-topic-field="short">不知道该往哪走</p>
                     </a>
                 </div>
             </div>
@@ -232,8 +260,98 @@
     </main>
 
     <footer>
-        <p>© 2025 TiedStory · <a href="/about">关于</a> · <a href="/topics">情绪专题</a> · <a href="/">进入树洞</a></p>
-        <p style="margin-top:6px; font-size:11px; opacity:0.6;">心理援助热线：400-161-9995</p>
+        <p id="topicsFooterLinks">© 2025 TiedStory · <a href="/about">关于</a> · <a href="/topics">情绪专题</a> · <a href="/">进入树洞</a></p>
+        <p style="margin-top:6px; font-size:11px; opacity:0.6;" id="topicsFooterHotline">心理援助热线：400-161-9995</p>
     </footer>
+    <script>
+        const TOPICS_PAGE_COPY = {
+            'zh-CN': {
+                navTreehole: '树洞', navTopics: '专题', navAbout: '关于',
+                heroTitle: '你现在的感受<br>这里都有人懂',
+                heroDesc: '选一个最接近你此刻心情的话题，看看有多少人和你一样',
+                groupRelationship: '关系与情感', groupEmotion: '心情与情绪', groupPressure: '压力与状态',
+                footerLinks: '© 2025 TiedStory · <a href="/about">关于</a> · <a href="/topics">情绪专题</a> · <a href="/">进入树洞</a>',
+                hotline: '心理援助热线：400-161-9995'
+            },
+            'zh-TW': {
+                navTreehole: '樹洞', navTopics: '專題', navAbout: '關於',
+                heroTitle: '你現在的感受<br>這裡都有人懂',
+                heroDesc: '選一個最接近你此刻心情的主題，看看有多少人和你一樣',
+                groupRelationship: '關係與情感', groupEmotion: '心情與情緒', groupPressure: '壓力與狀態',
+                footerLinks: '© 2025 TiedStory · <a href="/about">關於</a> · <a href="/topics">情緒專題</a> · <a href="/">進入樹洞</a>',
+                hotline: '心理援助熱線：400-161-9995'
+            },
+            'en': {
+                navTreehole: 'Tree', navTopics: 'Topics', navAbout: 'About',
+                heroTitle: 'Whatever you are feeling<br>someone here understands',
+                heroDesc: 'Pick the topic closest to how you feel right now and see how many people feel the same',
+                groupRelationship: 'Relationships & Love', groupEmotion: 'Feelings & Emotions', groupPressure: 'Stress & State',
+                footerLinks: '© 2025 TiedStory · <a href="/about">About</a> · <a href="/topics">Topics</a> · <a href="/">Enter the Tree</a>',
+                hotline: 'Support hotline: 400-161-9995'
+            },
+            'ja': {
+                navTreehole: 'ツリー', navTopics: 'トピック', navAbout: '概要',
+                heroTitle: '今の気持ちを<br>ここでは誰かがわかってくれる',
+                heroDesc: '今の気持ちにいちばん近いテーマを選んで、同じ気持ちの人を見つけてください',
+                groupRelationship: '関係と感情', groupEmotion: '気分と感情', groupPressure: 'ストレスと状態',
+                footerLinks: '© 2025 TiedStory · <a href="/about">概要</a> · <a href="/topics">トピック</a> · <a href="/">ツリーへ</a>',
+                hotline: '支援ホットライン：400-161-9995'
+            },
+            'ko': {
+                navTreehole: '트리', navTopics: '주제', navAbout: '소개',
+                heroTitle: '지금의 감정도<br>여기서는 누군가 이해해요',
+                heroDesc: '지금 마음에 가장 가까운 주제를 골라 같은 감정을 느끼는 사람들을 만나보세요',
+                groupRelationship: '관계와 감정', groupEmotion: '기분과 감정', groupPressure: '스트레스와 상태',
+                footerLinks: '© 2025 TiedStory · <a href="/about">소개</a> · <a href="/topics">주제</a> · <a href="/">트리로 가기</a>',
+                hotline: '지원 핫라인: 400-161-9995'
+            },
+            'fr': {
+                navTreehole: 'Arbre', navTopics: 'Thèmes', navAbout: 'À propos',
+                heroTitle: 'Ce que tu ressens maintenant<br>quelqu’un ici le comprend',
+                heroDesc: 'Choisis le thème qui ressemble le plus à ton état actuel et vois combien de personnes ressentent la même chose',
+                groupRelationship: 'Relations et attachement', groupEmotion: 'Humeur et émotions', groupPressure: 'Stress et état',
+                footerLinks: '© 2025 TiedStory · <a href="/about">À propos</a> · <a href="/topics">Thèmes</a> · <a href="/">Entrer dans l’arbre</a>',
+                hotline: 'Ligne de soutien : 400-161-9995'
+            },
+            'ru': {
+                navTreehole: 'Дерево', navTopics: 'Темы', navAbout: 'О нас',
+                heroTitle: 'Твои чувства сейчас<br>здесь кто-то поймёт',
+                heroDesc: 'Выбери тему, которая ближе всего к твоему состоянию, и посмотри, сколько людей чувствуют похожее',
+                groupRelationship: 'Отношения и чувства', groupEmotion: 'Настроение и эмоции', groupPressure: 'Стресс и состояние',
+                footerLinks: '© 2025 TiedStory · <a href="/about">О нас</a> · <a href="/topics">Темы</a> · <a href="/">Войти в дерево</a>',
+                hotline: 'Горячая линия поддержки: 400-161-9995'
+            }
+        };
+
+        function applyTopicsPageI18n() {
+            const lang = typeof i18nGetLang === 'function' ? i18nGetLang() : 'zh-CN';
+            const copy = TOPICS_PAGE_COPY[lang] || TOPICS_PAGE_COPY['zh-CN'];
+            document.documentElement.lang = lang;
+            document.getElementById('navTreehole').textContent = copy.navTreehole;
+            document.getElementById('navTopics').textContent = copy.navTopics;
+            document.getElementById('navAbout').textContent = copy.navAbout;
+            document.getElementById('topicsHeroTitle').innerHTML = copy.heroTitle;
+            document.getElementById('topicsHeroDesc').textContent = copy.heroDesc;
+            document.getElementById('groupRelationship').textContent = copy.groupRelationship;
+            document.getElementById('groupEmotion').textContent = copy.groupEmotion;
+            document.getElementById('groupPressure').textContent = copy.groupPressure;
+            document.getElementById('topicsFooterLinks').innerHTML = copy.footerLinks;
+            document.getElementById('topicsFooterHotline').textContent = copy.hotline;
+
+            document.querySelectorAll('[data-topic-slug]').forEach(card => {
+                const slug = card.getAttribute('data-topic-slug');
+                const topic = getTopicI18n(slug, lang);
+                if (!topic) return;
+                const titleEl = card.querySelector('[data-topic-field="title"]');
+                const shortEl = card.querySelector('[data-topic-field="short"]');
+                if (titleEl) titleEl.textContent = topic.title;
+                if (shortEl) shortEl.textContent = topic.short;
+            });
+        }
+
+        i18nInit();
+        applyTopicsPageI18n();
+        document.addEventListener('tiedstory:langchange', applyTopicsPageI18n);
+    </script>
 </body>
 </html>

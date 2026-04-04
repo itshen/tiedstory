@@ -54,14 +54,28 @@ const I18N_LANGS = {
       author_append_label: (t) => `作者追加 · ${t}`,
       witness_input_placeholder: '输入你的见证码',
       witness_verify: '验证',
-      witness_hint: '见证码是发布时生成的6位私密码，只有你知道',
+      witness_hint: '见证码是发布时生成的 12 位私密码，只有你知道',
       witness_error: '见证码不正确，请重试',
       append_placeholder: '追加你想说的……（后续感受、新进展都可以）',
       append_submit: '追加到丝带上',
       moderation_blocked: '内容包含敏感信息，已阻止发送。',
+      share_link: '复制分享链接',
+      share_copied: '已复制',
+      author_toggle: '我是这条丝带的作者，想追加内容',
+      crisis_title: '我们注意到一些让你痛苦的字句',
+      crisis_body_html: '你现在的感受很重要。如果此刻非常难受，可以拨打心理援助热线 <strong style="color:rgba(240,150,150,0.85);">400-161-9995</strong>，或者联系 <a class="tie-crisis-link" href="https://www.lifeline.org.cn" target="_blank">生命热线</a>，那里有人愿意听你说。<br><br>这条丝带暂时无法系上，但你不是一个人。',
+      rewrite: '重新写',
+      wps_save: '存到 WPS 笔记，永久保管',
+      wps_archive: '前往 WPS 笔记永久保管',
+      welcome_story_html: '有一个人，今天终于把那句憋了很久的话，写了下来。<br><br>不是给任何人看的，只是写下来。<br><br>写完之后，她把它挂在了这里。轻了一些，也好了一点点。',
+      welcome_desc_html: '这里是 <strong>TiedStory</strong>。<br>不用注册，不用解释，也不用担心被认出来。<br><br>你只需要把心里的那句话，系成一条丝带。<br>它会留在树上，被风吹动，也可能被某个陌生人温柔地看见。',
+      loading_failed: '加载失败，请重试。',
+      witness_entered: '已输入',
+      checking: '检测中…',
+      submitting: '提交中…',
       // 我的丝带
       my_ribbons_title: '我的丝带',
-      my_ribbons_hint: '以下记录保存在<strong style="color:rgba(200,155,80,0.6);">本机浏览器</strong>。换浏览器或清除记录后会消失。',
+      my_ribbons_hint: '以下记录保存在<strong style="color:rgba(200,155,80,0.6);">本机浏览器</strong>。换浏览器或清除记录后会消失。<br>如需长期保管，推荐存到 WPS 笔记。',
       my_ribbons_empty: '还没有系上过任何丝带',
       // 欢迎语
       welcome_eyebrow: '有一条金色的丝带，就挂在这棵树上',
@@ -132,13 +146,13 @@ const I18N_LANGS = {
       author_append_label: (t) => `作者追加 · ${t}`,
       witness_input_placeholder: '輸入你的見證碼',
       witness_verify: '驗證',
-      witness_hint: '見證碼是發布時生成的6位私密碼，只有你知道',
+      witness_hint: '見證碼是發布時生成的 12 位私密碼，只有你知道',
       witness_error: '見證碼不正確，請重試',
       append_placeholder: '追加你想說的……（後續感受、新進展都可以）',
       append_submit: '追加到絲帶上',
       moderation_blocked: '內容包含敏感資訊，已阻止發送。',
       my_ribbons_title: '我的絲帶',
-      my_ribbons_hint: '以下記錄儲存在<strong style="color:rgba(200,155,80,0.6);">本機瀏覽器</strong>。換瀏覽器或清除記錄後會消失。',
+      my_ribbons_hint: '以下記錄儲存在<strong style="color:rgba(200,155,80,0.6);">本機瀏覽器</strong>。換瀏覽器或清除記錄後會消失。<br>如需長期保管，推薦存到 WPS 筆記。',
       my_ribbons_empty: '還沒有繫上過任何絲帶',
       welcome_eyebrow: '有一條金色的絲帶，就掛在這棵樹上',
       no_ribbons: '還沒有人繫上絲帶，成為第一個吧。',
@@ -202,13 +216,13 @@ const I18N_LANGS = {
       author_append_label: (t) => `Author added · ${t}`,
       witness_input_placeholder: 'Enter your witness code',
       witness_verify: 'Verify',
-      witness_hint: 'The 6-digit code generated when you posted — only you know it.',
+      witness_hint: 'The 12-digit code generated when you posted — only you know it.',
       witness_error: 'Incorrect witness code. Please try again.',
       append_placeholder: 'Add a follow-up… (how you feel now, any new updates)',
       append_submit: 'Append to ribbon',
       moderation_blocked: 'Content flagged. Message not sent.',
       my_ribbons_title: 'My Ribbons',
-      my_ribbons_hint: 'Records are saved in <strong style="color:rgba(200,155,80,0.6);">this browser</strong>. They will be lost if you switch browsers or clear data.',
+      my_ribbons_hint: 'Records are saved in <strong style="color:rgba(200,155,80,0.6);">this browser</strong>. They will be lost if you switch browsers or clear data.<br>For long-term safekeeping, save them to WPS Notes.',
       my_ribbons_empty: "You haven't tied any ribbons yet.",
       welcome_eyebrow: 'A golden ribbon hangs on this tree',
       no_ribbons: "No ribbons yet — be the first.",
@@ -272,13 +286,13 @@ const I18N_LANGS = {
       author_append_label: (t) => `著者が追記 · ${t}`,
       witness_input_placeholder: '証言コードを入力',
       witness_verify: '確認',
-      witness_hint: '投稿時に生成された6桁の秘密コード。あなただけが知っています。',
+      witness_hint: '投稿時に生成された12桁の秘密コード。あなただけが知っています。',
       witness_error: '証言コードが正しくありません。再試行してください。',
       append_placeholder: '追記する……（その後の気持ちや新しい出来事など）',
       append_submit: 'リボンに追記する',
       moderation_blocked: '不適切なコンテンツが含まれています。送信がブロックされました。',
       my_ribbons_title: 'マイリボン',
-      my_ribbons_hint: '記録は<strong style="color:rgba(200,155,80,0.6);">このブラウザ</strong>に保存されています。ブラウザを変えるかデータを削除すると消えます。',
+      my_ribbons_hint: '記録は<strong style="color:rgba(200,155,80,0.6);">このブラウザ</strong>に保存されています。ブラウザを変えるかデータを削除すると消えます。<br>長期保存するなら WPS ノートへの保存をおすすめします。',
       my_ribbons_empty: 'まだリボンを結んでいません。',
       welcome_eyebrow: '金色のリボンが、この木に結ばれています',
       no_ribbons: 'まだリボンがありません。最初の一本を結んでみましょう。',
@@ -342,13 +356,13 @@ const I18N_LANGS = {
       author_append_label: (t) => `작성자 추가 · ${t}`,
       witness_input_placeholder: '증인 코드 입력',
       witness_verify: '확인',
-      witness_hint: '게시 시 생성된 6자리 비밀 코드예요. 본인만 알고 있어요.',
+      witness_hint: '게시 시 생성된 12자리 비밀 코드예요. 본인만 알고 있어요.',
       witness_error: '증인 코드가 올바르지 않아요. 다시 시도해주세요.',
       append_placeholder: '추가하고 싶은 말…（이후 감정이나 새로운 소식）',
       append_submit: '리본에 추가',
       moderation_blocked: '부적절한 내용이 포함되어 전송이 차단되었어요.',
       my_ribbons_title: '내 리본',
-      my_ribbons_hint: '기록은 <strong style="color:rgba(200,155,80,0.6);">이 브라우저</strong>에 저장됩니다. 브라우저를 바꾸거나 데이터를 지우면 사라져요.',
+      my_ribbons_hint: '기록은 <strong style="color:rgba(200,155,80,0.6);">이 브라우저</strong>에 저장됩니다. 브라우저를 바꾸거나 데이터를 지우면 사라져요.<br>장기 보관하려면 WPS 노트에 저장하세요.',
       my_ribbons_empty: '아직 묶은 리본이 없어요.',
       welcome_eyebrow: '황금색 리본 하나가 이 나무에 걸려 있어요',
       no_ribbons: '아직 리본이 없어요. 첫 번째가 되어보세요.',
@@ -394,14 +408,14 @@ const I18N_LANGS = {
       tie_btn: 'Nouer un ruban',
       witness_btn: 'Trouver par code',
       tie_title: 'Que veux-tu dire maintenant ?',
-      tie_subtitle: 'Écris simplement. Pas besoin de raison, ni d'être complet.',
-      tie_placeholder: 'Aujourd'hui, je…',
+      tie_subtitle: 'Écris simplement. Pas besoin de raison, ni d\'être complet.',
+      tie_placeholder: 'Aujourd\'hui, je…',
       tie_ready: 'Je suis prêt(e)',
       tie_sensing: 'Perception de tes émotions…',
       tie_btn_submit: 'Nouer ce ruban',
-      tie_done_title: 'Ton ruban est noué à l'arbre',
+      tie_done_title: 'Ton ruban est noué à l\'arbre',
       tie_done_subtitle: 'Sauvegarde ce code témoin pour consulter les réponses.',
-      tie_witness_hint: 'C'est le seul lien entre toi et ton histoire.',
+      tie_witness_hint: 'C\'est le seul lien entre toi et ton histoire.',
       tie_saved_hint: 'Sauvegardé automatiquement dans <strong>ce navigateur</strong>. Sera perdu si tu changes de navigateur ou effaces les données.',
       tie_confirm: 'Compris',
       crisis_text: 'ou contacte',
@@ -412,17 +426,17 @@ const I18N_LANGS = {
       author_append_label: (t) => `Ajout de l'auteur · ${t}`,
       witness_input_placeholder: 'Entre ton code témoin',
       witness_verify: 'Vérifier',
-      witness_hint: 'Le code à 6 chiffres généré lors de la publication — tu es le seul à le connaître.',
+      witness_hint: 'Le code à 12 chiffres généré lors de la publication — tu es le seul à le connaître.',
       witness_error: 'Code témoin incorrect. Réessaie.',
       append_placeholder: 'Ajouter une suite… (tes ressentis, de nouveaux développements)',
       append_submit: 'Ajouter au ruban',
       moderation_blocked: 'Contenu signalé. Message non envoyé.',
       my_ribbons_title: 'Mes Rubans',
-      my_ribbons_hint: 'Les données sont sauvegardées dans <strong style="color:rgba(200,155,80,0.6);">ce navigateur</strong>. Elles seront perdues si tu changes de navigateur ou effaces les données.',
+      my_ribbons_hint: 'Les données sont sauvegardées dans <strong style="color:rgba(200,155,80,0.6);">ce navigateur</strong>. Elles seront perdues si tu changes de navigateur ou effaces les données.<br>Pour une conservation longue durée, enregistre-les dans WPS Notes.',
       my_ribbons_empty: "Tu n'as pas encore noué de ruban.",
       welcome_eyebrow: 'Un ruban doré est noué à cet arbre',
-      no_ribbons: 'Aucun ruban pour l'instant — sois le premier.',
-      just_now: 'à l'instant',
+      no_ribbons: 'Aucun ruban pour l\'instant — sois le premier.',
+      just_now: 'à l\'instant',
       minutes_ago: (n) => `il y a ${n} min`,
       hours_ago: (n) => `il y a ${n} h`,
       days_ago: (n) => `il y a ${n} j`,
@@ -430,13 +444,13 @@ const I18N_LANGS = {
       years_ago: (n) => `il y a ${n} an${n > 1 ? 's' : ''}`,
       ai_label: 'SouffleArbre',
       visitors_today: (n) => `${n} en ligne`,
-      nav_back: 'Retour à l'arbre',
+      nav_back: 'Retour à l\'arbre',
       nav_topics: 'Thèmes',
       nav_faq: 'FAQ',
       nav_about: 'À propos',
-      pg_real_mode: 'Suivre l'heure réelle',
+      pg_real_mode: 'Suivre l\'heure réelle',
       pg_demo_mode: 'Démo time-lapse (30s/période)',
-      pg_auto_hint: 'Bascule automatiquement selon la saison et l'heure réelles',
+      pg_auto_hint: 'Bascule automatiquement selon la saison et l\'heure réelles',
       pg_demo_hint: 'Démo : cycles de 30s par période, puis passage à la saison suivante',
     }
   },
@@ -482,13 +496,13 @@ const I18N_LANGS = {
       author_append_label: (t) => `Добавлено автором · ${t}`,
       witness_input_placeholder: 'Введи код свидетеля',
       witness_verify: 'Проверить',
-      witness_hint: '6-значный код, созданный при публикации — знаешь только ты.',
+      witness_hint: '12-значный код, созданный при публикации — знаешь только ты.',
       witness_error: 'Неверный код. Попробуй снова.',
       append_placeholder: 'Добавить продолжение… (как ты сейчас, что изменилось)',
       append_submit: 'Добавить к ленте',
       moderation_blocked: 'Содержание нарушает правила. Сообщение не отправлено.',
       my_ribbons_title: 'Мои ленты',
-      my_ribbons_hint: 'Данные сохранены в <strong style="color:rgba(200,155,80,0.6);">этом браузере</strong>. Исчезнут при смене браузера или очистке данных.',
+      my_ribbons_hint: 'Данные сохранены в <strong style="color:rgba(200,155,80,0.6);">этом браузере</strong>. Исчезнут при смене браузера или очистке данных.<br>Для долгого хранения лучше сохранить их в WPS Notes.',
       my_ribbons_empty: 'Ты ещё не завязал(а) ни одной ленты.',
       welcome_eyebrow: 'На этом дереве висит золотая лента',
       no_ribbons: 'Лент пока нет — будь первым.',
@@ -543,6 +557,14 @@ function i18nT() {
   return I18N_LANGS[_currentLang].t;
 }
 
+function i18nValue(key, ...args) {
+  const current = I18N_LANGS[_currentLang]?.t ?? {};
+  const fallback = I18N_LANGS['zh-CN']?.t ?? {};
+  const value = current[key] !== undefined ? current[key] : fallback[key];
+  if (typeof value === 'function') return value(...args);
+  return value;
+}
+
 /**
  * 切换语言并刷新页面文本
  */
@@ -552,6 +574,7 @@ function i18nSetLang(code) {
   localStorage.setItem(I18N_STORAGE_KEY, code);
   i18nApply();
   i18nRenderSwitcher();
+  document.dispatchEvent(new CustomEvent('tiedstory:langchange', { detail: { lang: code } }));
 }
 
 /**
@@ -569,30 +592,40 @@ function i18nGetLang() {
  * data-i18n-title="key"       → 设置 title
  */
 function i18nApply() {
-  const t = i18nT();
-
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
-    if (typeof t[key] === 'function') {
-      el.textContent = t[key](el.getAttribute('data-i18n-n') || 0);
-    } else if (t[key] !== undefined) {
-      el.textContent = t[key];
+    const n = el.getAttribute('data-i18n-n');
+    const value = n !== null ? i18nValue(key, Number(n)) : i18nValue(key);
+    if (value !== undefined) {
+      el.textContent = value;
+    }
+  });
+
+  document.querySelectorAll('[data-i18n-n]:not([data-i18n])').forEach(el => {
+    const key = el.getAttribute('data-i18n-key');
+    if (!key) return;
+    const value = i18nValue(key, Number(el.getAttribute('data-i18n-n') || 0));
+    if (value !== undefined) {
+      el.textContent = value;
     }
   });
 
   document.querySelectorAll('[data-i18n-html]').forEach(el => {
     const key = el.getAttribute('data-i18n-html');
-    if (t[key] !== undefined) el.innerHTML = t[key];
+    const value = i18nValue(key);
+    if (value !== undefined) el.innerHTML = value;
   });
 
   document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
     const key = el.getAttribute('data-i18n-placeholder');
-    if (t[key] !== undefined) el.placeholder = t[key];
+    const value = i18nValue(key);
+    if (value !== undefined) el.placeholder = value;
   });
 
   document.querySelectorAll('[data-i18n-title]').forEach(el => {
     const key = el.getAttribute('data-i18n-title');
-    if (t[key] !== undefined) el.title = t[key];
+    const value = i18nValue(key);
+    if (value !== undefined) el.title = value;
   });
 
   // 更新 html lang 属性
@@ -653,12 +686,16 @@ document.addEventListener('click', function(e) {
 
 // ─── 辅助：time_ago 多语言版本 ────────────────────────────────────────────────
 function i18nTimeAgo(ts) {
-  const t = i18nT();
   const diff = Math.floor(Date.now() / 1000) - ts;
-  if (diff < 60) return t.just_now;
-  if (diff < 3600) return t.minutes_ago(Math.floor(diff / 60));
-  if (diff < 86400) return t.hours_ago(Math.floor(diff / 3600));
-  if (diff < 86400 * 30) return t.days_ago(Math.floor(diff / 86400));
-  if (diff < 86400 * 365) return t.months_ago(Math.floor(diff / (86400 * 30)));
-  return t.years_ago(Math.floor(diff / (86400 * 365)));
+  if (diff < 60) return i18nValue('just_now');
+  if (diff < 3600) return i18nValue('minutes_ago', Math.floor(diff / 60));
+  if (diff < 86400) return i18nValue('hours_ago', Math.floor(diff / 3600));
+  if (diff < 86400 * 30) return i18nValue('days_ago', Math.floor(diff / 86400));
+  if (diff < 86400 * 365) return i18nValue('months_ago', Math.floor(diff / (86400 * 30)));
+  return i18nValue('years_ago', Math.floor(diff / (86400 * 365)));
+}
+
+function i18nInit() {
+  i18nRenderSwitcher();
+  i18nApply();
 }
