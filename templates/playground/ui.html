@@ -2035,6 +2035,10 @@
 
     <!-- 右上角标签组：访客 + 时段 + 语言切换 -->
     <div class="hero-top-right">
+        <div class="hero-time-badge" id="heroTotalBadge" style="display:none;">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.6;flex-shrink:0"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span id="heroTotalLabel">—</span>
+        </div>
         <div class="hero-time-badge" id="heroStatsBadge" style="display:none;">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.6;flex-shrink:0"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             <span id="heroStatsLabel">—</span>
@@ -4220,12 +4224,23 @@ async function preloadBgImages() {
         const res = await fetch('/api/site_stats');
         if (!res.ok) return;
         const { today, total } = await res.json();
+        // 今日在线徽章
         const badge = document.getElementById('heroStatsBadge');
         const label = document.getElementById('heroStatsLabel');
-        if (!badge || !label) return;
-        label.dataset.uv = String(today.uv || 0);
-        label.textContent = i18nValue('visitors_today', today.uv);
-        badge.style.display = 'flex';
+        if (badge && label) {
+            label.dataset.uv = String(today.uv || 0);
+            label.textContent = i18nValue('visitors_today', today.uv || 0);
+            badge.style.display = 'flex';
+        }
+        // 历史总用户徽章
+        const totalBadge = document.getElementById('heroTotalBadge');
+        const totalLabel = document.getElementById('heroTotalLabel');
+        if (totalBadge && totalLabel && total) {
+            const totalUv = total.uv || 0;
+            totalLabel.dataset.uv = String(totalUv);
+            totalLabel.textContent = i18nValue('visitors_total', totalUv);
+            if (totalUv > 0) totalBadge.style.display = 'flex';
+        }
     } catch(e) {
         console.warn('[SiteStats] load failed', e);
     }
@@ -4245,6 +4260,11 @@ document.addEventListener('tiedstory:langchange', () => {
     const statsLabel = document.getElementById('heroStatsLabel');
     if (statsLabel?.dataset?.uv) {
         statsLabel.textContent = i18nValue('visitors_today', Number(statsLabel.dataset.uv));
+    }
+
+    const totalLabel = document.getElementById('heroTotalLabel');
+    if (totalLabel?.dataset?.uv) {
+        totalLabel.textContent = i18nValue('visitors_total', Number(totalLabel.dataset.uv));
     }
 
     if (document.getElementById('myRibbonsOverlay')?.classList.contains('active')) {

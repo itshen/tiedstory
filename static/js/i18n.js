@@ -205,8 +205,9 @@ const I18N_LANGS = {
       years_ago: (n) => `${n} 年前`,
       // AI 标签
       ai_label: '树语',
-      // 今日访客
+      // 今日访客 & 历史用户
       visitors_today: (n) => `${n} 人在线`,
+      visitors_total: (n) => `${n} 人到访过`,
       // 导航（about 页）
       nav_back: '回到树洞',
       nav_topics: '情绪专题',
@@ -293,6 +294,7 @@ const I18N_LANGS = {
       years_ago: (n) => `${n} 年前`,
       ai_label: '樹語',
       visitors_today: (n) => `${n} 人在線`,
+      visitors_total: (n) => `${n} 人到訪過`,
       nav_back: '回到樹洞',
       nav_topics: '情緒專題',
       nav_faq: '常見問題',
@@ -363,6 +365,7 @@ const I18N_LANGS = {
       years_ago: (n) => `${n}y ago`,
       ai_label: 'TreeWhisper',
       visitors_today: (n) => `${n} online`,
+      visitors_total: (n) => `${n} visitors`,
       nav_back: 'Back to Tree',
       nav_topics: 'Topics',
       nav_faq: 'FAQ',
@@ -447,6 +450,7 @@ const I18N_LANGS = {
       years_ago: (n) => `${n}年前`,
       ai_label: 'ツリーウィスパー',
       visitors_today: (n) => `${n}人がオンライン`,
+      visitors_total: (n) => `${n}人が訪問`,
       nav_back: 'ツリーに戻る',
       nav_topics: 'トピック',
       nav_faq: 'よくある質問',
@@ -531,6 +535,7 @@ const I18N_LANGS = {
       years_ago: (n) => `${n}년 전`,
       ai_label: '나무속삭임',
       visitors_today: (n) => `${n}명 온라인`,
+      visitors_total: (n) => `${n}명 방문`,
       nav_back: '나무로 돌아가기',
       nav_topics: '주제',
       nav_faq: 'FAQ',
@@ -615,6 +620,7 @@ const I18N_LANGS = {
       years_ago: (n) => `il y a ${n} an${n > 1 ? 's' : ''}`,
       ai_label: 'SouffleArbre',
       visitors_today: (n) => `${n} en ligne`,
+      visitors_total: (n) => `${n} visiteurs`,
       nav_back: 'Retour à l\'arbre',
       nav_topics: 'Thèmes',
       nav_faq: 'FAQ',
@@ -699,6 +705,7 @@ const I18N_LANGS = {
       years_ago: (n) => `${n} г назад`,
       ai_label: 'ГолосДерева',
       visitors_today: (n) => `${n} онлайн`,
+      visitors_total: (n) => `${n} посетителей`,
       nav_back: 'Вернуться к дереву',
       nav_topics: 'Темы',
       nav_faq: 'FAQ',
