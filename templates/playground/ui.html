@@ -1331,33 +1331,36 @@
     border: 1px solid rgba(255,255,255,0.08);
     box-shadow: 0 16px 48px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
     border-radius: 12px;
-    overflow-y: auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
     animation: ribbonSlideIn 0.4s cubic-bezier(0.22,1,0.36,1);
     position: relative;
-    /* 细滚动条 */
-    scrollbar-width: thin;
-    scrollbar-color: rgba(200,155,80,0.25) transparent;
-}
-.story-modal::-webkit-scrollbar {
-    width: 4px;
-}
-.story-modal::-webkit-scrollbar-track {
-    background: transparent;
-}
-.story-modal::-webkit-scrollbar-thumb {
-    background: rgba(200,155,80,0.25);
-    border-radius: 4px;
-}
-.story-modal::-webkit-scrollbar-thumb:hover {
-    background: rgba(200,155,80,0.45);
 }
 .story-ribbon-bar {
     height: 5px;
     background: var(--rc, var(--ribbon-orange));
     border-radius: 0;
 }
+.story-modal-header {
+    flex-shrink: 0;
+    padding: 28px 32px 0;
+}
 .story-modal-inner {
-    padding: 28px 32px 32px;
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 32px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(200,155,80,0.25) transparent;
+}
+.story-modal-inner::-webkit-scrollbar { width: 4px; }
+.story-modal-inner::-webkit-scrollbar-track { background: transparent; }
+.story-modal-inner::-webkit-scrollbar-thumb { background: rgba(200,155,80,0.25); border-radius: 4px; }
+.story-modal-inner::-webkit-scrollbar-thumb:hover { background: rgba(200,155,80,0.45); }
+.story-modal-footer {
+    flex-shrink: 0;
+    padding: 16px 32px 24px;
+    border-top: 1px solid rgba(255,255,255,0.06);
 }
 .story-modal-text {
     font-family: 'Noto Serif SC', serif;
@@ -2012,7 +2015,9 @@
     /* 弹窗边距和文字调整 */
     .tie-modal, .story-modal, .my-ribbons-modal { width: 94vw; border-radius: 12px; }
     .tie-modal-body { padding: 24px 20px 28px; }
-    .story-modal-inner { padding: 24px 20px 28px; }
+    .story-modal-header { padding: 24px 20px 0; }
+    .story-modal-inner { padding: 0 20px; }
+    .story-modal-footer { padding: 14px 20px 20px; }
     .my-ribbons-modal { padding: 24px 20px 28px; }
     
     .tie-label { font-size: 18px; }
@@ -2467,9 +2472,9 @@
         </div>
         <div class="story-ribbon-bar" id="storyRibbonBar"></div>
         <button class="story-close-btn" onclick="closeStoryDirect()">×</button>
-        <div class="story-modal-inner">
 
-            <!-- 卡片 ID + 分享按钮 -->
+        <!-- 顶部固定：ID + 分享 -->
+        <div class="story-modal-header">
             <div class="story-meta">
                 <span class="story-id" id="storyIdLabel"># TS-0001</span>
                 <button class="story-share-btn" id="storyShareBtn" onclick="shareStory()">
@@ -2477,6 +2482,10 @@
                     <span data-i18n="share_link">复制分享链接</span>
                 </button>
             </div>
+        </div>
+
+        <!-- 中间可滚动区域 -->
+        <div class="story-modal-inner">
 
             <!-- 故事正文 -->
             <p class="story-modal-text" id="storyModalText">有一个人，带着一个需要格外耐心的孩子，已经很久没有睡过一个完整的觉了。今天，最亲近的人说，这一切都是她的错。她没有哭，只是坐在那里，不知道该说什么。</p>
@@ -2516,8 +2525,12 @@
                 </div>
             </div>
 
+        </div>
+
+        <!-- 底部固定：输入 + 见证码 + 赞助 -->
+        <div class="story-modal-footer">
             <!-- 留下回响（所有人可见） -->
-            <div class="story-input-row" style="margin-bottom: 16px;">
+            <div class="story-input-row">
                 <input class="story-input" id="storyResonanceInput" type="text" data-i18n-placeholder="resonance_placeholder" placeholder="写下你的回响（50字以内）…">
                 <button class="story-submit-btn" onclick="submitResonance()" data-i18n="resonance_submit">留下回响</button>
             </div>
@@ -2546,7 +2559,6 @@
             </div>
 
             <a class="sponsor-line sponsor-line--modal" href="https://tokendance.space/?from=tiedstory" target="_blank" rel="noopener">树语的声音，由 TokenDance 点亮 <span class="sponsor-more">了解更多 ›</span></a>
-
         </div>
     </div>
 </div>

@@ -2,6 +2,22 @@
 
 ## 2026-04-24
 
+### UI 优化：故事弹窗（story modal）布局
+
+**现象**：长内容时弹窗整体滚动，头部与底部输入区不固定。  
+**根因**：`.story-modal` 使用 `overflow-y: auto`，未将头部、正文、底部解耦。  
+**修复文件**：`templates/playground/ui.html`  
+**变更**：将故事弹窗改为列向 flex 布局，正文区 `story-modal-inner` 独立滚动，固定头部与底栏（`story-modal-header` / `story-modal-footer`），滚动条仅作用于内层。  
+**状态**：已完成  
+
+### 仓库：停止跟踪 `app.log` 并忽略 SQLite 辅助文件
+
+**原因**：`app.log` 与 `*.db-shm` / `*.db-wal` 不应进入版本库。  
+**修复文件**：`.gitignore`，并从仓库移除已跟踪的 `app.log`。  
+**状态**：已完成  
+
+---
+
 ### 变更：模型供应商切换至词元跳动（TokenDance）
 
 **内容**：将所有大模型调用从阿里云百炼（DashScope）切换至词元跳动（tokendance.space）统一网关。

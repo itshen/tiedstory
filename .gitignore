@@ -7,6 +7,11 @@ venv/
 
 # Database
 *.db
+*.db-shm
+*.db-wal
+
+# Local logs
+app.log
 
 # OS
 .DS_Store
