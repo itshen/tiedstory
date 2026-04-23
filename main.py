@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 import logging
 import time
@@ -1285,8 +1287,11 @@ async def api_add_echo(ribbon_id: str, request: Request):
     ribbon_id = ribbon_id.upper()
     body = await request.json()
     content = body.get("content", "").strip()
+    author = body.get("author", "").strip()
     if not content:
         raise HTTPException(status_code=400, detail="content is required")
+    if len(author) > 20:
+        author = author[:20]
 
     # 后端安全校验
     if _check_injection(content):
@@ -1294,10 +1299,10 @@ async def api_add_echo(ribbon_id: str, request: Request):
         raise HTTPException(status_code=403, detail="内容包含非法指令")
 
     ip = _get_client_ip(request)
-    echo_id = database.add_echo(ribbon_id, content, ip=ip)
+    echo_id = database.add_echo(ribbon_id, content, ip=ip, author=author)
     if echo_id is None:
         raise HTTPException(status_code=404, detail="Ribbon not found")
-    logger.info(f"[Echo] ribbon={ribbon_id} ip={ip} echo_id={echo_id} content={content[:40]}")
+    logger.info(f"[Echo] ribbon={ribbon_id} ip={ip} echo_id={echo_id} author={author or '(anon)'} content={content[:40]}")
     return {"ok": True, "echo_id": echo_id}
 
 
@@ -1332,6 +1337,236 @@ async def api_add_append(ribbon_id: str, request: Request):
         raise HTTPException(status_code=403, detail="Invalid witness code")
     logger.info(f"[Append] ribbon={ribbon_id} content={content[:40]}")
     return {"ok": True}
+
+
+# ==========================================
+# Open API（公共接口，供第三方 Agent / 脚本调用）
+# ==========================================
+
+OPEN_API_RATE_LIMIT = 5       # 每 IP 每小时最多写入次数
+OPEN_API_RATE_WINDOW = 3600   # 限流窗口（秒）
+
+
+def _check_rate_limit(ip: str) -> tuple[bool, int]:
+    """检查 IP 写入限流，返回 (是否允许, 剩余重试秒数)"""
+    count = database.count_ip_submissions(ip, OPEN_API_RATE_WINDOW)
+    if count >= OPEN_API_RATE_LIMIT:
+        return False, OPEN_API_RATE_WINDOW
+    return True, 0
+
+
+@app.post("/open/api/ribbon")
+async def open_api_create_ribbon(request: Request):
+    """Open API: 发丝带（完整 AI 审核 + 改写 + 保存）"""
+    import json
+    import httpx
+    import re
+
+    ip = _get_client_ip(request)
+    allowed, retry_after = _check_rate_limit(ip)
+    if not allowed:
+        return JSONResponse(
+            {"error": "rate_limit", "message": "每小时最多提交 5 条，请稍后再试", "retry_after": retry_after},
+            status_code=429,
+        )
+
+    body = await request.json()
+    text = body.get("text", "").strip()
+    if not text:
+        raise HTTPException(status_code=400, detail="text is required")
+    if len(text) > 500:
+        raise HTTPException(status_code=400, detail="text must be 500 characters or less")
+
+    logger.info(f"[OpenAPI] Create ribbon, ip={ip}, text={text[:60]}")
+
+    if _check_injection(text):
+        logger.warning(f"[OpenAPI] Injection detected: {text[:80]}")
+        return JSONResponse({"ok": False, "reason": "内容包含非法指令"}, status_code=403)
+
+    actual_key = os.getenv("DASHSCOPE_API_KEY")
+    url = "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {actual_key}"}
+    payload = {
+        "model": "qwen3.5-plus",
+        "messages": [
+            {"role": "system", "content": _get_tree_whisper_prompt()},
+            {"role": "user", "content": text}
+        ],
+        "stream": False,
+        "enable_thinking": False,
+    }
+
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            resp = await client.post(url, headers=headers, json=payload)
+            resp.raise_for_status()
+            data = resp.json()
+            raw = data["choices"][0]["message"]["content"]
+            logger.info(f"[OpenAPI] AI raw={raw[:200]}")
+
+            raw = re.sub(r"```xml\s*", "", raw)
+            raw = re.sub(r"```\s*", "", raw)
+
+            color_m = re.search(r"<color>(.*?)</color>", raw, re.DOTALL)
+            publish_m = re.search(r"<allow_publish>(.*?)</allow_publish>", raw, re.DOTALL)
+            detail_m = re.search(r"<detail>(.*?)</detail>", raw, re.DOTALL)
+            content_m = re.search(r"<content>(.*?)</content>", raw, re.DOTALL)
+
+            color = color_m.group(1).strip().lower() if color_m else "grey"
+            allow_publish = publish_m.group(1).strip().lower() == "true" if publish_m else True
+            detail = detail_m.group(1).strip() if detail_m else ""
+            content = content_m.group(1).strip() if content_m else raw.strip()
+
+            valid_colors = {"blue", "orange", "pink", "green", "purple", "grey", "gray", "gold"}
+            if color not in valid_colors:
+                color = "grey"
+
+            if allow_publish and _check_output_leak(content):
+                logger.warning(f"[OpenAPI] Output leak blocked. content={content[:80]}")
+                return JSONResponse({"ok": False, "reason": "内容审核未通过"}, status_code=403)
+
+            if not allow_publish:
+                logger.info(f"[OpenAPI] Rejected by AI. detail={detail}")
+                return JSONResponse({"ok": False, "reason": detail or "内容审核未通过"}, status_code=403)
+
+            saved = database.save_ribbon(color=color, story=content, ip=ip)
+            slots, final_delay = _gen_ai_echo_slots()
+            database.schedule_ai_echo_slots(saved["id"], slots, final_delay)
+
+            logger.info(f"[OpenAPI] Saved ribbon={saved['id']} color={color}")
+            return JSONResponse({
+                "ok": True,
+                "ribbon_id": saved["id"],
+                "witness": saved["witness"],
+                "color": color,
+                "story": content,
+                "detail": detail,
+            })
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"[OpenAPI] Create ribbon error: {e}")
+        return JSONResponse({"ok": False, "reason": f"服务处理失败: {str(e)}"}, status_code=500)
+
+
+@app.get("/open/api/ribbons")
+async def open_api_list_ribbons(limit: int = 10, offset: int = 0, color: str = None):
+    """Open API: 分页查看丝带（支持颜色过滤）"""
+    limit = min(max(1, limit), 50)
+    offset = max(0, offset)
+    ribbons = database.list_ribbons(limit=limit, offset=offset, color=color)
+    total = database.total_ribbons(color=color)
+    result = [{
+        "id": r["id"],
+        "color": r["color"],
+        "story": r["story"],
+        "echo_count": r["echo_count"],
+        "created_at": r["created_at"],
+        "time": time_ago(r["created_at"]),
+    } for r in ribbons]
+    return {"total": total, "ribbons": result}
+
+
+@app.get("/open/api/ribbons/search")
+async def open_api_search_ribbons(q: str, limit: int = 10, offset: int = 0):
+    """Open API: 搜索丝带"""
+    if not q.strip():
+        raise HTTPException(status_code=400, detail="q is required")
+    limit = min(max(1, limit), 50)
+    offset = max(0, offset)
+    ribbons, total = database.search_ribbons(q.strip(), limit=limit, offset=offset)
+    result = [{
+        "id": r["id"],
+        "color": r["color"],
+        "story": r["story"],
+        "echo_count": r["echo_count"],
+        "created_at": r["created_at"],
+        "time": time_ago(r["created_at"]),
+    } for r in ribbons]
+    return {"total": total, "ribbons": result}
+
+
+@app.get("/open/api/ribbon/random")
+async def open_api_random_ribbon():
+    """Open API: 随机看一条丝带"""
+    data = database.random_ribbon()
+    if not data:
+        raise HTTPException(status_code=404, detail="No ribbons available")
+    data["time"] = time_ago(data["created_at"])
+    for e in data.get("echoes", []):
+        e["time"] = time_ago(e["created_at"])
+        if not e.get("author"):
+            e["author"] = ""
+    for a in data.get("appends", []):
+        a["time"] = time_ago(a["created_at"])
+    return data
+
+
+@app.get("/open/api/ribbon/{ribbon_id}")
+async def open_api_get_ribbon(ribbon_id: str):
+    """Open API: 查看单条丝带详情"""
+    ribbon_id = ribbon_id.upper()
+    data = database.get_ribbon(ribbon_id)
+    if not data:
+        raise HTTPException(status_code=404, detail="Ribbon not found")
+    data["time"] = time_ago(data["created_at"])
+    for e in data.get("echoes", []):
+        e["time"] = time_ago(e["created_at"])
+        if not e.get("author"):
+            e["author"] = ""
+    for a in data.get("appends", []):
+        a["time"] = time_ago(a["created_at"])
+    return data
+
+
+@app.post("/open/api/ribbon/{ribbon_id}/echo")
+async def open_api_add_echo(ribbon_id: str, request: Request):
+    """Open API: 留回响（支持署名）"""
+    ip = _get_client_ip(request)
+    allowed, retry_after = _check_rate_limit(ip)
+    if not allowed:
+        return JSONResponse(
+            {"error": "rate_limit", "message": "每小时最多提交 5 条，请稍后再试", "retry_after": retry_after},
+            status_code=429,
+        )
+
+    ribbon_id = ribbon_id.upper()
+    body = await request.json()
+    content = body.get("content", "").strip()
+    author = body.get("author", "").strip()
+
+    if not content:
+        raise HTTPException(status_code=400, detail="content is required")
+    if len(content) > 100:
+        raise HTTPException(status_code=400, detail="content must be 100 characters or less")
+    if len(author) > 20:
+        raise HTTPException(status_code=400, detail="author must be 20 characters or less")
+
+    if _check_injection(content):
+        logger.warning(f"[OpenAPI Echo] Injection in content, blocked. ip={ip}")
+        raise HTTPException(status_code=403, detail="内容包含非法指令")
+    if author and _check_injection(author):
+        logger.warning(f"[OpenAPI Echo] Injection in author, blocked. ip={ip}")
+        raise HTTPException(status_code=403, detail="署名包含非法指令")
+
+    echo_id = database.add_echo(ribbon_id, content, ip=ip, author=author)
+    if echo_id is None:
+        raise HTTPException(status_code=404, detail="Ribbon not found")
+    logger.info(f"[OpenAPI Echo] ribbon={ribbon_id} echo_id={echo_id} author={author or '(anonymous)'}")
+    return {"ok": True, "echo_id": echo_id}
+
+
+@app.get("/open/api/skill.md")
+async def open_api_skill_md():
+    """Open API: 返回 Skill 文档（MD 格式）"""
+    from fastapi.responses import PlainTextResponse
+    skill_path = os.path.join(os.path.dirname(__file__), "static", "tiedstory_skill.md")
+    try:
+        with open(skill_path, "r", encoding="utf-8") as f:
+            content = f.read()
+        return PlainTextResponse(content, media_type="text/markdown; charset=utf-8")
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Skill file not found")
 
 
 # ==========================================

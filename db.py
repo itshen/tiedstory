@@ -137,6 +137,7 @@ def _migrate():
         )""",
         "CREATE INDEX IF NOT EXISTS idx_page_views_date ON page_views(date)",
         "CREATE INDEX IF NOT EXISTS idx_page_views_ip_date ON page_views(ip, date)",
+        "ALTER TABLE echoes ADD COLUMN author TEXT NOT NULL DEFAULT ''",
     ]
     conn = get_conn()
     try:
@@ -186,7 +187,7 @@ def get_ribbon(ribbon_id: str) -> Optional[dict]:
         if not row:
             return None
         echoes = conn.execute(
-            "SELECT id, content, created_at, likes, is_ai FROM echoes WHERE ribbon_id=? AND hidden=0 ORDER BY created_at ASC",
+            "SELECT id, content, created_at, likes, is_ai, author FROM echoes WHERE ribbon_id=? AND hidden=0 ORDER BY created_at ASC",
             (ribbon_id,)
         ).fetchall()
         appends = conn.execute(
@@ -237,7 +238,7 @@ def total_ribbons(color: str = None) -> int:
         return row["c"]
 
 
-def add_echo(ribbon_id: str, content: str, ip: str = "", is_ai: bool = False) -> Optional[int]:
+def add_echo(ribbon_id: str, content: str, ip: str = "", is_ai: bool = False, author: str = "") -> Optional[int]:
     """插入回响，返回新记录的 id；ribbon_id 不存在时返回 None"""
     with db() as conn:
         exists = conn.execute("SELECT 1 FROM ribbons WHERE id=?", (ribbon_id,)).fetchone()
@@ -245,8 +246,8 @@ def add_echo(ribbon_id: str, content: str, ip: str = "", is_ai: bool = False) ->
             return None
         ts = int(time.time())
         cur = conn.execute(
-            "INSERT INTO echoes(ribbon_id, content, created_at, ip, is_ai) VALUES(?,?,?,?,?)",
-            (ribbon_id, content, ts, ip, 1 if is_ai else 0)
+            "INSERT INTO echoes(ribbon_id, content, created_at, ip, is_ai, author) VALUES(?,?,?,?,?,?)",
+            (ribbon_id, content, ts, ip, 1 if is_ai else 0, author)
         )
         return cur.lastrowid
 
@@ -577,3 +578,54 @@ def get_total_stats() -> dict:
             "SELECT COUNT(*) AS pv, COUNT(DISTINCT ip) AS uv FROM page_views"
         ).fetchone()
     return {"pv": row["pv"], "uv": row["uv"]} if row else {"pv": 0, "uv": 0}
+
+
+# ==========================================
+# Open API: 搜索 & 随机
+# ==========================================
+
+def search_ribbons(keyword: str, limit: int = 10, offset: int = 0) -> tuple[list[dict], int]:
+    """模糊搜索丝带 story 字段，返回 (结果列表, 总数)"""
+    pattern = f"%{keyword}%"
+    with db() as conn:
+        total_row = conn.execute(
+            "SELECT COUNT(*) AS c FROM ribbons WHERE hidden=0 AND story LIKE ?",
+            (pattern,)
+        ).fetchone()
+        total = total_row["c"]
+        rows = conn.execute(
+            """SELECT r.id, r.color, r.story, r.created_at,
+                      (SELECT COUNT(*) FROM echoes WHERE ribbon_id=r.id AND hidden=0) AS echo_count
+               FROM ribbons r
+               WHERE r.hidden=0 AND r.story LIKE ?
+               ORDER BY r.created_at DESC
+               LIMIT ? OFFSET ?""",
+            (pattern, limit, offset)
+        ).fetchall()
+        return [dict(r) for r in rows], total
+
+
+def random_ribbon() -> Optional[dict]:
+    """随机返回一条可见丝带（含回响列表）"""
+    with db() as conn:
+        row = conn.execute(
+            "SELECT id FROM ribbons WHERE hidden=0 ORDER BY RANDOM() LIMIT 1"
+        ).fetchone()
+        if not row:
+            return None
+    return get_ribbon(row["id"])
+
+
+def count_ip_submissions(ip: str, window_seconds: int = 3600) -> int:
+    """统计某 IP 在时间窗口内的写入次数（丝带 + 回响）"""
+    since = int(time.time()) - window_seconds
+    with db() as conn:
+        ribbon_count = conn.execute(
+            "SELECT COUNT(*) AS c FROM ribbons WHERE ip=? AND created_at > ?",
+            (ip, since)
+        ).fetchone()["c"]
+        echo_count = conn.execute(
+            "SELECT COUNT(*) AS c FROM echoes WHERE ip=? AND created_at > ? AND is_ai=0",
+            (ip, since)
+        ).fetchone()["c"]
+    return ribbon_count + echo_count

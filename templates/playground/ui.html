@@ -2022,7 +2022,306 @@
         -webkit-line-clamp: 2;
     }
 }
+
+/* ====== Open API 弹窗 ====== */
+.btn-api-badge {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(10,6,3,0.35);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(200,155,80,0.3);
+    border-radius: 20px;
+    padding: 5px 12px;
+    color: rgba(200,155,80,0.85);
+    font-size: 12px;
+    font-family: 'Noto Serif SC', serif;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.3s;
+}
+.btn-api-badge:hover {
+    background: rgba(200,155,80,0.15);
+    border-color: rgba(200,155,80,0.5);
+    color: rgba(200,155,80,1);
+}
+
+.api-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    justify-content: center;
+    align-items: center;
+}
+.api-modal-overlay.active { display: flex; }
+.api-modal {
+    background: #1a1510;
+    border: 1px solid rgba(200,155,80,0.2);
+    border-radius: 16px;
+    width: 90vw;
+    max-width: 680px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+.api-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(200,155,80,0.12);
+}
+.api-modal-title {
+    font-size: 16px;
+    color: rgba(200,155,80,0.9);
+    font-family: 'Noto Serif SC', serif;
+    letter-spacing: 1px;
+}
+.api-modal-close {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.5);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+.api-modal-close:hover {
+    color: #fff;
+    background: rgba(255,255,255,0.1);
+}
+.api-modal-tabs {
+    display: flex;
+    border-bottom: 1px solid rgba(200,155,80,0.12);
+    padding: 0 20px;
+}
+.api-modal-tab {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.4);
+    font-size: 13px;
+    padding: 10px 16px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    font-family: 'Noto Serif SC', serif;
+}
+.api-modal-tab:hover { color: rgba(255,255,255,0.7); }
+.api-modal-tab.active {
+    color: rgba(200,155,80,0.9);
+    border-bottom-color: rgba(200,155,80,0.7);
+}
+.api-modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(200,155,80,0.2) transparent;
+}
+.api-modal-body::-webkit-scrollbar { width: 6px; }
+.api-modal-body::-webkit-scrollbar-thumb { background: rgba(200,155,80,0.2); border-radius: 3px; }
+.api-tab-content { display: none; }
+.api-tab-content.active { display: block; }
+
+.api-endpoint-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+.api-endpoint-table th {
+    text-align: left;
+    color: rgba(200,155,80,0.7);
+    font-weight: 500;
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(200,155,80,0.1);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.api-endpoint-table td {
+    padding: 10px;
+    color: rgba(255,255,255,0.75);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    vertical-align: top;
+}
+.api-method {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+}
+.api-method-get { background: rgba(76,175,80,0.15); color: #66bb6a; }
+.api-method-post { background: rgba(33,150,243,0.15); color: #42a5f5; }
+.api-path {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 12px;
+    color: rgba(255,255,255,0.85);
+}
+.api-copy-btn {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.5);
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+.api-copy-btn:hover { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.8); }
+.api-copy-btn.copied { background: rgba(76,175,80,0.15); color: #66bb6a; border-color: rgba(76,175,80,0.3); }
+.api-rate-limit-note {
+    margin-top: 16px;
+    padding: 12px 14px;
+    background: rgba(200,155,80,0.08);
+    border: 1px solid rgba(200,155,80,0.15);
+    border-radius: 10px;
+    color: rgba(255,255,255,0.6);
+    font-size: 12px;
+    line-height: 1.6;
+}
+.api-rate-limit-note strong { color: rgba(200,155,80,0.85); }
+
+.api-skill-content {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 16px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.7);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-height: 55vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(200,155,80,0.2) transparent;
+}
+.api-skill-content::-webkit-scrollbar { width: 6px; }
+.api-skill-content::-webkit-scrollbar-thumb { background: rgba(200,155,80,0.2); border-radius: 3px; }
+.api-skill-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+.api-skill-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(200,155,80,0.1);
+    border: 1px solid rgba(200,155,80,0.25);
+    color: rgba(200,155,80,0.85);
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Noto Serif SC', serif;
+}
+.api-skill-btn:hover { background: rgba(200,155,80,0.2); }
+.api-skill-btn.copied { background: rgba(76,175,80,0.15); color: #66bb6a; border-color: rgba(76,175,80,0.3); }
+
+@media (max-width: 768px) {
+    .api-modal { width: 95vw; max-height: 90vh; border-radius: 12px; }
+    .api-modal-body { padding: 14px; }
+    .api-endpoint-table { font-size: 11px; }
+    .api-endpoint-table th, .api-endpoint-table td { padding: 6px 6px; }
+    .api-skill-content { font-size: 11px; padding: 12px; }
+}
 </style>
+
+<!-- Open API 弹窗 -->
+<div class="api-modal-overlay" id="apiModalOverlay" onclick="if(event.target===this)closeApiModal()">
+    <div class="api-modal">
+        <div class="api-modal-header">
+            <span class="api-modal-title">TiedStory Open API</span>
+            <button class="api-modal-close" onclick="closeApiModal()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="api-modal-tabs">
+            <button class="api-modal-tab active" onclick="switchApiTab('overview')">API 概览</button>
+            <button class="api-modal-tab" onclick="switchApiTab('skill')">Skill 文件</button>
+        </div>
+        <div class="api-modal-body">
+            <!-- Tab 1: API 概览 -->
+            <div class="api-tab-content active" id="apiTabOverview">
+                <table class="api-endpoint-table">
+                    <thead>
+                        <tr><th>方法</th><th>端点</th><th>说明</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="api-method api-method-post">POST</span></td>
+                            <td class="api-path">/open/api/ribbon</td>
+                            <td>发丝带（AI 审核+改写+保存）</td>
+                            <td><button class="api-copy-btn" onclick="copyApiCurl(this,'post-ribbon')">复制 curl</button></td>
+                        </tr>
+                        <tr>
+                            <td><span class="api-method api-method-get">GET</span></td>
+                            <td class="api-path">/open/api/ribbons</td>
+                            <td>查看列表（分页+颜色过滤）</td>
+                            <td><button class="api-copy-btn" onclick="copyApiCurl(this,'get-ribbons')">复制 curl</button></td>
+                        </tr>
+                        <tr>
+                            <td><span class="api-method api-method-get">GET</span></td>
+                            <td class="api-path">/open/api/ribbons/search?q=</td>
+                            <td>搜索丝带</td>
+                            <td><button class="api-copy-btn" onclick="copyApiCurl(this,'search')">复制 curl</button></td>
+                        </tr>
+                        <tr>
+                            <td><span class="api-method api-method-get">GET</span></td>
+                            <td class="api-path">/open/api/ribbon/random</td>
+                            <td>随机看一条</td>
+                            <td><button class="api-copy-btn" onclick="copyApiCurl(this,'random')">复制 curl</button></td>
+                        </tr>
+                        <tr>
+                            <td><span class="api-method api-method-get">GET</span></td>
+                            <td class="api-path">/open/api/ribbon/{id}</td>
+                            <td>查看单条详情</td>
+                            <td><button class="api-copy-btn" onclick="copyApiCurl(this,'get-ribbon')">复制 curl</button></td>
+                        </tr>
+                        <tr>
+                            <td><span class="api-method api-method-post">POST</span></td>
+                            <td class="api-path">/open/api/ribbon/{id}/echo</td>
+                            <td>留回响（可附署名）</td>
+                            <td><button class="api-copy-btn" onclick="copyApiCurl(this,'echo')">复制 curl</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="api-rate-limit-note">
+                    <strong>限流规则：</strong>写入操作（发丝带、留回响）每 IP 每小时最多 5 次。读取操作不限流。<br>
+                    <strong>无需 API Key</strong>，所有端点均为公开接口。返回数据格式为 JSON。
+                </div>
+            </div>
+            <!-- Tab 2: Skill 文件 -->
+            <div class="api-tab-content" id="apiTabSkill">
+                <div class="api-skill-actions">
+                    <button class="api-skill-btn" id="apiSkillCopyBtn" onclick="copySkillContent()">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        复制全部
+                    </button>
+                    <button class="api-skill-btn" onclick="downloadSkillFile()">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        下载 .md
+                    </button>
+                </div>
+                <div class="api-skill-content" id="apiSkillContent">加载中...</div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- 展开态背景遮罩（点击收起） -->
 <div class="hero-bottom-scrim" id="heroBottomScrim" onclick="closeAllPanel()"></div>
@@ -2048,6 +2347,10 @@
             <span id="heroTimeLabel">傍晚</span>
         </div>
         <!-- 语言切换器（最右） -->
+        <div class="btn-api-badge" onclick="openApiModal()" title="Open API">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            <span>API</span>
+        </div>
         <div id="langSwitcher"></div>
     </div>
 
@@ -4269,6 +4572,86 @@ document.addEventListener('tiedstory:langchange', () => {
 
     if (document.getElementById('myRibbonsOverlay')?.classList.contains('active')) {
         openMyRibbons();
+    }
+});
+
+/* ====== Open API 弹窗逻辑 ====== */
+let _skillContent = null;
+
+function openApiModal() {
+    document.getElementById('apiModalOverlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+    if (!_skillContent) {
+        fetch('/open/api/skill.md')
+            .then(r => r.text())
+            .then(text => {
+                _skillContent = text;
+                document.getElementById('apiSkillContent').textContent = text;
+            })
+            .catch(() => {
+                document.getElementById('apiSkillContent').textContent = '加载失败，请稍后重试';
+            });
+    }
+}
+
+function closeApiModal() {
+    document.getElementById('apiModalOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+function switchApiTab(tab) {
+    document.querySelectorAll('.api-modal-tab').forEach((el, i) => {
+        el.classList.toggle('active', (tab === 'overview' && i === 0) || (tab === 'skill' && i === 1));
+    });
+    document.getElementById('apiTabOverview').classList.toggle('active', tab === 'overview');
+    document.getElementById('apiTabSkill').classList.toggle('active', tab === 'skill');
+}
+
+const _apiCurls = {
+    'post-ribbon': `curl -X POST ${location.origin}/open/api/ribbon \\\n  -H "Content-Type: application/json" \\\n  -d '{"text": "今天很难过，不知道跟谁说"}'`,
+    'get-ribbons': `curl "${location.origin}/open/api/ribbons?limit=10&color=blue"`,
+    'search': `curl "${location.origin}/open/api/ribbons/search?q=孤独&limit=5"`,
+    'random': `curl "${location.origin}/open/api/ribbon/random"`,
+    'get-ribbon': `curl "${location.origin}/open/api/ribbon/A3K7BN"`,
+    'echo': `curl -X POST ${location.origin}/open/api/ribbon/A3K7BN/echo \\\n  -H "Content-Type: application/json" \\\n  -d '{"content": "你不是一个人", "author": "路过的风"}'`,
+};
+
+function copyApiCurl(btn, key) {
+    const text = _apiCurls[key] || '';
+    navigator.clipboard.writeText(text).then(() => {
+        btn.classList.add('copied');
+        btn.textContent = '已复制';
+        setTimeout(() => { btn.classList.remove('copied'); btn.textContent = '复制 curl'; }, 1500);
+    });
+}
+
+function copySkillContent() {
+    const text = _skillContent || document.getElementById('apiSkillContent').textContent;
+    const btn = document.getElementById('apiSkillCopyBtn');
+    navigator.clipboard.writeText(text).then(() => {
+        btn.classList.add('copied');
+        btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> 已复制';
+        setTimeout(() => {
+            btn.classList.remove('copied');
+            btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> 复制全部';
+        }, 1500);
+    });
+}
+
+function downloadSkillFile() {
+    const text = _skillContent || document.getElementById('apiSkillContent').textContent;
+    const blob = new Blob([text], { type: 'text/markdown; charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'tiedstory_skill.md';
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && document.getElementById('apiModalOverlay').classList.contains('active')) {
+        closeApiModal();
     }
 });
 </script>
