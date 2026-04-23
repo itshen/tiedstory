@@ -581,6 +581,143 @@ def get_total_stats() -> dict:
 
 
 # ==========================================
+# Nginx 日志解析统计（与 GoAccess 对齐）
+# ==========================================
+
+import glob
+import gzip
+import re
+
+_NGINX_LOG_DIR = "/var/log/nginx"
+_NGINX_LOG_PRIMARY = os.path.join(_NGINX_LOG_DIR, "tiedstory_access.log")
+_NGINX_LOG_FALLBACK = os.path.join(_NGINX_LOG_DIR, "access.log")
+
+_NGINX_IP_RE = re.compile(r"^(\S+)")
+_NGINX_DATE_RE = re.compile(r"\[(\d{2})/(\w{3})/(\d{4})")
+
+_MONTH_MAP = {
+    "Jan": "01", "Feb": "02", "Mar": "03", "Apr": "04",
+    "May": "05", "Jun": "06", "Jul": "07", "Aug": "08",
+    "Sep": "09", "Oct": "10", "Nov": "11", "Dec": "12",
+}
+
+_nginx_cache: dict = {}
+_NGINX_CACHE_TTL = 120  # 缓存 2 分钟
+
+
+def _iter_nginx_log_files() -> list[str]:
+    """收集所有 nginx 日志文件（独立 + 回退旧共用日志），按时间顺序"""
+    files = []
+    for pattern in (
+        os.path.join(_NGINX_LOG_DIR, "tiedstory_access.log*"),
+        os.path.join(_NGINX_LOG_DIR, "access.log*"),
+    ):
+        files.extend(glob.glob(pattern))
+    seen = set()
+    result = []
+    for f in sorted(files):
+        real = os.path.realpath(f)
+        if real not in seen:
+            seen.add(real)
+            result.append(f)
+    return result
+
+
+def _open_log(filepath: str):
+    if filepath.endswith(".gz"):
+        return gzip.open(filepath, "rt", errors="replace")
+    return open(filepath, "r", errors="replace")
+
+
+def _parse_line_date(line: str) -> str | None:
+    """从日志行提取 YYYY-MM-DD 格式日期"""
+    m = _NGINX_DATE_RE.search(line)
+    if not m:
+        return None
+    day, mon_str, year = m.group(1), m.group(2), m.group(3)
+    mon = _MONTH_MAP.get(mon_str)
+    if not mon:
+        return None
+    return f"{year}-{mon}-{day}"
+
+
+def get_nginx_stats(since_date: str | None = None) -> dict:
+    """
+    解析 Nginx 日志统计 UV / PV，与 GoAccess 数据对齐。
+    since_date: 可选，YYYY-MM-DD 格式，只统计该日期及之后的数据。None 表示全部。
+    返回 {"pv": int, "uv": int, "daily": {date: {"pv": int, "uv": set}}}
+    """
+    cache_key = f"stats:{since_date or 'all'}"
+    cached = _nginx_cache.get(cache_key)
+    if cached and time.time() - cached["ts"] < _NGINX_CACHE_TTL:
+        return cached["data"]
+
+    all_ips = set()
+    total_pv = 0
+    daily: dict[str, dict] = {}
+
+    for logfile in _iter_nginx_log_files():
+        try:
+            with _open_log(logfile) as f:
+                for line in f:
+                    ip_m = _NGINX_IP_RE.match(line)
+                    if not ip_m:
+                        continue
+                    ip = ip_m.group(1)
+
+                    date = _parse_line_date(line)
+                    if since_date and date and date < since_date:
+                        continue
+
+                    all_ips.add(ip)
+                    total_pv += 1
+
+                    if date:
+                        if date not in daily:
+                            daily[date] = {"pv": 0, "ips": set()}
+                        daily[date]["pv"] += 1
+                        daily[date]["ips"].add(ip)
+        except Exception:
+            continue
+
+    result = {
+        "pv": total_pv,
+        "uv": len(all_ips),
+        "daily": {d: {"pv": v["pv"], "uv": len(v["ips"])} for d, v in daily.items()},
+    }
+    _nginx_cache[cache_key] = {"ts": time.time(), "data": result}
+    return result
+
+
+def get_nginx_today_stats() -> dict:
+    """从 Nginx 日志获取今日 PV / UV"""
+    import datetime
+    today = datetime.date.today().isoformat()
+    stats = get_nginx_stats(since_date=today)
+    day_data = stats["daily"].get(today, {"pv": 0, "uv": 0})
+    return {"pv": day_data["pv"], "uv": day_data["uv"]}
+
+
+def get_nginx_total_stats() -> dict:
+    """从 Nginx 日志获取全量累计 PV / UV"""
+    stats = get_nginx_stats()
+    return {"pv": stats["pv"], "uv": stats["uv"]}
+
+
+def get_nginx_daily_stats(days: int = 14) -> list[dict]:
+    """从 Nginx 日志获取最近 N 天的每日 PV / UV"""
+    import datetime
+    today = datetime.date.today()
+    dates = [(today - datetime.timedelta(days=i)).isoformat() for i in range(days - 1, -1, -1)]
+    since = dates[0]
+    stats = get_nginx_stats(since_date=since)
+    return [
+        {"date": d, "pv": stats["daily"].get(d, {}).get("pv", 0), "uv": stats["daily"].get(d, {}).get("uv", 0)}
+        for d in dates
+    ]
+
+
+# ==========================================
 # Open API: 搜索 & 随机
 # ==========================================
 

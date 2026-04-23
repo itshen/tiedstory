@@ -1202,9 +1202,9 @@ async def api_list_ribbons(limit: int = 60, offset: int = 0, color: str = None):
 
 @app.get("/api/site_stats")
 async def api_site_stats():
-    """公开的站点统计（今日 PV/UV + 累计 PV/UV）"""
-    today = database.get_today_stats()
-    total = database.get_total_stats()
+    """公开的站点统计（今日 PV/UV + 累计 PV/UV），数据源为 Nginx 日志"""
+    today = database.get_nginx_today_stats()
+    total = database.get_nginx_total_stats()
     return {"today": today, "total": total}
 
 
@@ -2034,8 +2034,8 @@ async def admin_ban_ip(request: Request):
 async def admin_get_stats(request: Request, days: int = 14):
     if not _check_session(request):
         raise HTTPException(status_code=401)
-    daily = database.get_daily_stats(days=min(days, 90))
-    today = database.get_today_stats()
+    daily = database.get_nginx_daily_stats(days=min(days, 90))
+    today = database.get_nginx_today_stats()
     logger.info(f"[Admin] Stats requested days={days}")
     return {"daily": daily, "today": today}
 
