@@ -551,6 +551,7 @@ async def playground_api_chat(
                 {"role": "user", "content": content}
             ],
             "stream": True,
+            "enable_thinking": False,
         }
         logger.info(f"[TokenDance] model=qwen3.5-plus")
 
@@ -579,8 +580,8 @@ async def playground_api_chat(
                             except json.JSONDecodeError:
                                 continue
         except Exception as e:
-            logger.error(f"[TokenDance Exception] {str(e)}")
-            yield f"data: {json.dumps({'error': str(e)})}\n\n"
+            logger.error(f"[TokenDance Exception] {type(e).__name__}: {e}")
+            yield f"data: {json.dumps({'error': str(e) or type(e).__name__})}\n\n"
 
     return StreamingResponse(event_stream(), media_type="text/event-stream")
 
@@ -704,10 +705,11 @@ async def _generate_ai_echo(story: str, existing_echoes: list[str] = None) -> st
             {"role": "user", "content": user_content}
         ],
         "stream": False,
+        "enable_thinking": False,
         "max_tokens": 60,
     }
     try:
-        async with httpx.AsyncClient(timeout=20.0) as client:
+        async with httpx.AsyncClient(timeout=30.0) as client:
             resp = await client.post(url, headers=headers, json=payload)
             resp.raise_for_status()
             content = resp.json()["choices"][0]["message"]["content"].strip()
@@ -997,6 +999,7 @@ async def ribbon_analyze(request: Request):
             {"role": "user", "content": text}
         ],
         "stream": False,
+        "enable_thinking": False,
     }
 
     try:
@@ -1027,7 +1030,7 @@ async def ribbon_analyze(request: Request):
             logger.info(f"[Analyze] color={color}, is_crisis={is_crisis}, is_spam={is_spam}")
             return {"color": color, "is_crisis": is_crisis, "is_spam": is_spam}
     except Exception as e:
-        logger.error(f"[Analyze Exception] {str(e)}")
+        logger.error(f"[Analyze Exception] {type(e).__name__}: {e}", exc_info=True)
         return {"color": "gray", "is_crisis": False}
 
 
@@ -1052,6 +1055,7 @@ async def ribbon_rewrite(request: Request):
                 {"role": "user", "content": text}
             ],
             "stream": True,
+            "enable_thinking": False,
         }
 
         try:
@@ -1079,8 +1083,8 @@ async def ribbon_rewrite(request: Request):
                             except json.JSONDecodeError:
                                 continue
         except Exception as e:
-            logger.error(f"[Rewrite Exception] {str(e)}")
-            yield f"data: {json.dumps({'error': str(e)})}\n\n"
+            logger.error(f"[Rewrite Exception] {type(e).__name__}: {e}")
+            yield f"data: {json.dumps({'error': str(e) or type(e).__name__})}\n\n"
 
     return StreamingResponse(event_stream(), media_type="text/event-stream")
 
@@ -1119,6 +1123,7 @@ async def ribbon_process(request: Request):
             {"role": "user", "content": text}
         ],
         "stream": False,
+        "enable_thinking": False,
     }
 
     try:
@@ -1166,9 +1171,9 @@ async def ribbon_process(request: Request):
                 "content": content,
             })
     except Exception as e:
-        logger.error(f"[Process Exception] {str(e)}")
+        logger.error(f"[Process Exception] {type(e).__name__}: {e}", exc_info=True)
         return JSONResponse(
-            {"color": "grey", "allow_publish": False, "detail": f"处理失败: {str(e)}", "content": ""},
+            {"color": "grey", "allow_publish": False, "detail": f"处理失败: {str(e) or type(e).__name__}", "content": ""},
             status_code=500
         )
 
@@ -1229,9 +1234,10 @@ async def api_save_ribbon(request: Request):
             {"role": "user", "content": story}
         ],
         "stream": False,
+        "enable_thinking": False,
     }
     try:
-        async with httpx.AsyncClient(timeout=20.0) as client:
+        async with httpx.AsyncClient(timeout=30.0) as client:
             resp = await client.post(url, headers=headers, json=payload)
             resp.raise_for_status()
             raw = resp.json()["choices"][0]["message"]["content"]
@@ -1387,6 +1393,7 @@ async def open_api_create_ribbon(request: Request):
             {"role": "user", "content": text}
         ],
         "stream": False,
+        "enable_thinking": False,
     }
 
     try:
@@ -1438,8 +1445,9 @@ async def open_api_create_ribbon(request: Request):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"[OpenAPI] Create ribbon error: {e}")
-        return JSONResponse({"ok": False, "reason": f"服务处理失败: {str(e)}"}, status_code=500)
+        err_msg = str(e) or type(e).__name__
+        logger.error(f"[OpenAPI] Create ribbon error: {type(e).__name__}: {err_msg}", exc_info=True)
+        return JSONResponse({"ok": False, "reason": f"服务处理失败: {err_msg}"}, status_code=500)
 
 
 @app.get("/open/api/ribbons")
