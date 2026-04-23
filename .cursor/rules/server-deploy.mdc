@@ -21,7 +21,14 @@ alwaysApply: true
 2. SSH 到服务器执行 `cd /var/www/tiedstory && git pull origin main`
 3. FastAPI + Jinja2 模板无需重启即可生效；若修改了 `main.py` 或 Python 文件则需重启服务
 
-## 重启服务命令（如需）
+**推荐使用一键部署脚本：**
+```bash
+./deploy.sh          # 全量部署：push + pull + 重启
+./deploy.sh --restart # 仅重启服务
+./deploy.sh --pull    # 仅拉取代码
+```
+
+## 重启服务命令（如需手动）
 ```bash
 sshpass -p 'Itshen369*' ssh -o StrictHostKeyChecking=no ubuntu@43.163.82.143 \
   'cd /var/www/tiedstory && pkill -f main.py; sleep 1 && nohup python3.11 main.py > app.log 2>&1 &'

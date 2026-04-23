@@ -55,3 +55,7 @@
 ## 待开发 / 新增想法
 
 （暂无）
+
+## 开发工具
+
+- [x] deploy.sh 一键部署脚本（push + pull + 重启，支持 --restart / --pull 模式）

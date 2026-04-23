@@ -2,6 +2,27 @@
 
 ## 2026-04-24
 
+### BUG-001：POST /open/api/ribbon 返回 500，AI 改写超时
+
+**现象**：`POST /open/api/ribbon` 返回 HTTP 500，耗时 ~31 秒，`reason` 字段冒号后为空。其余所有接口正常。网页端 `/api/ribbon/process` 也同样 500。  
+**根因**：切换到词元跳动（TokenDance）网关后移除了 `enable_thinking: false` 参数，但 `qwen3.5-plus` 模型默认开启了 Reasoning/Thinking，导致每次请求产生大量思考 token（简单 "hi" 就生成 1123 reasoning tokens、耗时 22 秒），复杂改写内容超过 httpx 30 秒 timeout，触发 `ReadTimeout` 异常且 `str(e)` 为空字符串。  
+**修复文件**：`main.py`  
+**修复内容**：  
+- 所有 7 处 tokendance API 调用恢复添加 `enable_thinking: false`  
+- AI Echo 生成的 timeout 从 20s 提升到 30s  
+- 改进异常日志：记录 `type(e).__name__` + `exc_info=True` 完整堆栈  
+- 修复 `reason` 字段为空：fallback 到异常类型名  
+**验证**：修复后接口响应 ~3 秒，完整流程（AI 审核 + 改写 + 保存）正常  
+**状态**：✅ 已修复
+
+### 新增：deploy.sh 一键部署脚本
+
+**内容**：新增 `deploy.sh` 脚本，封装 git push → 服务器 pull → 重启服务的完整部署流程。  
+**用法**：`./deploy.sh`（全量部署）、`./deploy.sh --restart`（仅重启）、`./deploy.sh --pull`（仅拉取）  
+**状态**：✅ 已完成
+
+---
+
 ### UI 优化：故事弹窗（story modal）布局
 
 **现象**：长内容时弹窗整体滚动，头部与底部输入区不固定。  
@@ -26,7 +47,7 @@
 - API 端点：`dashscope.aliyuncs.com/compatible-mode/v1/chat/completions` → `tokendance.space/gateway/v1/chat/completions`
 - 环境变量：`DASHSCOPE_API_KEY` → `TOKENDANCE_API_KEY`
 - 模型名称：`qwen3.5-plus` / `qwen-plus` → `qwen3.5-plus`（统一为同一模型）
-- 移除 DashScope 特有参数 `enable_thinking: false`（词元跳动为标准 OpenAI 协议，无此参数）
+- 移除 DashScope 特有参数 `enable_thinking: false`（后经验证词元跳动同样支持此参数，已在 BUG-001 中恢复）
 
 **影响范围（7 处调用）：**
 - Playground AI 对话 (`/playground/api/chat`)
