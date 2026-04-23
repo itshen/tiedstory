@@ -527,19 +527,19 @@ async def playground_api_chat(
     content: str = Form(...),
     api_key: str = Form(None),
 ):
-    """处理 AI 对话测试的流式请求（DashScope）"""
+    """处理 AI 对话测试的流式请求（词元跳动）"""
     logger.info(f"[Chat] content={content[:60]}")
 
     import json
     import httpx
 
     async def event_stream():
-        actual_key = api_key or os.getenv("DASHSCOPE_API_KEY")
+        actual_key = api_key or os.getenv("TOKENDANCE_API_KEY")
         if not actual_key:
-            yield f"data: {json.dumps({'error': 'Missing DASHSCOPE_API_KEY'})}\n\n"
+            yield f"data: {json.dumps({'error': 'Missing TOKENDANCE_API_KEY'})}\n\n"
             return
 
-        url = "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
+        url = "https://tokendance.space/gateway/v1/chat/completions"
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {actual_key}"
@@ -551,16 +551,15 @@ async def playground_api_chat(
                 {"role": "user", "content": content}
             ],
             "stream": True,
-            "enable_thinking": False,
         }
-        logger.info(f"[DashScope] model=qwen3.5-plus")
+        logger.info(f"[TokenDance] model=qwen3.5-plus")
 
         try:
             async with httpx.AsyncClient(timeout=60.0) as client:
                 async with client.stream("POST", url, headers=headers, json=payload) as response:
                     if response.status_code != 200:
                         error_text = await response.aread()
-                        logger.error(f"[DashScope Error] {response.status_code}: {error_text.decode()}")
+                        logger.error(f"[TokenDance Error] {response.status_code}: {error_text.decode()}")
                         yield f"data: {json.dumps({'error': f'API {response.status_code}: {error_text.decode()[:200]}'})}\n\n"
                         return
 
@@ -580,7 +579,7 @@ async def playground_api_chat(
                             except json.JSONDecodeError:
                                 continue
         except Exception as e:
-            logger.error(f"[DashScope Exception] {str(e)}")
+            logger.error(f"[TokenDance Exception] {str(e)}")
             yield f"data: {json.dumps({'error': str(e)})}\n\n"
 
     return StreamingResponse(event_stream(), media_type="text/event-stream")
@@ -687,7 +686,7 @@ def _gen_ai_echo_slots() -> tuple[list[int], int]:
 async def _generate_ai_echo(story: str, existing_echoes: list[str] = None) -> str | None:
     """调用 LLM 生成一句 AI 回响，返回回响文本或 None"""
     import httpx
-    actual_key = os.getenv("DASHSCOPE_API_KEY")
+    actual_key = os.getenv("TOKENDANCE_API_KEY")
     if not actual_key:
         return None
 
@@ -696,16 +695,15 @@ async def _generate_ai_echo(story: str, existing_echoes: list[str] = None) -> st
         existing_str = "\n".join(f"- {e}" for e in existing_echoes)
         user_content = f"{story}\n\n[已有回响，请避免重复或语义相近：\n{existing_str}\n]"
 
-    url = "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
+    url = "https://tokendance.space/gateway/v1/chat/completions"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {actual_key}"}
     payload = {
-        "model": "qwen-plus",
+        "model": "qwen3.5-plus",
         "messages": [
             {"role": "system", "content": _AI_ECHO_PROMPT},
             {"role": "user", "content": user_content}
         ],
         "stream": False,
-        "enable_thinking": False,
         "max_tokens": 60,
     }
     try:
@@ -989,8 +987,8 @@ async def ribbon_analyze(request: Request):
         logger.warning(f"[Analyze] Injection detected: {text[:80]}")
         return {"color": "gray", "is_crisis": False, "is_spam": True}
 
-    actual_key = os.getenv("DASHSCOPE_API_KEY")
-    url = "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
+    actual_key = os.getenv("TOKENDANCE_API_KEY")
+    url = "https://tokendance.space/gateway/v1/chat/completions"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {actual_key}"}
     payload = {
         "model": "qwen3.5-plus",
@@ -999,7 +997,6 @@ async def ribbon_analyze(request: Request):
             {"role": "user", "content": text}
         ],
         "stream": False,
-        "enable_thinking": False,
     }
 
     try:
@@ -1045,8 +1042,8 @@ async def ribbon_rewrite(request: Request):
     logger.info(f"[Rewrite] text={text[:60]}")
 
     async def event_stream():
-        actual_key = os.getenv("DASHSCOPE_API_KEY")
-        url = "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
+        actual_key = os.getenv("TOKENDANCE_API_KEY")
+        url = "https://tokendance.space/gateway/v1/chat/completions"
         headers = {"Content-Type": "application/json", "Authorization": f"Bearer {actual_key}"}
         payload = {
             "model": "qwen3.5-plus",
@@ -1055,7 +1052,6 @@ async def ribbon_rewrite(request: Request):
                 {"role": "user", "content": text}
             ],
             "stream": True,
-            "enable_thinking": False,
         }
 
         try:
@@ -1113,8 +1109,8 @@ async def ribbon_process(request: Request):
             "content": "这片树林只接受真实的心声。",
         })
 
-    actual_key = os.getenv("DASHSCOPE_API_KEY")
-    url = "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
+    actual_key = os.getenv("TOKENDANCE_API_KEY")
+    url = "https://tokendance.space/gateway/v1/chat/completions"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {actual_key}"}
     payload = {
         "model": "qwen3.5-plus",
@@ -1123,7 +1119,6 @@ async def ribbon_process(request: Request):
             {"role": "user", "content": text}
         ],
         "stream": False,
-        "enable_thinking": False,
     }
 
     try:
@@ -1224,17 +1219,16 @@ async def api_save_ribbon(request: Request):
         logger.warning(f"[Save] Injection in story, blocked. ip={_get_client_ip(request)}")
         raise HTTPException(status_code=403, detail="内容包含非法指令")
 
-    actual_key = os.getenv("DASHSCOPE_API_KEY")
-    url = "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
+    actual_key = os.getenv("TOKENDANCE_API_KEY")
+    url = "https://tokendance.space/gateway/v1/chat/completions"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {actual_key}"}
     payload = {
-        "model": "qwen-plus",
+        "model": "qwen3.5-plus",
         "messages": [
             {"role": "system", "content": _get_tree_whisper_prompt()},
             {"role": "user", "content": story}
         ],
         "stream": False,
-        "enable_thinking": False,
     }
     try:
         async with httpx.AsyncClient(timeout=20.0) as client:
@@ -1383,8 +1377,8 @@ async def open_api_create_ribbon(request: Request):
         logger.warning(f"[OpenAPI] Injection detected: {text[:80]}")
         return JSONResponse({"ok": False, "reason": "内容包含非法指令"}, status_code=403)
 
-    actual_key = os.getenv("DASHSCOPE_API_KEY")
-    url = "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
+    actual_key = os.getenv("TOKENDANCE_API_KEY")
+    url = "https://tokendance.space/gateway/v1/chat/completions"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {actual_key}"}
     payload = {
         "model": "qwen3.5-plus",
@@ -1393,7 +1387,6 @@ async def open_api_create_ribbon(request: Request):
             {"role": "user", "content": text}
         ],
         "stream": False,
-        "enable_thinking": False,
     }
 
     try:

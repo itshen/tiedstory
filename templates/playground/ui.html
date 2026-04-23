@@ -513,6 +513,29 @@
 .hero-bottom.expanded .ribbon-cards-scroll::-webkit-scrollbar { width: 3px; display: block; }
 .hero-bottom.expanded .ribbon-cards-scroll::-webkit-scrollbar-thumb { background: rgba(200,155,80,0.15); border-radius: 4px; }
 
+.sponsor-line {
+    display: block;
+    text-align: center;
+    padding: 10px 0 6px;
+    font-size: 11px;
+    color: rgba(247,244,238,0.18);
+    text-decoration: none;
+    letter-spacing: 0.3px;
+    transition: color 0.25s;
+}
+.sponsor-line:hover { color: rgba(247,244,238,0.35); }
+.sponsor-more {
+    opacity: 0;
+    margin-left: 4px;
+    transition: opacity 0.25s;
+}
+.sponsor-line:hover .sponsor-more { opacity: 1; }
+.sponsor-line--modal {
+    margin-top: 20px;
+    padding: 12px 0 0;
+    border-top: 1px solid rgba(247,244,238,0.04);
+}
+
 .hero-bottom.expanded .ribbon-card {
     width: auto;
     height: 160px;
@@ -2427,6 +2450,8 @@
             <!-- 由 JS renderRibbonCards() 动态生成 -->
         </div>
 
+        <a class="sponsor-line" href="https://tokendance.space/?from=tiedstory" target="_blank" rel="noopener">树语的声音，由 TokenDance 点亮 <span class="sponsor-more">了解更多 ›</span></a>
+
     </div>
 </div>
 
@@ -2519,6 +2544,8 @@
                     </div>
                 </div>
             </div>
+
+            <a class="sponsor-line sponsor-line--modal" href="https://tokendance.space/?from=tiedstory" target="_blank" rel="noopener">树语的声音，由 TokenDance 点亮 <span class="sponsor-more">了解更多 ›</span></a>
 
         </div>
     </div>

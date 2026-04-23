@@ -2,6 +2,35 @@
 
 ## 2026-04-24
 
+### 变更：模型供应商切换至词元跳动（TokenDance）
+
+**内容**：将所有大模型调用从阿里云百炼（DashScope）切换至词元跳动（tokendance.space）统一网关。
+
+**变更详情：**
+- API 端点：`dashscope.aliyuncs.com/compatible-mode/v1/chat/completions` → `tokendance.space/gateway/v1/chat/completions`
+- 环境变量：`DASHSCOPE_API_KEY` → `TOKENDANCE_API_KEY`
+- 模型名称：`qwen3.5-plus` / `qwen-plus` → `qwen3.5-plus`（统一为同一模型）
+- 移除 DashScope 特有参数 `enable_thinking: false`（词元跳动为标准 OpenAI 协议，无此参数）
+
+**影响范围（7 处调用）：**
+- Playground AI 对话 (`/playground/api/chat`)
+- AI 自动回响生成 (`_generate_ai_echo`)
+- 丝带分析 (`/api/ribbon/analyze`)
+- 丝带改写 (`/api/ribbon/rewrite`)
+- 丝带处理 (`/api/ribbon/process`)
+- 丝带保存二次审核 (`/api/ribbon/save`)
+- Open API 创建丝带 (`/open/api/ribbon`)
+
+**修改文件**：
+- `main.py` — 全部 7 处 LLM 调用切换
+- `.env` — 替换 API Key
+- `tests/test_open_api.py` — 环境变量名同步更新
+- `templates/playground/ai.html` — 前端显示名更新
+
+**状态**：✅ 已完成
+
+---
+
 ### 新增功能：Open API & Skill 文档
 
 **内容**：为 TiedStory 开放公共 API，允许第三方 AI Agent / 脚本调用核心功能。
