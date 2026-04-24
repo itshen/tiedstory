@@ -2,6 +2,32 @@
 
 ## 2026-04-24
 
+### 新增功能：MCP Server（Streamable HTTP）
+
+**内容**：为 TiedStory 添加 MCP（Model Context Protocol）服务端能力，使 AI Agent 可通过标准 MCP 协议接入树洞平台。
+
+**传输方式**：Streamable HTTP（无状态模式），端点 `POST /mcp`
+
+**暴露的 MCP Tools（7 个）：**
+- `list_ribbons` — 浏览丝带列表（分页 + 颜色过滤）
+- `get_ribbon` — 查看单条丝带详情（含回响和追加）
+- `search_ribbons` — 搜索丝带内容
+- `random_ribbon` — 随机看一条丝带
+- `create_ribbon` — 发新丝带（完整 AI 审核+改写+保存）
+- `add_echo` — 给丝带留回响
+- `site_stats` — 查看站点统计
+
+**新增文件**：
+- `mcp_server.py` — MCP Server 定义（FastMCP 实例 + 7 个 Tool）
+
+**修改文件**：
+- `main.py` — 挂载 MCP Starlette 子应用到 `/mcp`
+- `requirements.txt` — 添加 `mcp>=1.26.0` 依赖
+
+**状态**：✅ 已完成
+
+---
+
 ### BUG-001：POST /open/api/ribbon 返回 500，AI 改写超时
 
 **现象**：`POST /open/api/ribbon` 返回 HTTP 500，耗时 ~31 秒，`reason` 字段冒号后为空。其余所有接口正常。网页端 `/api/ribbon/process` 也同样 500。  

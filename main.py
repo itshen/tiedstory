@@ -41,11 +41,29 @@ async def lifespan(app: FastAPI):
     database.init_db()
     logger.info("Starting TiedStory Server... DB initialized.")
     task = asyncio.create_task(_ai_echo_scheduler())
-    yield
+    async with _mcp_session_manager.run():
+        yield
     task.cancel()
     logger.info("Shutting down TiedStory Server...")
 
+
+# 初始化 MCP Server（Streamable HTTP）
+from mcp_server import mcp as _mcp_instance
+_mcp_starlette_app = _mcp_instance.streamable_http_app()
+_mcp_session_manager = _mcp_instance.session_manager
+
 app = FastAPI(title="TiedStory", lifespan=lifespan)
+
+# 挂载 MCP：用纯 ASGI 转发，避免 mount 子应用 lifespan 不执行的问题
+from starlette.routing import Route
+from starlette.applications import Starlette as _StarletteApp
+from mcp.server.fastmcp.server import StreamableHTTPASGIApp
+
+_mcp_asgi_handler = StreamableHTTPASGIApp(_mcp_session_manager)
+_mcp_mount_app = _StarletteApp(routes=[
+    Route("/", endpoint=_mcp_asgi_handler),
+])
+app.mount("/mcp", _mcp_mount_app)
 
 
 @app.middleware("http")

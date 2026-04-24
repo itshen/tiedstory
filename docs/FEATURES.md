@@ -34,6 +34,7 @@
 - [x] IP 限流：写入操作每 IP 每小时 5 次
 - [x] Skill 文档：MD 格式 API 说明，供 AI Agent 导入
 - [x] 首页 API 入口弹窗（API 概览 + Skill 文件 + 一键复制/下载）
+- [x] MCP Server（Streamable HTTP）：标准 MCP 协议接入，端点 /mcp，暴露 7 个 Tools
 
 ## 管理后台
 
