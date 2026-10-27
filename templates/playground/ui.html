@@ -525,16 +525,22 @@
 }
 .sponsor-line:hover { color: rgba(247,244,238,0.35); }
 .sponsor-more {
+    /* 绝对定位：隐藏时不占位，避免署名文字视觉上偏左 */
+    position: absolute;
+    white-space: nowrap;
     opacity: 0;
     margin-left: 4px;
     transition: opacity 0.25s;
 }
 .sponsor-line:hover .sponsor-more { opacity: 1; }
 .sponsor-line--modal {
-    margin-top: 20px;
-    padding: 12px 0 0;
-    border-top: 1px solid rgba(247,244,238,0.04);
+    margin-top: 22px;
+    padding: 16px 0 0;
+    font-size: 12px;
+    color: rgba(247,244,238,0.3);
+    border-top: 1px solid rgba(247,244,238,0.07);
 }
+.sponsor-line--modal:hover { color: rgba(247,244,238,0.5); }
 
 .hero-bottom.expanded .ribbon-card {
     width: auto;
@@ -1595,7 +1601,8 @@
 
 /* 见证码验证区（默认收起） */
 .story-witness-area {
-    margin-bottom: 16px;
+    margin-top: 14px;
+    margin-bottom: 0;
 }
 .story-witness-toggle {
     display: flex;
