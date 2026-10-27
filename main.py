@@ -11,6 +11,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from dotenv import load_dotenv
 import db as database
+import llm
+from mcp_server import mcp_gateway
 
 # 加载环境变量
 load_dotenv()
@@ -41,29 +43,21 @@ async def lifespan(app: FastAPI):
     database.init_db()
     logger.info("Starting TiedStory Server... DB initialized.")
     task = asyncio.create_task(_ai_echo_scheduler())
-    async with _mcp_session_manager.run():
-        yield
-    task.cancel()
-    logger.info("Shutting down TiedStory Server...")
+    try:
+        # MCP session manager 的生命周期绑定在应用 lifespan 上
+        async with mcp_gateway.run():
+            yield
+    finally:
+        task.cancel()
+        logger.info("Shutting down TiedStory Server...")
 
-
-# 初始化 MCP Server（Streamable HTTP）
-from mcp_server import mcp as _mcp_instance
-_mcp_starlette_app = _mcp_instance.streamable_http_app()
-_mcp_session_manager = _mcp_instance.session_manager
 
 app = FastAPI(title="TiedStory", lifespan=lifespan)
 
-# 挂载 MCP：用纯 ASGI 转发，避免 mount 子应用 lifespan 不执行的问题
-from starlette.routing import Route
-from starlette.applications import Starlette as _StarletteApp
-from mcp.server.fastmcp.server import StreamableHTTPASGIApp
-
-_mcp_asgi_handler = StreamableHTTPASGIApp(_mcp_session_manager)
-_mcp_mount_app = _StarletteApp(routes=[
-    Route("/", endpoint=_mcp_asgi_handler),
-])
-app.mount("/mcp", _mcp_mount_app)
+# MCP Server（Streamable HTTP）：同时注册 /mcp 和 /mcp/，避免 307 重定向
+# （MCP 客户端对 POST 重定向的支持参差不齐）
+app.router.add_route("/mcp", mcp_gateway)
+app.router.add_route("/mcp/", mcp_gateway)
 
 
 @app.middleware("http")
@@ -545,36 +539,31 @@ async def playground_api_chat(
     content: str = Form(...),
     api_key: str = Form(None),
 ):
-    """处理 AI 对话测试的流式请求（词元跳动）"""
+    """处理 AI 对话测试的流式请求（米羊 Gateway）"""
     logger.info(f"[Chat] content={content[:60]}")
 
     import json
     import httpx
 
     async def event_stream():
-        actual_key = api_key or os.getenv("TOKENDANCE_API_KEY")
+        actual_key = api_key or llm.get_api_key()
         if not actual_key:
-            yield f"data: {json.dumps({'error': 'Missing TOKENDANCE_API_KEY'})}\n\n"
+            yield f"data: {json.dumps({'error': f'Missing {llm.get_api_key_env_name()}'})}\n\n"
             return
 
-        url = "https://tokendance.space/gateway/v1/chat/completions"
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {actual_key}"
-        }
-        payload = {
-            "model": "qwen3.5-plus",
-            "messages": [
+        url, headers, payload = llm.build_request(
+            "playground",
+            [
                 {"role": "system", "content": prompt},
-                {"role": "user", "content": content}
+                {"role": "user", "content": content},
             ],
-            "stream": True,
-            "enable_thinking": False,
-        }
-        logger.info(f"[TokenDance] model=qwen3.5-plus")
+            stream=True,
+            api_key=actual_key,
+        )
+        logger.info(f"[LLM] role=playground model={payload['model']}")
 
         try:
-            async with httpx.AsyncClient(timeout=60.0) as client:
+            async with httpx.AsyncClient(timeout=llm.get_timeout(stream=True)) as client:
                 async with client.stream("POST", url, headers=headers, json=payload) as response:
                     if response.status_code != 200:
                         error_text = await response.aread()
@@ -702,10 +691,13 @@ def _gen_ai_echo_slots() -> tuple[list[int], int]:
     return slots, final_delay
 
 
+_AI_ECHO_MAX_ATTEMPTS = 2
+
+
 async def _generate_ai_echo(story: str, existing_echoes: list[str] = None) -> str | None:
     """调用 LLM 生成一句 AI 回响，返回回响文本或 None"""
     import httpx
-    actual_key = os.getenv("TOKENDANCE_API_KEY")
+    actual_key = llm.get_api_key()
     if not actual_key:
         return None
 
@@ -714,30 +706,40 @@ async def _generate_ai_echo(story: str, existing_echoes: list[str] = None) -> st
         existing_str = "\n".join(f"- {e}" for e in existing_echoes)
         user_content = f"{story}\n\n[已有回响，请避免重复或语义相近：\n{existing_str}\n]"
 
-    url = "https://tokendance.space/gateway/v1/chat/completions"
-    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {actual_key}"}
-    payload = {
-        "model": "qwen3.5-plus",
-        "messages": [
+    url, headers, payload = llm.build_request(
+        "echo",
+        [
             {"role": "system", "content": _AI_ECHO_PROMPT},
-            {"role": "user", "content": user_content}
+            {"role": "user", "content": user_content},
         ],
-        "stream": False,
-        "enable_thinking": False,
-        "max_tokens": 60,
-    }
-    try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            resp = await client.post(url, headers=headers, json=payload)
-            resp.raise_for_status()
-            content = resp.json()["choices"][0]["message"]["content"].strip()
-            if len(content) > 30:
-                content = content[:30]
-            logger.info(f"[AI Echo] generated: {content}")
-            return content
-    except Exception as e:
-        logger.error(f"[AI Echo] generate failed: {e}")
-        return None
+        api_key=actual_key,
+    )
+    # 回响是后台任务、无人等待；而调度器会在生成前就把任务标记完成，
+    # 一次瞬时失败（超时 / 5xx / 空内容）就会让这条回响永久丢失，所以重试一次。
+    for attempt in range(1, _AI_ECHO_MAX_ATTEMPTS + 1):
+        try:
+            async with httpx.AsyncClient(timeout=llm.get_timeout(role="echo")) as client:
+                resp = await client.post(url, headers=headers, json=payload)
+                resp.raise_for_status()
+                choice = resp.json()["choices"][0]
+                content = (choice["message"].get("content") or "").strip()
+                if not content:
+                    # 空内容通常是思考 token 耗尽了 max_tokens（finish_reason=length）
+                    logger.warning(
+                        f"[AI Echo] empty content (attempt {attempt}/{_AI_ECHO_MAX_ATTEMPTS}) "
+                        f"model={payload['model']} finish_reason={choice.get('finish_reason')}"
+                    )
+                    continue
+                if len(content) > 30:
+                    content = content[:30]
+                logger.info(f"[AI Echo] generated: {content}")
+                return content
+        except Exception as e:
+            logger.error(
+                f"[AI Echo] generate failed (attempt {attempt}/{_AI_ECHO_MAX_ATTEMPTS}): "
+                f"{type(e).__name__}: {str(e) or '(no message)'}"
+            )
+    return None
 
 
 async def _ai_echo_scheduler():
@@ -1007,21 +1009,16 @@ async def ribbon_analyze(request: Request):
         logger.warning(f"[Analyze] Injection detected: {text[:80]}")
         return {"color": "gray", "is_crisis": False, "is_spam": True}
 
-    actual_key = os.getenv("TOKENDANCE_API_KEY")
-    url = "https://tokendance.space/gateway/v1/chat/completions"
-    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {actual_key}"}
-    payload = {
-        "model": "qwen3.5-plus",
-        "messages": [
+    url, headers, payload = llm.build_request(
+        "moderation",
+        [
             {"role": "system", "content": _get_tree_whisper_prompt()},
-            {"role": "user", "content": text}
+            {"role": "user", "content": text},
         ],
-        "stream": False,
-        "enable_thinking": False,
-    }
+    )
 
     try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
+        async with httpx.AsyncClient(timeout=llm.get_timeout()) as client:
             resp = await client.post(url, headers=headers, json=payload)
             resp.raise_for_status()
             data = resp.json()
@@ -1063,21 +1060,17 @@ async def ribbon_rewrite(request: Request):
     logger.info(f"[Rewrite] text={text[:60]}")
 
     async def event_stream():
-        actual_key = os.getenv("TOKENDANCE_API_KEY")
-        url = "https://tokendance.space/gateway/v1/chat/completions"
-        headers = {"Content-Type": "application/json", "Authorization": f"Bearer {actual_key}"}
-        payload = {
-            "model": "qwen3.5-plus",
-            "messages": [
+        url, headers, payload = llm.build_request(
+            "moderation",
+            [
                 {"role": "system", "content": _get_tree_whisper_prompt()},
-                {"role": "user", "content": text}
+                {"role": "user", "content": text},
             ],
-            "stream": True,
-            "enable_thinking": False,
-        }
+            stream=True,
+        )
 
         try:
-            async with httpx.AsyncClient(timeout=60.0) as client:
+            async with httpx.AsyncClient(timeout=llm.get_timeout(stream=True)) as client:
                 async with client.stream("POST", url, headers=headers, json=payload) as response:
                     if response.status_code != 200:
                         err = await response.aread()
@@ -1131,21 +1124,16 @@ async def ribbon_process(request: Request):
             "content": "这片树林只接受真实的心声。",
         })
 
-    actual_key = os.getenv("TOKENDANCE_API_KEY")
-    url = "https://tokendance.space/gateway/v1/chat/completions"
-    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {actual_key}"}
-    payload = {
-        "model": "qwen3.5-plus",
-        "messages": [
+    url, headers, payload = llm.build_request(
+        "moderation",
+        [
             {"role": "system", "content": _get_tree_whisper_prompt()},
-            {"role": "user", "content": text}
+            {"role": "user", "content": text},
         ],
-        "stream": False,
-        "enable_thinking": False,
-    }
+    )
 
     try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
+        async with httpx.AsyncClient(timeout=llm.get_timeout()) as client:
             resp = await client.post(url, headers=headers, json=payload)
             resp.raise_for_status()
             data = resp.json()
@@ -1242,20 +1230,15 @@ async def api_save_ribbon(request: Request):
         logger.warning(f"[Save] Injection in story, blocked. ip={_get_client_ip(request)}")
         raise HTTPException(status_code=403, detail="内容包含非法指令")
 
-    actual_key = os.getenv("TOKENDANCE_API_KEY")
-    url = "https://tokendance.space/gateway/v1/chat/completions"
-    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {actual_key}"}
-    payload = {
-        "model": "qwen3.5-plus",
-        "messages": [
+    url, headers, payload = llm.build_request(
+        "moderation",
+        [
             {"role": "system", "content": _get_tree_whisper_prompt()},
-            {"role": "user", "content": story}
+            {"role": "user", "content": story},
         ],
-        "stream": False,
-        "enable_thinking": False,
-    }
+    )
     try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
+        async with httpx.AsyncClient(timeout=llm.get_timeout()) as client:
             resp = await client.post(url, headers=headers, json=payload)
             resp.raise_for_status()
             raw = resp.json()["choices"][0]["message"]["content"]
@@ -1401,21 +1384,16 @@ async def open_api_create_ribbon(request: Request):
         logger.warning(f"[OpenAPI] Injection detected: {text[:80]}")
         return JSONResponse({"ok": False, "reason": "内容包含非法指令"}, status_code=403)
 
-    actual_key = os.getenv("TOKENDANCE_API_KEY")
-    url = "https://tokendance.space/gateway/v1/chat/completions"
-    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {actual_key}"}
-    payload = {
-        "model": "qwen3.5-plus",
-        "messages": [
+    url, headers, payload = llm.build_request(
+        "moderation",
+        [
             {"role": "system", "content": _get_tree_whisper_prompt()},
-            {"role": "user", "content": text}
+            {"role": "user", "content": text},
         ],
-        "stream": False,
-        "enable_thinking": False,
-    }
+    )
 
     try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
+        async with httpx.AsyncClient(timeout=llm.get_timeout()) as client:
             resp = await client.post(url, headers=headers, json=payload)
             resp.raise_for_status()
             data = resp.json()

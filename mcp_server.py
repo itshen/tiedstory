@@ -5,39 +5,27 @@ TiedStory MCP Server — Streamable HTTP
 
 from __future__ import annotations
 
+import contextlib
 import os
 import logging
 from mcp.server.fastmcp import FastMCP
 from mcp.server.fastmcp.server import TransportSecuritySettings
+from starlette.responses import PlainTextResponse
 
 import db as database
+import llm
 
 logger = logging.getLogger(__name__)
 
 _site_domain = os.getenv("SITE_DOMAIN", "https://tiedstory.com")
 _host_from_domain = _site_domain.replace("https://", "").replace("http://", "")
 
-mcp = FastMCP(
-    "TiedStory",
-    instructions=(
-        "TiedStory 是一个匿名情感树洞平台。"
-        "用户写下心事，AI 将其改写为第三人称故事并以「丝带」形态展示。"
-        "路过的人可以阅读故事、留下匿名回响。"
-        "丝带颜色代表不同情绪：blue=悲伤, orange=愤怒, pink=思念, "
-        "green=疲惫, purple=迷茫, gray=麻木, gold=喜悦。"
-    ),
-    stateless_http=True,
-    streamable_http_path="/",
-    host="0.0.0.0",
-    transport_security=TransportSecuritySettings(
-        enable_dns_rebinding_protection=True,
-        allowed_hosts=[
-            _host_from_domain,
-            f"{_host_from_domain}:*",
-            "localhost:*",
-            "127.0.0.1:*",
-        ],
-    ),
+_INSTRUCTIONS = (
+    "TiedStory 是一个匿名情感树洞平台。"
+    "用户写下心事，AI 将其改写为第三人称故事并以「丝带」形态展示。"
+    "路过的人可以阅读故事、留下匿名回响。"
+    "丝带颜色代表不同情绪：blue=悲伤, orange=愤怒, pink=思念, "
+    "green=疲惫, purple=迷茫, gray=麻木, gold=喜悦。"
 )
 
 
@@ -61,7 +49,6 @@ def _time_ago(ts: int) -> str:
 # MCP Tools
 # ==========================================
 
-@mcp.tool()
 def list_ribbons(
     limit: int = 10,
     offset: int = 0,
@@ -88,7 +75,6 @@ def list_ribbons(
     }
 
 
-@mcp.tool()
 def get_ribbon(ribbon_id: str) -> dict:
     """查看单条丝带的完整内容，包含所有回响和追加"""
     ribbon_id = ribbon_id.upper()
@@ -105,7 +91,6 @@ def get_ribbon(ribbon_id: str) -> dict:
     return data
 
 
-@mcp.tool()
 def random_ribbon() -> dict:
     """随机查看一条丝带（含回响列表），适合闲逛树洞时使用"""
     data = database.random_ribbon()
@@ -121,7 +106,6 @@ def random_ribbon() -> dict:
     return data
 
 
-@mcp.tool()
 def search_ribbons(keyword: str, limit: int = 10, offset: int = 0) -> dict:
     """搜索丝带内容（模糊匹配故事文本）"""
     if not keyword.strip():
@@ -144,7 +128,6 @@ def search_ribbons(keyword: str, limit: int = 10, offset: int = 0) -> dict:
     }
 
 
-@mcp.tool()
 def add_echo(ribbon_id: str, content: str, author: str = "") -> dict:
     """给某条丝带留下一句匿名回响（共鸣、鼓励或陪伴的话）。
     content: 回响内容，1-100 字。author: 可选署名，最长 20 字。"""
@@ -167,11 +150,9 @@ def add_echo(ribbon_id: str, content: str, author: str = "") -> dict:
     return {"ok": True, "echo_id": echo_id}
 
 
-@mcp.tool()
 def create_ribbon(text: str) -> dict:
     """发一条新丝带到树上。系统会进行 AI 内容审核和改写。
     text: 用户的心事原文，1-500 字。"""
-    import os
     import re
     import httpx
 
@@ -181,7 +162,7 @@ def create_ribbon(text: str) -> dict:
     if len(text) > 500:
         return {"error": "text_too_long", "message": "内容不能超过 500 字"}
 
-    actual_key = os.getenv("TOKENDANCE_API_KEY")
+    actual_key = llm.get_api_key()
     if not actual_key:
         return {"error": "config_error", "message": "服务端 AI Key 未配置"}
 
@@ -191,20 +172,17 @@ def create_ribbon(text: str) -> dict:
         logger.warning(f"[MCP] Injection detected: {text[:80]}")
         return {"error": "rejected", "message": "内容包含非法指令"}
 
-    url = "https://tokendance.space/gateway/v1/chat/completions"
-    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {actual_key}"}
-    payload = {
-        "model": "qwen3.5-plus",
-        "messages": [
+    url, headers, payload = llm.build_request(
+        "moderation",
+        [
             {"role": "system", "content": _get_tree_whisper_prompt()},
             {"role": "user", "content": text},
         ],
-        "stream": False,
-        "enable_thinking": False,
-    }
+        api_key=actual_key,
+    )
 
     try:
-        resp = httpx.post(url, headers=headers, json=payload, timeout=30.0)
+        resp = httpx.post(url, headers=headers, json=payload, timeout=llm.get_timeout())
         resp.raise_for_status()
         raw = resp.json()["choices"][0]["message"]["content"]
 
@@ -255,9 +233,85 @@ def create_ribbon(text: str) -> dict:
         return {"error": "server_error", "message": f"服务处理失败: {e}"}
 
 
-@mcp.tool()
 def site_stats() -> dict:
     """查看 TiedStory 站点统计（今日 PV/UV + 累计 PV/UV）"""
     today = database.get_nginx_today_stats()
     total = database.get_nginx_total_stats()
     return {"today": today, "total": total}
+
+
+# ==========================================
+# Server 构建与 ASGI 网关
+# ==========================================
+
+TOOLS = (
+    list_ribbons,
+    get_ribbon,
+    random_ribbon,
+    search_ribbons,
+    add_echo,
+    create_ribbon,
+    site_stats,
+)
+
+
+def build_mcp_server() -> FastMCP:
+    """新建一个 FastMCP 实例并注册全部 Tools。
+
+    StreamableHTTPSessionManager.run() 每个实例只能启动一次，
+    因此每次应用 lifespan 启动都要重新构建（测试中会多次启动应用）。
+    """
+    server = FastMCP(
+        "TiedStory",
+        instructions=_INSTRUCTIONS,
+        stateless_http=True,
+        streamable_http_path="/",
+        host="0.0.0.0",
+        transport_security=TransportSecuritySettings(
+            enable_dns_rebinding_protection=True,
+            allowed_hosts=[
+                _host_from_domain,
+                f"{_host_from_domain}:*",
+                "localhost:*",
+                "127.0.0.1:*",
+            ],
+        ),
+    )
+    for fn in TOOLS:
+        server.add_tool(fn)
+    return server
+
+
+class MCPGateway:
+    """挂到 FastAPI 的 ASGI 入口，生命周期与应用 lifespan 绑定。
+
+    - run()：在应用 lifespan 中使用，启动时新建 MCP server 和 session manager
+    - __call__：把请求转给当前 session manager；未启动时返回 503
+    """
+
+    def __init__(self) -> None:
+        self._manager = None
+
+    @contextlib.asynccontextmanager
+    async def run(self):
+        server = build_mcp_server()
+        server.streamable_http_app()  # 触发 session manager 的惰性初始化
+        manager = server.session_manager
+        async with manager.run():
+            self._manager = manager
+            logger.info("[MCP] gateway ready, tools=%s", [fn.__name__ for fn in TOOLS])
+            try:
+                yield
+            finally:
+                self._manager = None
+
+    async def __call__(self, scope, receive, send) -> None:
+        manager = self._manager
+        if manager is None:
+            logger.warning("[MCP] request before gateway ready")
+            await PlainTextResponse("MCP server not ready", status_code=503)(scope, receive, send)
+            return
+        await manager.handle_request(scope, receive, send)
+
+
+mcp_gateway = MCPGateway()

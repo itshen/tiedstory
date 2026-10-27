@@ -1,0 +1,29 @@
+# 大模型调用配置（米羊 Gateway，OpenAI 兼容）
+# 详见 PRD_llm_gateway.md。API Key 不写在这里，从环境变量读取。
+
+gateway:
+  base_url: https://api.alice.fans/api/v1
+  api_key_env: MIYANG_API_KEY
+  timeout: 30          # 非流式请求超时（秒）
+  stream_timeout: 60   # 流式请求超时（秒）
+
+# 按角色分配模型。enable_thinking 为 false 时请求体会带 "enable_thinking": false；
+# 不配置该字段则不发送。
+models:
+  # 树语：审核 + 脱敏 + 改写（一次调用完成）
+  moderation:
+    id: aliyun_bailian_shanghai/qwen3.8-flash
+    enable_thinking: false
+  # AI 自动回响
+  # max_tokens 必须留足余量：Gemini 的隐藏思考 token 也计入 max_tokens。
+  # 实测设为 60 时约 8% 的请求被思考耗尽额度，返回空内容（finish_reason=length）。
+  # 回响字数由提示词约束，并在代码里截断到 30 字。
+  # timeout：Gemini 偶有长尾延迟（实测出现过 >30 秒），回响是后台任务无人等待，放宽到 90 秒。
+  echo:
+    id: miyang/gemini-3.8-flash
+    max_tokens: 512
+    timeout: 90
+  # Playground 对话测试
+  playground:
+    id: aliyun_bailian_shanghai/qwen3.8-flash
+    enable_thinking: false

@@ -34,7 +34,15 @@
 - [x] IP 限流：写入操作每 IP 每小时 5 次
 - [x] Skill 文档：MD 格式 API 说明，供 AI Agent 导入
 - [x] 首页 API 入口弹窗（API 概览 + Skill 文件 + 一键复制/下载）
-- [x] MCP Server（Streamable HTTP）：标准 MCP 协议接入，端点 /mcp，暴露 7 个 Tools
+- [x] MCP Server（Streamable HTTP）：标准 MCP 协议接入，端点 /mcp（/mcp/ 同样可用，无重定向），暴露 7 个 Tools
+
+## 大模型接入
+
+- [x] 米羊 Gateway 统一接入：端点、模型、超时、思考开关集中在 config/llm.yaml，代码按角色取用（llm.py）
+- [x] 审核 + 改写（一步完成）使用 aliyun_bailian_shanghai/qwen3.8-flash
+- [x] AI 自动回响使用 miyang/gemini-3.8-flash（max_tokens 留足思考余量、超时 90 秒、失败重试一次）
+- [x] Playground 对话使用 qwen3.8-flash
+- [x] 联网测试：有真实 Key 时自动校验两个模型的连通性与回响不返回空内容
 
 ## 管理后台
 
@@ -55,7 +63,10 @@
 
 ## 待开发 / 新增想法
 
-（暂无）
+- [ ] MCP 写入类 Tool（create_ribbon / add_echo）补上 IP 限流，与 Open API 的「每 IP 每小时 5 次」对齐（当前 ip 固定记为 "mcp"，无限流）
+- [ ] MCP add_echo 补上 Prompt Injection 检测（Open API 的回响接口已有）
+- [ ] 前台「树语的声音，由 TokenDance 点亮」署名与新供应商（米羊）不一致，待产品决定是否修改
+- [ ] 为 MCP 补充独立 PRD 文档（本次接入时未先写 PRD）
 
 ## 开发工具
 
